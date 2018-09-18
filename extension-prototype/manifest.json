@@ -1,0 +1,21 @@
+{
+  "description": "Tota11y prototype",
+  "manifest_version": 2,
+  "name": "Tota11y prototype",
+  "version": "1.0",
+
+  "permissions": ["tabs"],
+
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["tota11y.js"]
+    }
+  ]
+}
