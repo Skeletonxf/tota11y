@@ -10,6 +10,7 @@
   "author": "Jordan Scales <scalesjordan@gmail.com>",
   "devDependencies": {
     "accessibility-developer-tools": "2.11.0",
+    "ajv": "^6.0.1",
     "autoprefixer": "^6.5.3",
     "babel": "^6.23.0",
     "babel-core": "^6.26.3",
@@ -28,6 +29,7 @@
     "script-loader": "^0.6.1",
     "style-loader": "^0.10.1",
     "webpack": "^4.16.3",
+    "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.5"
   },
   "scripts": {
