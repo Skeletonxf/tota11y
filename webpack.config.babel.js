@@ -22,12 +22,13 @@ let bannerTemplate = handlebars.compile(
 const plugins = [
     // Add a banner to our bundles with a version number, date, and
     // license info
-    new webpack.BannerPlugin(
-        bannerTemplate({
-            version: require("./package.json").version,
-            date: new Date().toISOString().slice(0, 10),
+    new webpack.BannerPlugin({
+          banner: bannerTemplate({
+              version: require("./package.json").version,
+              date: new Date().toISOString().slice(0, 10),
+          }),
+          entryOnly: true
         }),
-        {entryOnly: true}),
 
     // Make the JSX pragma function available everywhere without the need
     // to use "require"
