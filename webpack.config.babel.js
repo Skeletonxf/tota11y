@@ -37,23 +37,19 @@ const plugins = [
     }),
 ];
 
-if (process.env.NODE_ENV === "production") {
-    plugins.push(
-        // Suppress uglifyJS warnings from node_modules/
-        new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}})
-    )
-}
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: {
         app: "./index.js",
     },
+    mode: (process.env.NODE_ENV === "production") ? "production" : "development",
     output: {
         path: path.join(__dirname, "build"),
         filename: "tota11y.min.js",
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
@@ -70,8 +66,18 @@ module.exports = {
         ],
     },
     plugins,
-    postcss: [
+    /* postcss: [
         veryimportant,
         autoprefixer({browsers: ["> 1%"]}),
-    ],
+    ], */
+    optimization: {
+        minimizer: [
+            // Suppress uglifyJS warnings from node_modules/
+            new UglifyJsPlugin({
+                uglifyOptions: {
+                    compress: false
+                }
+            })
+        ]
+    }
 };
