@@ -51,12 +51,12 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: "babel",
-                query: {
-                    jsxPragma: options.jsxPragma,
-                },
+              test: /\.js$/,
+              exclude: /node_modules/,
+              loader: 'babel-loader',
+              query: {
+                  jsxPragma: options.jsxPragma,
+              },
             },
             { test: /\.handlebars$/, loader: "handlebars", },
             {
@@ -75,8 +75,8 @@ module.exports = {
             // Suppress uglifyJS warnings from node_modules/
             new UglifyJsPlugin({
                 uglifyOptions: {
-                    compress: false
-                }
+                    compress: false,
+                },
             })
         ]
     }
