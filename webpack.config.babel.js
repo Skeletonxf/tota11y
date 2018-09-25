@@ -33,7 +33,7 @@ const plugins = [
     // Make the JSX pragma function available everywhere without the need
     // to use "require"
     new webpack.ProvidePlugin({
-        [options.jsxPragma]: path.join(__dirname, "utils", "element"),
+        [options.pragma]: path.join(__dirname, "utils", "element"),
     }),
 ];
 
@@ -54,11 +54,11 @@ module.exports = {
               test: /\.js$/,
               exclude: /node_modules/,
               loader: 'babel-loader',
-              query: {
-                  jsxPragma: options.jsxPragma,
-              },
             },
-            { test: /\.handlebars$/, loader: "handlebars", },
+            {
+              test: /\.handlebars$/,
+              loader: "handlebars-loader",
+            },
             {
                 test: /\.less$/,
                 loader: "style!css!postcss!less",
