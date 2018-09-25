@@ -60,16 +60,26 @@ module.exports = {
               loader: "handlebars-loader",
             },
             {
-                test: /\.less$/,
-                loader: "style!css!postcss!less",
+              test: /\.less$/,
+              use: [
+                "style-loader",
+                "css-loader",
+                {
+                  loader: "postcss-loader",
+                  options: {
+                    ident: "postcss",
+                    plugins: [
+                      veryimportant,
+                      autoprefixer({browsers: ["> 1%"]}),
+                    ],
+                  },
+                },
+                "less-loader",
+              ],
             },
         ],
     },
     plugins,
-    /* postcss: [
-        veryimportant,
-        autoprefixer({browsers: ["> 1%"]}),
-    ], */
     optimization: {
         minimizer: [
             // Suppress uglifyJS warnings from node_modules/
