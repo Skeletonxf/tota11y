@@ -6,6 +6,7 @@ let webpack = require("webpack");
 let autoprefixer = require("autoprefixer");
 
 let options = require("./utils/options");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 // PostCSS plugin to append !important to every CSS rule
 let veryimportant = postcss.plugin("veryimportant", function() {
@@ -35,6 +36,14 @@ const plugins = [
     new webpack.ProvidePlugin({
         [options.pragma]: path.join(__dirname, "utils", "element"),
     }),
+    // WebExtensions do not accept symlinking tota11y so copy it into
+    // the web extension folder
+    new CopyWebpackPlugin([
+        {
+            from: "./build/tota11y.js",
+            to: "../extension-prototype/",
+        }
+    ]),
 ];
 
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');

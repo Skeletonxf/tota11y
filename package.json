@@ -16,6 +16,7 @@
     "ajv": "^6.0.1",
     "autoprefixer": "^6.5.3",
     "babel-loader": "^8.0.2",
+    "copy-webpack-plugin": "^4.5.2",
     "css-loader": "^0.10.1",
     "eslint": "^5.2.0",
     "handlebars": "^4.0.12",
@@ -41,5 +42,6 @@
     "test": "mocha --require test/babel-hook test/*.js",
     "live-test": "webpack-dev-server --config webpack.config.babel.js --hot --inline"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {}
 }
