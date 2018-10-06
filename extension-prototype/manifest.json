@@ -4,18 +4,16 @@
   "name": "Tota11y prototype",
   "version": "1.0",
 
-  "permissions": ["tabs"],
+  "permissions": ["tabs", "https://*/*", "http://*/*", "activeTab"],
 
   "background": {
-    "scripts": [
-      "background.js"
+    "scripts": ["background.js"
     ]
   },
 
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["tota11y.js"]
-    }
-  ]
+  "sidebar_action": {
+    "default_title": "Tota11y",
+    "default_panel": "sidebar/index.html",
+    "default_icon": "sidebar/tmp-icon.png"
+  }
 }
