@@ -121,7 +121,7 @@ $(function() {
     let port = browser.runtime.connect({name:"content-script"});
     port.postMessage({toolbar: bar, greeting:"passing toolbar instance"});
 
-    let allPlugins = plugins.default.concat(plugins.experimental)
+    let allPlugins = [...plugins.default, ...plugins.experimental]
     let namedPlugins = allPlugins.map((p) => p.getName());
 
     port.onMessage.addListener(function(m) {
