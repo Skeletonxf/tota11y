@@ -41,7 +41,7 @@ const plugins = [
     new CopyWebpackPlugin([
         {
             from: "./build/tota11y.js",
-            to: "../extension-prototype/",
+            to: "../addon/",
         }
     ]),
 ];
