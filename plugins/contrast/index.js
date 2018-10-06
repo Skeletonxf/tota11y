@@ -20,6 +20,10 @@ class ContrastPlugin extends Plugin {
         this.preservedColors = [];
     }
 
+    getName() {
+        return "contrast";
+    }
+
     getTitle() {
         return "Contrast";
     }

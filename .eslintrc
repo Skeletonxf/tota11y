@@ -20,5 +20,6 @@
     "globals": {
         "axs": true,
         "$": true,
+        "browser": true,
     }
 }

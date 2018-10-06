@@ -115,6 +115,31 @@ class Toolbar {
 $(function() {
     var bar = new Toolbar();
 
+    // TODO New file
+    console.log("going to open port to sidebar");
+    console.log(browser);
+    let port = browser.runtime.connect({name:"content-script"});
+    port.postMessage({toolbar: bar, greeting:"passing toolbar instance"});
+
+    let allPlugins = plugins.default.concat(plugins.experimental)
+    let namedPlugins = allPlugins.map((p) => p.getName());
+
+    port.onMessage.addListener(function(m) {
+        console.log("In content script, received message from background script: ");
+        console.log(m.greeting);
+        if (m.pluginClick) {
+            let index = namedPlugins.findIndex((p) => p === m.pluginClick);
+            if (index !== -1) {
+                // toolbar expects plugin instance
+                bar.handlePluginClick(allPlugins[index]);
+                console.log("handled through port");
+            } else {
+                console.log("unrecognised");
+                console.log("plugins", namedPlugins, m.pluginClick);
+            }
+        }
+    });
+
     // TODO: Make this customizable
     bar.appendTo($("body"));
 });

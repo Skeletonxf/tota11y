@@ -7,6 +7,10 @@ let Plugin = require("../base");
 let annotate = require("../shared/annotate")("landmarks");
 
 class LandmarksPlugin extends Plugin {
+    getName() {
+        return "landmarks";
+    }
+
     getTitle() {
         return "Landmarks";
     }

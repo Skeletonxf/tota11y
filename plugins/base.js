@@ -2,7 +2,8 @@
  * Base class for plugins.
  *
  * This module defines methods to render and mount plugins to the toolbar.
- * Each plugin will define four methods:
+ * Each plugin will define five methods:
+ *     getName: name to use for messaging to communicate to sidebar
  *     getTitle: title to display in the toolbar
  *     getDescription: description to display in the toolbar
  *     run: code to run when the plugin is activated from the toolbar
@@ -17,6 +18,10 @@ class Plugin {
     constructor() {
         this.panel = new InfoPanel(this);
         this.$checkbox = null;
+    }
+
+    getName() {
+        return "plugin";
     }
 
     getTitle() {

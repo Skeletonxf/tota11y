@@ -69,6 +69,10 @@ const ERRORS = {
 };
 
 class HeadingsPlugin extends Plugin {
+    getName() {
+        return "headings";
+    }
+
     getTitle() {
         return "Headings";
     }

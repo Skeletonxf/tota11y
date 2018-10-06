@@ -8,6 +8,10 @@ let Plugin = require("../base");
 require("./style.less");
 
 class A11yTextWand extends Plugin {
+    getName() {
+        return "screen-reader-wand";
+    }
+
     getTitle() {
         return "Screen Reader Wand";
     }

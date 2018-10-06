@@ -10,6 +10,10 @@ let audit = require("../shared/audit");
 let errorTemplate = require("./error-template.handlebars");
 
 class LabelsPlugin extends Plugin {
+    getName() {
+        return "labels";
+    }
+
     getTitle() {
         return "Labels";
     }

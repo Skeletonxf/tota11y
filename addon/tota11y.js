@@ -211,7 +211,36 @@ class Toolbar {
 }
 
 $(function () {
-  var bar = new Toolbar(); // TODO: Make this customizable
+  var bar = new Toolbar(); // TODO New file
+
+  console.log("going to open port to sidebar");
+  console.log(browser);
+  let port = browser.runtime.connect({
+    name: "content-script"
+  });
+  port.postMessage({
+    toolbar: bar,
+    greeting: "passing toolbar instance"
+  });
+  let allPlugins = plugins.default.concat(plugins.experimental);
+  let namedPlugins = allPlugins.map(p => p.getName());
+  port.onMessage.addListener(function (m) {
+    console.log("In content script, received message from background script: ");
+    console.log(m.greeting);
+
+    if (m.pluginClick) {
+      let index = namedPlugins.findIndex(p => p === m.pluginClick);
+
+      if (index !== -1) {
+        // toolbar expects plugin instance
+        bar.handlePluginClick(allPlugins[index]);
+        console.log("handled through port");
+      } else {
+        console.log("unrecognised");
+        console.log("plugins", namedPlugins, m.pluginClick);
+      }
+    }
+  }); // TODO: Make this customizable
 
   bar.appendTo($("body"));
 });
@@ -12396,6 +12425,10 @@ let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 __webpack_require__(/*! ./style.less */ "./plugins/a11y-text-wand/style.less");
 
 class A11yTextWand extends Plugin {
+  getName() {
+    return "screen-reader-wand";
+  }
+
   getTitle() {
     return "Screen Reader Wand";
   }
@@ -12475,6 +12508,10 @@ let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/a
 let audit = __webpack_require__(/*! ../shared/audit */ "./plugins/shared/audit.js");
 
 class AltTextPlugin extends Plugin {
+  getName() {
+    return "alt-text";
+  }
+
   getTitle() {
     return "Image alt-text";
   }
@@ -12536,7 +12573,8 @@ module.exports = AltTextPlugin;
  * Base class for plugins.
  *
  * This module defines methods to render and mount plugins to the toolbar.
- * Each plugin will define four methods:
+ * Each plugin will define five methods:
+ *     getName: name to use for messaging to communicate to sidebar
  *     getTitle: title to display in the toolbar
  *     getDescription: description to display in the toolbar
  *     run: code to run when the plugin is activated from the toolbar
@@ -12550,6 +12588,10 @@ class Plugin {
   constructor() {
     this.panel = new InfoPanel(this);
     this.$checkbox = null;
+  }
+
+  getName() {
+    return "plugin";
   }
 
   getTitle() {
@@ -12724,6 +12766,10 @@ class ContrastPlugin extends Plugin {
     // Used to restore original colors in cleanup.
 
     this.preservedColors = [];
+  }
+
+  getName() {
+    return "contrast";
   }
 
   getTitle() {
@@ -12958,6 +13004,10 @@ const ERRORS = {
 };
 
 class HeadingsPlugin extends Plugin {
+  getName() {
+    return "headings";
+  }
+
   getTitle() {
     return "Headings";
   }
@@ -13172,6 +13222,10 @@ let audit = __webpack_require__(/*! ../shared/audit */ "./plugins/shared/audit.j
 let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/labels/error-template.handlebars");
 
 class LabelsPlugin extends Plugin {
+  getName() {
+    return "labels";
+  }
+
   getTitle() {
     return "Labels";
   }
@@ -13233,6 +13287,10 @@ let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("landmarks");
 
 class LandmarksPlugin extends Plugin {
+  getName() {
+    return "landmarks";
+  }
+
   getTitle() {
     return "Landmarks";
   }
@@ -13275,6 +13333,10 @@ let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("link-text");
 
 class LinkTextPlugin extends Plugin {
+  getName() {
+    return "link-text";
+  }
+
   getTitle() {
     return "Link text";
   }

@@ -8,6 +8,10 @@ let Plugin = require("../base");
 let annotate = require("../shared/annotate")("link-text");
 
 class LinkTextPlugin extends Plugin {
+    getName() {
+        return "link-text";
+    }
+
     getTitle() {
         return "Link text";
     }
