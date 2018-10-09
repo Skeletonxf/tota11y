@@ -1,3 +1,11 @@
+/**
+ * Entry point for the sidebar to control tota11y from
+ * the WebExtension.
+ */
+
+// let plugins = require("../../plugins");
+// console.log('plugins', plugins);
+
 let windowId;
 const content = document.querySelector("#content");
 

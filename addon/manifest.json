@@ -13,7 +13,6 @@
 
   "sidebar_action": {
     "default_title": "Tota11y",
-    "default_panel": "sidebar/index.html",
-    "default_icon": "sidebar/tmp-icon.png"
+    "default_panel": "sidebar/index.html"
   }
 }

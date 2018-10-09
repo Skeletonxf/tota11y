@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-10-06
+ * Date: 2018-10-09
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -222,7 +222,7 @@ $(function () {
     toolbar: bar,
     greeting: "passing toolbar instance"
   });
-  let allPlugins = plugins.default.concat(plugins.experimental);
+  let allPlugins = [...plugins.default, ...plugins.experimental];
   let namedPlugins = allPlugins.map(p => p.getName());
   port.onMessage.addListener(function (m) {
     console.log("In content script, received message from background script: ");

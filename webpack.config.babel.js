@@ -36,18 +36,22 @@ const plugins = [
     new webpack.ProvidePlugin({
         [options.pragma]: path.join(__dirname, "utils", "element"),
     }),
-    // WebExtensions do not accept symlinking tota11y so copy it into
-    // the web extension folder
+    // WebExtensions do not accept symlinking so copy
+    // everything built it into the web extension folder
     new FileManagerPlugin({
       // copy after building
-      onEnd: {
-        copy: [
-          {
-            source: "./build/tota11y.js",
-            destination: "../addon/",
-          },
-        ],
-      },
+        onEnd: {
+            copy: [
+                {
+                    source: "./build/tota11y.js",
+                    destination: "./addon/build/",
+                },
+                {
+                    source: "./build/sidebar.js",
+                    destination: "./addon/build/",
+                },
+            ],
+        },
     }),
 ];
 
@@ -55,12 +59,13 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: {
-        app: "./index.js",
+        "tota11y": "./index.js",
+        sidebar: "./addon/sidebar/index.js",
     },
     mode: (process.env.NODE_ENV === "production") ? "production" : "development",
     output: {
         path: path.join(__dirname, "build"),
-        filename: "tota11y.min.js",
+        filename: "[name].min.js",
     },
     module: {
         rules: [
