@@ -6,7 +6,7 @@ let webpack = require("webpack");
 let autoprefixer = require("autoprefixer");
 
 let options = require("./utils/options");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
+const FileManagerPlugin = require('filemanager-webpack-plugin');
 
 // PostCSS plugin to append !important to every CSS rule
 let veryimportant = postcss.plugin("veryimportant", function() {
@@ -38,12 +38,17 @@ const plugins = [
     }),
     // WebExtensions do not accept symlinking tota11y so copy it into
     // the web extension folder
-    new CopyWebpackPlugin([
-        {
-            from: "./build/tota11y.js",
-            to: "../addon/",
-        }
-    ]),
+    new FileManagerPlugin({
+      // copy after building
+      onEnd: {
+        copy: [
+          {
+            source: "./build/tota11y.js",
+            destination: "../addon/",
+          },
+        ],
+      },
+    }),
 ];
 
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');

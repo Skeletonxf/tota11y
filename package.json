@@ -19,6 +19,7 @@
     "copy-webpack-plugin": "^4.5.2",
     "css-loader": "^0.10.1",
     "eslint": "^5.2.0",
+    "filemanager-webpack-plugin": "^2.0.5",
     "handlebars": "^4.0.12",
     "handlebars-loader": "^1.7.0",
     "jquery": "^3.3.1",
