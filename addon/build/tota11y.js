@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-10-09
+ * Date: 2018-10-10
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -107,7 +107,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(buildElement) {/**
+/**
  * The entry point for tota11y.
  *
  * Builds and mounts the toolbar.
@@ -119,132 +119,20 @@ let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"
 
 let plugins = __webpack_require__(/*! ./plugins */ "./plugins/index.js");
 
-let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./templates/logo.handlebars"); // Chrome Accessibility Developer Tools - required once as a global
+let toolbar = __webpack_require__(/*! ./toolbar.js */ "./toolbar.js");
 
+const Toolbar = toolbar.toolbar; // Chrome Accessibility Developer Tools - required once as a global
 
 __webpack_require__(/*! script-loader!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js */ "./node_modules/script-loader/index.js!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js");
 
-class Toolbar {
-  constructor() {
-    this.activePlugin = null;
-  }
-  /**
-   * Manages the state of the toolbar when a plugin is clicked, and toggles
-   * the appropriate plugins on and off.
-   */
-
-
-  handlePluginClick(plugin) {
-    // If the plugin was already selected, toggle it off
-    if (plugin === this.activePlugin) {
-      plugin.deactivate();
-      this.activePlugin = null;
-    } else {
-      // Deactivate the active plugin if there is one
-      if (this.activePlugin) {
-        this.activePlugin.deactivate();
-      } // Activate the selected plugin
-
-
-      plugin.activate();
-      this.activePlugin = plugin;
-    }
-  }
-  /**
-   * Renders the toolbar and appends it to the specified element.
-   */
-
-
-  appendTo($el) {
-    let $logo = $(logoTemplate());
-    let $toolbar;
-    let $defaultPlugins = plugins.default.map(Plugin => {
-      // eslint-disable-line no-unused-vars
-      return buildElement(Plugin, {
-        onClick: this.handlePluginClick.bind(this)
-      });
-    });
-    let $experimentalPlugins = null;
-
-    if (plugins.experimental.length) {
-      $experimentalPlugins = buildElement("li", null, buildElement("div", {
-        className: "tota11y-plugins-separator"
-      }, "Experimental"), buildElement("ul", null, plugins.experimental.map(Plugin => {
-        // eslint-disable-line no-unused-vars
-        return buildElement(Plugin, {
-          onClick: this.handlePluginClick.bind(this)
-        });
-      })));
-    }
-
-    let $plugins = buildElement("ul", {
-      className: "tota11y-plugins"
-    }, $defaultPlugins, $experimentalPlugins);
-
-    let handleToggleClick = e => {
-      e.preventDefault();
-      e.stopPropagation();
-      $toolbar.toggleClass("tota11y-expanded");
-      $toolbar.attr("aria-expanded", $toolbar.is(".tota11y-expanded"));
-    };
-
-    let $toggle = buildElement("button", {
-      "aria-controls": "tota11y-toolbar",
-      className: "tota11y-toolbar-toggle",
-      onClick: handleToggleClick,
-      "aria-label": "[tota11y] Toggle menu"
-    }, buildElement("div", {
-      "aria-hidden": "true",
-      className: "tota11y-toolbar-logo"
-    }, $logo));
-    $toolbar = buildElement("div", {
-      id: "tota11y-toolbar",
-      className: "tota11y tota11y-toolbar",
-      role: "region",
-      "aria-expanded": "false"
-    }, buildElement("div", {
-      className: "tota11y-toolbar-body"
-    }, $plugins), $toggle);
-    $el.append($toolbar);
-  }
-
-}
-
 $(function () {
-  var bar = new Toolbar(); // TODO New file
-
-  console.log("going to open port to sidebar");
-  console.log(browser);
-  let port = browser.runtime.connect({
-    name: "content-script"
-  });
-  port.postMessage({
-    toolbar: bar,
-    greeting: "passing toolbar instance"
-  });
-  let allPlugins = [...plugins.default, ...plugins.experimental];
-  let namedPlugins = allPlugins.map(p => p.getName());
-  port.onMessage.addListener(function (m) {
-    console.log("In content script, received message from background script: ");
-    console.log(m.greeting);
-
-    if (m.pluginClick) {
-      let index = namedPlugins.findIndex(p => p === m.pluginClick);
-
-      if (index !== -1) {
-        // toolbar expects plugin instance
-        bar.handlePluginClick(allPlugins[index]);
-        console.log("handled through port");
-      } else {
-        console.log("unrecognised");
-        console.log("plugins", namedPlugins, m.pluginClick);
-      }
-    }
-  }); // TODO: Make this customizable
+  var bar = new Toolbar();
+  bar.delegate();
+  console.log("appending toolbar to body"); // TODO: Make this customizable
 
   bar.appendTo($("body"));
+  console.log("done");
 });
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./utils/element */ "./utils/element.js")))
 
 /***/ }),
 
@@ -12144,7 +12032,7 @@ module.exports = function(src) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! !./node_modules/script-loader/addScript.js */ "./node_modules/script-loader/addScript.js")(__webpack_require__(/*! !./node_modules/raw-loader!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js */ "./node_modules/raw-loader/index.js!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js")+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///home/skeletonxf/Documents/Sheffield/Dissertation/tota11y/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
+__webpack_require__(/*! !./node_modules/script-loader/addScript.js */ "./node_modules/script-loader/addScript.js")(__webpack_require__(/*! !./node_modules/raw-loader!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js */ "./node_modules/raw-loader/index.js!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js")+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///home/skeletonxf/Documents/Sheffield/Dissertation/dissertation/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
 
 /***/ }),
 
@@ -14176,6 +14064,193 @@ function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj);
 module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<!--\n    \"Glasses\" icon by Kyle Scott\n    https://thenounproject.com/Kyle/\n\n    Licensed under Creative Commons by 3.0 US\n    http://creativecommons.org/licenses/by/3.0/us/legalcode\n-->\n<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"Layer_1\" x=\"0px\" y=\"0px\" viewBox=\"0 0 100 100\" enable-background=\"new 0 0 100 100\" xml:space=\"preserve\">\n    <path fill=\"#ffffff\" d=\"M74.466,35.24c-1.069-0.19-2.208-0.267-3.228-0.562c-0.639-0.184-1.348-0.622-1.965-1.075  c-1.246-0.919-2.479-1.557-3.928-2.152c-0.671-0.276-1.617-0.698-2.432-0.608c-0.582,0.064-1.196,0.664-1.73,1.029  c-1.196,0.818-2.186,1.442-3.32,2.198c-0.524,0.35-1.308,0.798-1.543,1.263c-0.142,0.279-0.13,0.736-0.281,1.029  c-0.35,0.679-1.069,1.434-1.777,1.403c-0.835-0.038-1.773-1.518-1.449-2.619c0.177-0.602,1.126-0.902,1.776-1.262  c2.041-1.134,3.803-2.3,5.52-3.602c1.106-0.841,2.579-1.471,4.536-1.542c1.889-0.071,4.45-0.083,6.22,0  c1.465,0.066,2.698,0.164,3.976,0.42c7.308,1.469,14.698,2.788,21.607,4.77c0.739,0.213,2.896,0.613,3.086,1.311  c0.121,0.439-0.236,1.435-0.375,2.151c-0.165,0.865-0.292,1.626-0.42,2.246c-0.12,0.574-0.65,1.174-0.936,1.776  c-0.842,1.778-1.379,3.821-2.104,5.753c-0.954,2.545-2.02,4.859-3.554,6.968c-1.46,2.005-3.442,3.33-5.987,4.536  c-1.128,0.534-2.43,1.083-3.835,1.403c-1.355,0.311-3.263,0.63-4.817,0.28c-2.233-0.501-3.081-2.543-3.882-4.536  c-0.848-2.115-1.351-4.049-1.636-6.827c-2.692,0.176-3.259,2.014-4.163,3.928c-0.384,0.812-0.792,1.623-1.168,2.385  c-1.542,3.115-3.197,6.47-5.473,8.746c-1.215,1.213-2.581,2.03-4.35,2.758c-3.331,1.373-6.847,2.569-10.757,3.462  c-3.598,0.821-8.923,1.642-12.252-0.093c-2.136-1.113-3.105-3.939-4.023-6.268c-0.458-1.159-0.835-2.459-1.262-3.882  c-0.378-1.259-0.708-2.778-1.543-3.602c-1.053-1.037-2.78-1.414-3.227-2.993c-0.815-0.307-1.563-0.821-2.292-1.308  c-4.349-2.915-8.693-5.774-13.141-8.606c-0.727-0.462-1.667-0.958-2.151-1.497c-0.712-0.792-1.108-2.117-1.684-3.133  c-0.265-0.469-0.588-0.92-0.888-1.357c-0.275-0.4-0.536-0.997-1.076-1.076C2.223,36.823,2.365,37.469,2.349,38  c-0.017,0.549-0.077,1.172-0.047,1.823c0.028,0.606,0.297,1.049,0.28,1.544c-0.018,0.515-0.291,1.036-0.841,1.029  c-0.727-0.009-0.8-0.98-0.983-1.686c-0.209-0.807-0.483-1.551-0.421-2.245c0.049-0.531,0.341-1.223,0.468-2.057  c0.246-1.599,0.126-3.078,1.451-3.415C3.004,32.804,4,33.38,4.781,33.649c0.789,0.272,1.597,0.428,2.339,0.702  c0.854,0.316,1.706,0.875,2.524,1.355c2.526,1.484,4.626,3.112,7.062,4.63c3.273,2.041,6.545,3.955,9.307,6.267  c7.434-2.179,16.722-3.566,25.863-4.302c4.176-0.337,8.326-0.174,12.253,0.374c5.624,0.787,10.073-1.58,13.844-3.18  c2.035-0.864,4.078-1.653,6.173-2.573C80.804,36.331,77.705,35.814,74.466,35.24z M93.968,39.729  c-1.838-0.388-3.732-0.737-5.471-1.075c-0.059-0.012-0.127-0.067-0.188-0.046c-1.143,0.392-2.279,0.613-3.367,1.029  c-2.033,0.773-4.015,1.775-5.752,3.039C78.33,43.3,77.372,44,76.897,44.733c-1.609,2.489-1.206,7.214-0.467,10.149  c0.27,1.071,0.411,1.79,0.889,2.666c3.022,1.287,6.88-0.183,8.885-1.684c1.526-1.142,2.676-2.75,3.602-4.35  C91.815,48.042,93.102,43.946,93.968,39.729z M64.878,46.089c-6.121-1.937-14.865-0.822-21.232,0.467  c-4.477,0.907-9.474,1.92-10.944,5.753c-0.801,2.086-1.009,5.098-0.701,7.903c0.284,2.599,1.076,4.892,2.011,6.594  c2.943,2.698,10.038,1.581,14.124,0.375c2.523-0.745,4.112-1.389,5.845-2.197c1.973-0.921,4.636-1.939,5.285-4.116  c0.179-0.597,0.115-1.244,0.188-1.824c0.492-3.909,1.942-7.447,4.303-9.634c0.477-0.441,1.146-0.679,1.357-1.262  C65.37,47.428,65.13,46.709,64.878,46.089z\"/>\n</svg>\n";
 },"useData":true});
+
+/***/ }),
+
+/***/ "./toolbar.js":
+/*!********************!*\
+  !*** ./toolbar.js ***!
+  \********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(buildElement) {// Require the base tota11y styles right away so they can be overwritten
+__webpack_require__(/*! ./less/tota11y.less */ "./less/tota11y.less");
+
+let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
+let plugins = __webpack_require__(/*! ./plugins */ "./plugins/index.js");
+
+let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./templates/logo.handlebars");
+/**
+ * In a standalone script the toolbar is responsible for switching
+ * active plugins and drawing its UI.
+ * In a WebExtension the UI and the content script run in different
+ * JS sandboxes, ie the content script can use eval() but not most
+ * WebExtension APIs and the sidebar UI JS can use WebExtension APIs
+ * but not eval(). Therefore the toolbar becomes responsible for
+ * everything but the UI, and the UI is synced to the rest of
+ * the WebExtension over a Port.
+ */
+
+
+class Toolbar {
+  constructor() {
+    this.activePlugin = null;
+  }
+  /**
+   * Manages the state of the toolbar when a plugin is clicked, and toggles
+   * the appropriate plugins on and off.
+   */
+
+
+  handlePluginClick(plugin) {
+    console.log(`Handling plugin click ${plugin}`); // If the plugin was already selected, toggle it off
+
+    if (plugin === this.activePlugin) {
+      plugin.deactivate();
+      this.activePlugin = null;
+    } else {
+      // Deactivate the active plugin if there is one
+      if (this.activePlugin) {
+        this.activePlugin.deactivate();
+      } // Activate the selected plugin
+
+
+      plugin.activate();
+      this.activePlugin = plugin;
+    }
+  }
+  /**
+   * Renders the toolbar and appends it to the specified element.
+   */
+
+
+  appendTo($el) {
+    let $logo = $(logoTemplate());
+    let $toolbar;
+    let $defaultPlugins = plugins.default.map(Plugin => {
+      // eslint-disable-line no-unused-vars
+      return buildElement(Plugin, {
+        onClick: this.handlePluginClick.bind(this)
+      });
+    });
+    let $experimentalPlugins = null;
+
+    if (plugins.experimental.length) {
+      $experimentalPlugins = buildElement("li", null, buildElement("div", {
+        className: "tota11y-plugins-separator"
+      }, "Experimental"), buildElement("ul", null, plugins.experimental.map(Plugin => {
+        // eslint-disable-line no-unused-vars
+        return buildElement(Plugin, {
+          onClick: this.handlePluginClick.bind(this)
+        });
+      })));
+    }
+
+    let $plugins = buildElement("ul", {
+      className: "tota11y-plugins"
+    }, $defaultPlugins, $experimentalPlugins);
+
+    let handleToggleClick = e => {
+      e.preventDefault();
+      e.stopPropagation();
+      $toolbar.toggleClass("tota11y-expanded");
+      $toolbar.attr("aria-expanded", $toolbar.is(".tota11y-expanded"));
+    };
+
+    let $toggle = buildElement("button", {
+      "aria-controls": "tota11y-toolbar",
+      className: "tota11y-toolbar-toggle",
+      onClick: handleToggleClick,
+      "aria-label": "[tota11y] Toggle menu"
+    }, buildElement("div", {
+      "aria-hidden": "true",
+      className: "tota11y-toolbar-logo"
+    }, $logo));
+    $toolbar = buildElement("div", {
+      id: "tota11y-toolbar",
+      className: "tota11y tota11y-toolbar",
+      role: "region",
+      "aria-expanded": "false"
+    }, buildElement("div", {
+      className: "tota11y-toolbar-body"
+    }, $plugins), $toggle);
+    $el.append($toolbar);
+  }
+  /**
+   * Opens a port to communicate to a ToolbarController
+   * over the browser.runtime API.
+   */
+
+
+  delegate() {
+    if (browser) {
+      console.log("Opening port");
+      let port = browser.runtime.connect({
+        name: "toolbar"
+      });
+      this.port = port;
+      port.postMessage({
+        msg: "Opened port"
+      });
+      let allPlugins = [...plugins.default, ...plugins.experimental];
+      let namedPlugins = allPlugins.map(p => p.getName());
+      port.onMessage.addListener(json => {
+        console.log(`Toolbar received msg: ${json.msg}, ${json}`);
+
+        if (json.click) {
+          // retrieve the plugin instance from the name
+          let index = namedPlugins.findIndex(p => p === json.click);
+
+          if (index !== -1) {
+            let plugin = allPlugins[index];
+            console.log(`Plugin click sent through port ${plugin.getName()}`);
+            this.handlePluginClick(plugin);
+          } else {
+            port.postMessage("Unrecognised plugin");
+          }
+        }
+      }); // TODO: Hide this toolbar
+    }
+  }
+
+}
+/**
+ * Responsible for the other side of the port to communicate to
+ * a Toolbar over the browser.runtime API.
+ */
+
+
+class ToolbarController {
+  constructor() {
+    if (browser) {
+      browser.runtime.onConnect.addListener(port => {
+        this.port = port;
+        port.onMessage.addListener(json => {
+          console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
+        });
+        this.handlePluginClick(plugins.default[4]);
+      });
+    }
+  }
+
+  handlePluginClick(plugin) {
+    this.port.postMessage({
+      msg: "Plugin click",
+      // Plugin instance will be different and not go
+      // through JSON so pass the name instead.
+      click: plugin.getName()
+    });
+  }
+
+}
+
+module.exports = {
+  toolbar: Toolbar,
+  controller: ToolbarController
+};
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./utils/element */ "./utils/element.js")))
 
 /***/ }),
 
