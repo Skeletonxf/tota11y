@@ -209,7 +209,7 @@ class ToolbarController {
         );
 
         $toolbar = (
-            <div id="tota11y-toolbar" className="tota11y tota11y-toolbar tota11y-expanded"
+            <div id="tota11y-toolbar" className="tota11y tota11y-toolbar tota11y-expanded tota11y-sidebar"
                  role="region"
                  aria-expanded="true">
                 <div className="tota11y-toolbar-body">

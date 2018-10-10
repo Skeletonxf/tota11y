@@ -13,7 +13,6 @@ let toolbar = require("../../toolbar.js");
 const ToolbarController = toolbar.controller;
 
 let windowId;
-const content = document.querySelector("#content");
 
 /*
  * Generates a function which logs an error with
@@ -27,20 +26,19 @@ function onError(msg) {
 
 // developed using https://github.com/mdn/webextensions-examples
 
+// We only need 1 controller for n content scripts
 let controller = new ToolbarController();
+controller.appendTo($("body"));
 
 /*
  * Update the sidebar for this active tab
  */
 function updateContent() {
-    controller.appendTo($("body"));
     browser.tabs.query({windowId: windowId, active: true})
     .then((tabs) => {
         return tabs[0];
     })
     .then((tab) => {
-        console.log(tab.url);
-        content.textContent = tab.url;
         browser.tabs.executeScript(tab.id, {
             file: "/build/tota11y.js"
         }).catch(onError("failed to execute script"));
