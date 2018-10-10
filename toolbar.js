@@ -1,6 +1,3 @@
-// Require the base tota11y styles right away so they can be overwritten
-require("./less/tota11y.less");
-
 let $ = require("jquery");
 
 let plugins = require("./plugins");
@@ -159,7 +156,7 @@ class ToolbarController {
                 port.onMessage.addListener((json) => {
                     console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
                 });
-                this.handlePluginClick(plugins.default[4]);
+                //this.handlePluginClick(plugins.default[4]);
             })
         }
     }
@@ -171,6 +168,57 @@ class ToolbarController {
             // through JSON so pass the name instead.
             click: plugin.getName(),
         });
+    }
+
+    /**
+     * Renders the toolbar and appends it to the specified element.
+     */
+    appendTo($el) {
+        let $logo = $(logoTemplate());
+        let $toolbar;
+
+        let $defaultPlugins = plugins.default.map((Plugin) => { // eslint-disable-line no-unused-vars
+            return <Plugin onClick={this.handlePluginClick.bind(this)} />;
+        });
+
+        let $experimentalPlugins = null;
+        if (plugins.experimental.length) {
+            $experimentalPlugins = (
+                <li>
+                    <div className="tota11y-plugins-separator">
+                        Experimental
+                    </div>
+                    <ul>
+                      {
+                          plugins.experimental.map((Plugin) => { // eslint-disable-line no-unused-vars
+                              return (
+                                  <Plugin onClick={this.handlePluginClick.bind(this)} />
+                              );
+                          })
+                      }
+                    </ul>
+                </li>
+            );
+        }
+
+        let $plugins = (
+            <ul className="tota11y-plugins">
+                {$defaultPlugins}
+                {$experimentalPlugins}
+            </ul>
+        );
+
+        $toolbar = (
+            <div id="tota11y-toolbar" className="tota11y tota11y-toolbar tota11y-expanded"
+                 role="region"
+                 aria-expanded="true">
+                <div className="tota11y-toolbar-body">
+                    {$plugins}
+                </div>
+            </div>
+        );
+
+        $el.append($toolbar);
     }
 }
 

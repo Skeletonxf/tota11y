@@ -2,6 +2,10 @@
  * Entry point for the sidebar to control tota11y from
  * the WebExtension.
  */
+ // Require the base tota11y styles right away so they can be overwritten
+require("../../less/tota11y.less");
+
+let $ = require("jquery");
 
 let plugins = require("../../plugins");
 let toolbar = require("../../toolbar.js");
@@ -23,10 +27,13 @@ function onError(msg) {
 
 // developed using https://github.com/mdn/webextensions-examples
 
+let controller = new ToolbarController();
+
 /*
  * Update the sidebar for this active tab
  */
 function updateContent() {
+    controller.appendTo($("body"));
     browser.tabs.query({windowId: windowId, active: true})
     .then((tabs) => {
         return tabs[0];
@@ -58,6 +65,3 @@ browser.windows.getCurrent({populate: true}).then((windowInfo) => {
     windowId = windowInfo.id;
     updateContent();
 });
-
-
-let controller = new ToolbarController();

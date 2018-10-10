@@ -14074,10 +14074,7 @@ module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,"
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(buildElement) {// Require the base tota11y styles right away so they can be overwritten
-__webpack_require__(/*! ./less/tota11y.less */ "./less/tota11y.less");
-
-let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* WEBPACK VAR INJECTION */(function(buildElement) {let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 
 let plugins = __webpack_require__(/*! ./plugins */ "./plugins/index.js");
 
@@ -14229,8 +14226,7 @@ class ToolbarController {
         this.port = port;
         port.onMessage.addListener(json => {
           console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
-        });
-        this.handlePluginClick(plugins.default[4]);
+        }); //this.handlePluginClick(plugins.default[4]);
       });
     }
   }
@@ -14242,6 +14238,46 @@ class ToolbarController {
       // through JSON so pass the name instead.
       click: plugin.getName()
     });
+  }
+  /**
+   * Renders the toolbar and appends it to the specified element.
+   */
+
+
+  appendTo($el) {
+    let $logo = $(logoTemplate());
+    let $toolbar;
+    let $defaultPlugins = plugins.default.map(Plugin => {
+      // eslint-disable-line no-unused-vars
+      return buildElement(Plugin, {
+        onClick: this.handlePluginClick.bind(this)
+      });
+    });
+    let $experimentalPlugins = null;
+
+    if (plugins.experimental.length) {
+      $experimentalPlugins = buildElement("li", null, buildElement("div", {
+        className: "tota11y-plugins-separator"
+      }, "Experimental"), buildElement("ul", null, plugins.experimental.map(Plugin => {
+        // eslint-disable-line no-unused-vars
+        return buildElement(Plugin, {
+          onClick: this.handlePluginClick.bind(this)
+        });
+      })));
+    }
+
+    let $plugins = buildElement("ul", {
+      className: "tota11y-plugins"
+    }, $defaultPlugins, $experimentalPlugins);
+    $toolbar = buildElement("div", {
+      id: "tota11y-toolbar",
+      className: "tota11y tota11y-toolbar tota11y-expanded",
+      role: "region",
+      "aria-expanded": "true"
+    }, buildElement("div", {
+      className: "tota11y-toolbar-body"
+    }, $plugins));
+    $el.append($toolbar);
   }
 
 }
