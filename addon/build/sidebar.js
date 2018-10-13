@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-10-10
+ * Date: 2018-10-13
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -14093,7 +14093,7 @@ let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./tem
 
 class Toolbar {
   constructor() {
-    this.activePlugin = null;
+    this.activePlugins = new Set();
   }
   /**
    * Manages the state of the toolbar when a plugin is clicked, and toggles
@@ -14104,18 +14104,13 @@ class Toolbar {
   handlePluginClick(plugin) {
     console.log(`Handling plugin click ${plugin}`); // If the plugin was already selected, toggle it off
 
-    if (plugin === this.activePlugin) {
+    if (this.activePlugins.has(plugin)) {
       plugin.deactivate();
-      this.activePlugin = null;
+      this.activePlugins.delete(plugin);
     } else {
-      // Deactivate the active plugin if there is one
-      if (this.activePlugin) {
-        this.activePlugin.deactivate();
-      } // Activate the selected plugin
-
-
+      // Activate the selected plugin
       plugin.activate();
-      this.activePlugin = plugin;
+      this.activePlugins.add(plugin);
     }
   }
   /**

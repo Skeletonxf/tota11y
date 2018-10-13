@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-10-10
+ * Date: 2018-10-13
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -12032,7 +12032,7 @@ module.exports = function(src) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! !./node_modules/script-loader/addScript.js */ "./node_modules/script-loader/addScript.js")(__webpack_require__(/*! !./node_modules/raw-loader!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js */ "./node_modules/raw-loader/index.js!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js")+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///home/skeletonxf/Documents/Sheffield/Dissertation/dissertation/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
+__webpack_require__(/*! !./node_modules/script-loader/addScript.js */ "./node_modules/script-loader/addScript.js")(__webpack_require__(/*! !./node_modules/raw-loader!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js */ "./node_modules/raw-loader/index.js!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js")+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///home/skeletonxf/Documents/Sheffield/Dissertation/tota11y/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
 
 /***/ }),
 
@@ -14093,7 +14093,7 @@ let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./tem
 
 class Toolbar {
   constructor() {
-    this.activePlugin = null;
+    this.activePlugins = new Set();
   }
   /**
    * Manages the state of the toolbar when a plugin is clicked, and toggles
@@ -14104,18 +14104,13 @@ class Toolbar {
   handlePluginClick(plugin) {
     console.log(`Handling plugin click ${plugin}`); // If the plugin was already selected, toggle it off
 
-    if (plugin === this.activePlugin) {
+    if (this.activePlugins.has(plugin)) {
       plugin.deactivate();
-      this.activePlugin = null;
+      this.activePlugins.delete(plugin);
     } else {
-      // Deactivate the active plugin if there is one
-      if (this.activePlugin) {
-        this.activePlugin.deactivate();
-      } // Activate the selected plugin
-
-
+      // Activate the selected plugin
       plugin.activate();
-      this.activePlugin = plugin;
+      this.activePlugins.add(plugin);
     }
   }
   /**

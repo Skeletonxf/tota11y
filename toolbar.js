@@ -15,7 +15,7 @@ let logoTemplate = require("./templates/logo.handlebars");
  */
 class Toolbar {
     constructor() {
-        this.activePlugin = null;
+        this.activePlugins = new Set();
     }
 
     /**
@@ -25,18 +25,13 @@ class Toolbar {
     handlePluginClick(plugin) {
         console.log(`Handling plugin click ${plugin}`);
         // If the plugin was already selected, toggle it off
-        if (plugin === this.activePlugin) {
+        if (this.activePlugins.has(plugin)) {
             plugin.deactivate();
-            this.activePlugin = null;
+            this.activePlugins.delete(plugin);
         } else {
-            // Deactivate the active plugin if there is one
-            if (this.activePlugin) {
-                this.activePlugin.deactivate();
-            }
-
             // Activate the selected plugin
             plugin.activate();
-            this.activePlugin = plugin;
+            this.activePlugins.add(plugin);
         }
     }
 
