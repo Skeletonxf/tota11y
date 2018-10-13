@@ -26,6 +26,7 @@ class A11yTextWand extends Plugin {
         this.summary(" ");
         this.panel.render();
 
+        let panel = this.panel;
         $(document).on("mousemove.wand", function(e) {
             let element = document.elementFromPoint(e.clientX, e.clientY);
 
@@ -36,13 +37,14 @@ class A11yTextWand extends Plugin {
             $(element).addClass("tota11y-outlined");
 
             if (!textAlternative) {
-                $(".tota11y-info-section.active").html(
+                panel.$el.find(".tota11y-info-section.active").html(
                     <i className="tota11y-nothingness">
                         No text visible to a screen reader
                     </i>
                 );
             } else {
-                $(".tota11y-info-section.active").text(textAlternative);
+                panel.$el.find(".tota11y-info-section.active").text(
+                    textAlternative);
             }
         });
     }

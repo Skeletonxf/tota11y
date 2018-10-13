@@ -12330,6 +12330,7 @@ class A11yTextWand extends Plugin {
     //     render.
     this.summary(" ");
     this.panel.render();
+    let panel = this.panel;
     $(document).on("mousemove.wand", function (e) {
       let element = document.elementFromPoint(e.clientX, e.clientY);
       let textAlternative = axs.properties.findTextAlternatives(element, {});
@@ -12337,11 +12338,11 @@ class A11yTextWand extends Plugin {
       $(element).addClass("tota11y-outlined");
 
       if (!textAlternative) {
-        $(".tota11y-info-section.active").html(buildElement("i", {
+        panel.$el.find(".tota11y-info-section.active").html(buildElement("i", {
           className: "tota11y-nothingness"
         }, "No text visible to a screen reader"));
       } else {
-        $(".tota11y-info-section.active").text(textAlternative);
+        panel.$el.find(".tota11y-info-section.active").text(textAlternative);
       }
     });
   }
@@ -12497,6 +12498,7 @@ class Plugin {
 
 
   summary($html) {
+    console.log("summary called");
     return this.panel.setSummary($html);
   } // Populates the info panel's "About" tab
 
