@@ -10,6 +10,7 @@ let $ = require("jquery");
 let plugins = require("../../plugins");
 let toolbar = require("../../toolbar.js");
 
+const InfoPanelController = require("../../plugins/shared/info-panel/controller.js")
 const ToolbarController = toolbar.controller;
 
 let windowId;
@@ -27,8 +28,9 @@ function onError(msg) {
 // developed using https://github.com/mdn/webextensions-examples
 
 // We only need 1 controller for n content scripts
-let controller = new ToolbarController();
-controller.appendTo($("body"));
+let toolbarController = new ToolbarController();
+toolbarController.appendTo($("body"));
+let infoPanelController = new InfoPanelController();
 
 /*
  * Update the sidebar for this active tab

@@ -10,13 +10,17 @@
  *     cleanup: code to run when the plugin is deactivated from the toolbar
  */
 
-let InfoPanel = require("./shared/info-panel");
+let infoPanel = require("./shared/info-panel");
+const InfoPanel = infoPanel.panel;
 
 require("./style.less");
 
 class Plugin {
     constructor() {
         this.panel = new InfoPanel(this);
+        if (browser) {
+            this.panel.delegate();
+        }
         this.$checkbox = null;
     }
 

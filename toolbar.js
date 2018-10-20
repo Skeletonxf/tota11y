@@ -3,6 +3,11 @@ let $ = require("jquery");
 let plugins = require("./plugins");
 let logoTemplate = require("./templates/logo.handlebars");
 
+const PORT_NAME = "toolbar";
+
+let allPlugins = [...plugins.default, ...plugins.experimental];
+let namedPlugins = allPlugins.map((p) => p.getName());
+
 /**
  * In a standalone script the toolbar is responsible for switching
  * active plugins and drawing its UI.
@@ -112,12 +117,11 @@ class Toolbar {
     delegate() {
         if (browser) {
             console.log("Opening port");
-            let port = browser.runtime.connect({name:"toolbar"});
+            let port = browser.runtime.connect({
+                name: PORT_NAME
+            });
             this.port = port;
             port.postMessage({msg: "Opened port"});
-
-            let allPlugins = [...plugins.default, ...plugins.experimental];
-            let namedPlugins = allPlugins.map((p) => p.getName());
 
             port.onMessage.addListener((json) => {
                 console.log(`Toolbar received msg: ${json.msg}, ${json}`);
@@ -147,11 +151,13 @@ class ToolbarController {
     constructor() {
         if (browser) {
             browser.runtime.onConnect.addListener((port) => {
+                if (port.name !== PORT_NAME) {
+                    return;
+                }
                 this.port = port;
                 port.onMessage.addListener((json) => {
                     console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
                 });
-                //this.handlePluginClick(plugins.default[4]);
             })
         }
     }

@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-10-13
+ * Date: 2018-10-20
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -223,7 +223,7 @@ exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-controls {\n  float: right !important;\n}\n.tota11y-info-annotation-toggle {\n  float: left !important;\n  margin-right: 10px !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n  position: relative !important;\n  top: -2px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n  flex-grow: 1 !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section,\n.tota11y-info-section * {\n  color: #333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  transform: rotateZ(90deg) !important;\n  transform-origin: 3px 8px !important;\n  transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description-code-container {\n  margin-top: 10px !important;\n}\n.tota11y-info-error-description-code-container code {\n  display: block !important;\n  margin-top: 10px !important;\n  padding: 5px 10px !important;\n  word-wrap: break-word !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-controls {\n  float: right !important;\n}\n.tota11y-info-annotation-toggle {\n  float: left !important;\n  margin-right: 10px !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n  position: relative !important;\n  top: -2px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n  flex-grow: 1 !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section,\n.tota11y-info-section * {\n  color: #333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  transform: rotateZ(90deg) !important;\n  transform-origin: 3px 8px !important;\n  transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description-code-container {\n  margin-top: 10px !important;\n}\n.tota11y-info-error-description-code-container code {\n  display: block !important;\n  margin-top: 10px !important;\n  padding: 5px 10px !important;\n  word-wrap: break-word !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n.tota11y-sidebar {\n  position: static !important;\n}\n.tota11y-sidebar .tota11y-info-sections {\n  width: auto !important;\n  height: auto !important;\n}\n.tota11y-sidebar .tota11y-info-section {\n  position: static !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -12469,13 +12469,20 @@ module.exports = AltTextPlugin;
  *     run: code to run when the plugin is activated from the toolbar
  *     cleanup: code to run when the plugin is deactivated from the toolbar
  */
-let InfoPanel = __webpack_require__(/*! ./shared/info-panel */ "./plugins/shared/info-panel/index.js");
+let infoPanel = __webpack_require__(/*! ./shared/info-panel */ "./plugins/shared/info-panel/index.js");
+
+const InfoPanel = infoPanel.panel;
 
 __webpack_require__(/*! ./style.less */ "./plugins/style.less");
 
 class Plugin {
   constructor() {
     this.panel = new InfoPanel(this);
+
+    if (browser) {
+      this.panel.delegate();
+    }
+
     this.$checkbox = null;
   }
 
@@ -12498,7 +12505,6 @@ class Plugin {
 
 
   summary($html) {
-    console.log("summary called");
     return this.panel.setSummary($html);
   } // Populates the info panel's "About" tab
 
@@ -13714,6 +13720,7 @@ __webpack_require__(/*! ./style.less */ "./plugins/shared/info-panel/style.less"
 const INITIAL_PANEL_MARGIN_PX = 10;
 const COLLAPSED_CLASS_NAME = "tota11y-collapsed";
 const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
+const PORT_NAME = "info-panel";
 
 class InfoPanel {
   constructor(plugin) {
@@ -13730,6 +13737,13 @@ class InfoPanel {
 
   setAbout(about) {
     this.about = about;
+
+    if (browser && this.port) {
+      this.port.postMessage({
+        msg: "about",
+        setAbout: about
+      });
+    }
   }
   /**
    * Sets the contents of the summary section as HTML
@@ -13738,6 +13752,13 @@ class InfoPanel {
 
   setSummary(summary) {
     this.summary = summary;
+
+    if (browser && this.port) {
+      this.port.postMessage({
+        msg: "summary",
+        setSummary: summary
+      });
+    }
   }
   /**
    * Adds an error to the errors tab. Also receives a jQuery element to
@@ -13752,6 +13773,17 @@ class InfoPanel {
       $el
     };
     this.errors.push(error);
+
+    if (browser && this.port) {
+      this.port.postMessage({
+        msg: "error",
+        addError: true,
+        title: title // TODO: Work out how to send highlight on hover
+        // information over JSON
+
+      });
+    }
+
     return error;
   }
 
@@ -13849,7 +13881,14 @@ class InfoPanel {
   }
 
   render() {
-    // Destroy the existing info panel to prevent double-renders
+    if (browser && this.port) {
+      this.port.postMessage({
+        msg: "render",
+        render: true
+      });
+    } // Destroy the existing info panel to prevent double-renders
+
+
     if (this.$el) {
       this.$el.remove();
     }
@@ -14007,11 +14046,42 @@ class InfoPanel {
 
 
     annotate.removeAll();
+
+    if (browser && this.port) {
+      this.port.disconnect();
+      this.port = undefined;
+    }
+  }
+  /**
+   * Opens a port to communicate to an InfoPanelController
+   * over the browser.runtime API.
+   */
+
+
+  delegate() {
+    if (browser) {
+      console.log("Opening port");
+      let port = browser.runtime.connect({
+        name: PORT_NAME
+      });
+      this.port = port;
+      port.postMessage({
+        msg: "Opened port",
+        registerActive: true,
+        plugin: this.plugin.getName()
+      });
+      port.onMessage.addListener(json => {
+        console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
+      }); // TODO: Hide this panel
+    }
   }
 
 }
 
-module.exports = InfoPanel;
+module.exports = {
+  panel: InfoPanel,
+  port: PORT_NAME
+};
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./utils/element */ "./utils/element.js")))
 
 /***/ }),
@@ -14081,6 +14151,10 @@ module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,"
 let plugins = __webpack_require__(/*! ./plugins */ "./plugins/index.js");
 
 let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./templates/logo.handlebars");
+
+const PORT_NAME = "toolbar";
+let allPlugins = [...plugins.default, ...plugins.experimental];
+let namedPlugins = allPlugins.map(p => p.getName());
 /**
  * In a standalone script the toolbar is responsible for switching
  * active plugins and drawing its UI.
@@ -14091,7 +14165,6 @@ let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./tem
  * everything but the UI, and the UI is synced to the rest of
  * the WebExtension over a Port.
  */
-
 
 class Toolbar {
   constructor() {
@@ -14182,14 +14255,12 @@ class Toolbar {
     if (browser) {
       console.log("Opening port");
       let port = browser.runtime.connect({
-        name: "toolbar"
+        name: PORT_NAME
       });
       this.port = port;
       port.postMessage({
         msg: "Opened port"
       });
-      let allPlugins = [...plugins.default, ...plugins.experimental];
-      let namedPlugins = allPlugins.map(p => p.getName());
       port.onMessage.addListener(json => {
         console.log(`Toolbar received msg: ${json.msg}, ${json}`);
 
@@ -14220,10 +14291,14 @@ class ToolbarController {
   constructor() {
     if (browser) {
       browser.runtime.onConnect.addListener(port => {
+        if (port.name !== PORT_NAME) {
+          return;
+        }
+
         this.port = port;
         port.onMessage.addListener(json => {
           console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
-        }); //this.handlePluginClick(plugins.default[4]);
+        });
       });
     }
   }

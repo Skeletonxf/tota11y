@@ -23,6 +23,7 @@ require("./style.less");
 const INITIAL_PANEL_MARGIN_PX = 10;
 const COLLAPSED_CLASS_NAME = "tota11y-collapsed";
 const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
+const PORT_NAME = "info-panel";
 
 class InfoPanel {
     constructor(plugin) {
@@ -40,6 +41,12 @@ class InfoPanel {
      */
     setAbout(about) {
         this.about = about;
+        if (browser && this.port) {
+            this.port.postMessage({
+                msg: "about",
+                setAbout: about,
+            });
+        }
     }
 
     /**
@@ -47,6 +54,12 @@ class InfoPanel {
      */
     setSummary(summary) {
         this.summary = summary;
+        if (browser && this.port) {
+            this.port.postMessage({
+                msg: "summary",
+                setSummary: summary,
+            });
+        }
     }
 
     /**
@@ -56,6 +69,15 @@ class InfoPanel {
     addError(title, $description, $el) {
         let error = {title, $description, $el};
         this.errors.push(error);
+        if (browser && this.port) {
+            this.port.postMessage({
+                msg: "error",
+                addError: true,
+                title: title,
+                // TODO: Work out how to send highlight on hover
+                // information over JSON
+            });
+        }
         return error;
     }
 
@@ -180,6 +202,13 @@ class InfoPanel {
     }
 
     render() {
+        if (browser && this.port) {
+            this.port.postMessage({
+                msg: "render",
+                render: true,
+            });
+        }
+
         // Destroy the existing info panel to prevent double-renders
         if (this.$el) {
             this.$el.remove();
@@ -366,7 +395,40 @@ class InfoPanel {
 
         // Remove the annotations
         annotate.removeAll();
+
+        if (browser && this.port) {
+            this.port.disconnect();
+            this.port = undefined;
+        }
+    }
+
+    /**
+     * Opens a port to communicate to an InfoPanelController
+     * over the browser.runtime API.
+     */
+    delegate() {
+        if (browser) {
+            console.log("Opening port");
+            let port = browser.runtime.connect({
+                name: PORT_NAME
+            });
+            this.port = port;
+            port.postMessage({
+                msg: "Opened port",
+                registerActive: true,
+                plugin: this.plugin.getName(),
+            });
+
+            port.onMessage.addListener((json) => {
+                console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
+            });
+
+            // TODO: Hide this panel
+        }
     }
 }
 
-module.exports = InfoPanel;
+module.exports = {
+    panel: InfoPanel,
+    port: PORT_NAME,
+};

@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-10-13
+ * Date: 2018-10-20
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -120,6 +120,8 @@ let plugins = __webpack_require__(/*! ../../plugins */ "./plugins/index.js");
 
 let toolbar = __webpack_require__(/*! ../../toolbar.js */ "./toolbar.js");
 
+const InfoPanelController = __webpack_require__(/*! ../../plugins/shared/info-panel/controller.js */ "./plugins/shared/info-panel/controller.js");
+
 const ToolbarController = toolbar.controller;
 let windowId;
 /*
@@ -135,8 +137,9 @@ function onError(msg) {
 // We only need 1 controller for n content scripts
 
 
-let controller = new ToolbarController();
-controller.appendTo($("body"));
+let toolbarController = new ToolbarController();
+toolbarController.appendTo($("body"));
+let infoPanelController = new InfoPanelController();
 /*
  * Update the sidebar for this active tab
  */
@@ -265,7 +268,7 @@ exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-controls {\n  float: right !important;\n}\n.tota11y-info-annotation-toggle {\n  float: left !important;\n  margin-right: 10px !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n  position: relative !important;\n  top: -2px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n  flex-grow: 1 !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section,\n.tota11y-info-section * {\n  color: #333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  transform: rotateZ(90deg) !important;\n  transform-origin: 3px 8px !important;\n  transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description-code-container {\n  margin-top: 10px !important;\n}\n.tota11y-info-error-description-code-container code {\n  display: block !important;\n  margin-top: 10px !important;\n  padding: 5px 10px !important;\n  word-wrap: break-word !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-controls {\n  float: right !important;\n}\n.tota11y-info-annotation-toggle {\n  float: left !important;\n  margin-right: 10px !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n  position: relative !important;\n  top: -2px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n  flex-grow: 1 !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section,\n.tota11y-info-section * {\n  color: #333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  transform: rotateZ(90deg) !important;\n  transform-origin: 3px 8px !important;\n  transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description-code-container {\n  margin-top: 10px !important;\n}\n.tota11y-info-error-description-code-container code {\n  display: block !important;\n  margin-top: 10px !important;\n  padding: 5px 10px !important;\n  word-wrap: break-word !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n.tota11y-sidebar {\n  position: static !important;\n}\n.tota11y-sidebar .tota11y-info-sections {\n  width: auto !important;\n  height: auto !important;\n}\n.tota11y-sidebar .tota11y-info-section {\n  position: static !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -12469,13 +12472,20 @@ module.exports = AltTextPlugin;
  *     run: code to run when the plugin is activated from the toolbar
  *     cleanup: code to run when the plugin is deactivated from the toolbar
  */
-let InfoPanel = __webpack_require__(/*! ./shared/info-panel */ "./plugins/shared/info-panel/index.js");
+let infoPanel = __webpack_require__(/*! ./shared/info-panel */ "./plugins/shared/info-panel/index.js");
+
+const InfoPanel = infoPanel.panel;
 
 __webpack_require__(/*! ./style.less */ "./plugins/style.less");
 
 class Plugin {
   constructor() {
     this.panel = new InfoPanel(this);
+
+    if (browser) {
+      this.panel.delegate();
+    }
+
     this.$checkbox = null;
   }
 
@@ -12498,7 +12508,6 @@ class Plugin {
 
 
   summary($html) {
-    console.log("summary called");
     return this.panel.setSummary($html);
   } // Populates the info panel's "About" tab
 
@@ -13662,6 +13671,334 @@ module.exports = audit;
 
 /***/ }),
 
+/***/ "./plugins/shared/info-panel/controller.js":
+/*!*************************************************!*\
+  !*** ./plugins/shared/info-panel/controller.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(buildElement) {/**
+ * The following code defines the controller for an information panel
+ * that can be invoked from any plugin to display summaries, errors,
+ * or more information about what its plugin is doing.
+ *
+ * These panels are unique to the plugin that created them.
+ *
+ * Info panels consist of a title and three optional sections, which form
+ * tabs that users can switch between.
+ *
+ *   Summary: A summary of the plugin's results
+ *   Errors: A list of violations reported by this plugin. The tab marker also
+ *           contains the number of errors listed
+ */
+let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
+let annotate = __webpack_require__(/*! ../annotate */ "./plugins/shared/annotate/index.js")("info-panel");
+/*
+ * The info panel is depended on by every plugin and therefore cannot
+ * require the plugins because it would introduce a circular dependency.
+ *
+ * Therefore we must depend on the plugins from a different file to
+ * access this list on the Controller side, which is fine because all our
+ * communication to the plugins on the page goes through the Port that the
+ * InfoPanel creates.
+ */
+
+
+let plugins = __webpack_require__(/*! ../../../plugins */ "./plugins/index.js");
+
+let infoPanel = __webpack_require__(/*! ./index.js */ "./plugins/shared/info-panel/index.js");
+
+console.log('GETTING PLUGINS');
+console.log(plugins);
+
+let errorTemplate = __webpack_require__(/*! ./error.handlebars */ "./plugins/shared/info-panel/error.handlebars");
+
+__webpack_require__(/*! ./style.less */ "./plugins/shared/info-panel/style.less");
+
+const PORT_NAME = infoPanel.port;
+const InfoPanel = infoPanel.panel;
+let allPlugins = [...plugins.default, ...plugins.experimental];
+let namedPlugins = allPlugins.map(p => p.getName());
+
+class InfoPanelController {
+  constructor() {
+    this.activePanels = new Set();
+
+    if (browser) {
+      browser.runtime.onConnect.addListener(port => {
+        if (port.name !== PORT_NAME) {
+          return;
+        }
+
+        port.onMessage.addListener(json => {
+          console.log(`InfoPanel controller received msg: ${json.msg}, ${json}`);
+
+          if (json.registerActive) {
+            // retrieve the plugin instance from the name
+            let index = namedPlugins.findIndex(p => p === json.plugin);
+
+            if (index === -1) {
+              port.postMessage("Unrecognised plugin");
+              return;
+            }
+
+            let plugin = allPlugins[index];
+            console.log('registering active panel');
+            this.activePanels.add(new ActivePanel(port, plugin));
+          }
+        });
+        port.onDisconnect.addListener(port => {
+          let activePanels = new Set();
+
+          for (let ap of this.activePanels) {
+            console.log('discarding active panel'); // discard the active panel with the port
+
+            if (ap.port === port) {
+              ap.destroy();
+            } else {
+              activePanels.add(ap);
+            }
+          }
+
+          this.activePanels = activePanels;
+        });
+      });
+    }
+  }
+
+}
+
+class ActivePanel {
+  constructor(port, plugin) {
+    this.port = port;
+    this.plugin = plugin;
+    this.about = null;
+    this.summary = null;
+    this.errors = [];
+    this.$el = null;
+    port.onMessage.addListener(json => {
+      console.log(`ActivePanel received msg: ${json.msg}, ${json}`);
+
+      if (json.setAbout) {
+        this.about = json.setAbout;
+      }
+
+      if (json.setSummary) {
+        this.summary = json.summary;
+      }
+
+      if (json.addError) {
+        console.log("Recieved error");
+        console.log(json.title); // TODO: Highlight information
+
+        let error = {
+          title: json.title,
+          $description: null,
+          $el: null
+        };
+        this.errors.push(error);
+      }
+
+      if (json.render) {
+        this.render();
+      }
+    });
+  }
+  /**
+   * Positions the info panel in the sidebar.
+   */
+
+
+  initAndPosition() {
+    // Append the info panel to the body.
+    $("body").append(this.$el);
+  }
+
+  render() {
+    console.log("ActivePanel rendering"); // Destroy the existing info panel to prevent double-renders
+
+    if (this.$el) {
+      this.$el.remove();
+    }
+
+    let hasContent = false;
+    this.$el = buildElement("div", {
+      className: "tota11y tota11y-info tota11y-sidebar",
+      tabindex: "-1"
+    }, buildElement("header", {
+      className: "tota11y-info-title"
+    }, this.plugin.getTitle(), buildElement("span", {
+      className: "tota11y-info-controls"
+    }, buildElement("label", {
+      className: "tota11y-info-annotation-toggle"
+    }, "Annotate:", " ", buildElement("input", {
+      className: "toggle-annotation",
+      type: "checkbox",
+      checked: "checked"
+    })), buildElement("a", {
+      "aria-label": "Close info panel",
+      href: "#",
+      className: "tota11y-info-dismiss-trigger"
+    }, "\xD7"))), buildElement("div", {
+      className: "tota11y-info-body"
+    }, buildElement("div", {
+      className: "tota11y-info-sections"
+    }), buildElement("ul", {
+      role: "tablist",
+      className: "tota11y-info-tabs"
+    }))); // Add the appropriate tabs based on which information the info panel
+    // was provided, then highlight the most important one.
+
+    let $activeTab;
+
+    if (this.about) {
+      $activeTab = this._addTab("About", this.about);
+    }
+
+    if (this.summary) {
+      $activeTab = this._addTab("Summary", this.summary);
+    } // Wire annotation toggling
+
+
+    this.$el.find(".toggle-annotation").click(e => {
+      if ($(e.target).prop("checked")) {
+        annotate.show();
+      } else {
+        annotate.hide();
+      }
+    });
+
+    if (this.errors.length > 0) {
+      let $errors = $("<ul>").addClass("tota11y-info-errors"); // Store a reference to the "Errors" tab so we can switch to it
+      // later
+
+      let $errorsTab;
+      this.errors.forEach((error, i) => {
+        let $error = $(errorTemplate(error)); //
+        // // Insert description jQuery object into template.
+        // // Description is passed as jQuery object
+        // // so that functionality can be inserted.
+        // $error
+        //     .find(".tota11y-info-error-description")
+        //     .prepend(error.$description);
+        //
+
+        $errors.append($error); //
+        // // Wire up the expand/collapse trigger
+        // let $trigger = $error.find(".tota11y-info-error-trigger");
+        // let $desc = $error.find(".tota11y-info-error-description");
+        //
+        // $trigger.click((e) => {
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        //     $trigger.toggleClass(COLLAPSED_CLASS_NAME);
+        //     $desc.toggleClass(COLLAPSED_CLASS_NAME);
+        // });
+        // Attach a function to the original error object to open
+        // this error so it can be done externally. We'll use this to
+        // access error entries in the info panel from labels.
+
+        error.show = () => {
+          // // Make sure info panel is visible
+          // this.$el.removeClass(HIDDEN_CLASS_NAME);
+          //
+          // // Open the error entry
+          // $trigger.removeClass(COLLAPSED_CLASS_NAME);
+          // $desc.removeClass(COLLAPSED_CLASS_NAME);
+          // Switch to the "Errors" tab
+          $errorsTab.trigger("activate"); // // Scroll to the error entry
+          // let $scrollParent = $trigger.parents(
+          //     ".tota11y-info-section");
+          // $scrollParent[0].scrollTop = $trigger[0].offsetTop - 10;
+        }; //
+        // // Attach the `$trigger` as well so can access it externally.
+        // // We use this to highlight the trigger when hovering over
+        // // inline error labels.
+        // error.$trigger = $trigger;
+        //
+        // // Wire up the scroll-to-error button
+        // let $scroll = $error.find(".tota11y-info-error-scroll");
+        // $scroll.click((e) => {
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        //
+        //     // TODO: This attempts to scroll to fixed elements
+        //     $(document).scrollTop(error.$el.offset().top - 80);
+        // });
+        // // Expand the first violation
+        // if (i === 0) {
+        //     $desc.toggleClass(COLLAPSED_CLASS_NAME);
+        //     $trigger.toggleClass(COLLAPSED_CLASS_NAME);
+        // }
+        //
+        // // Highlight the violating element on hover/focus. We do it
+        // // for both $trigger and $scroll to allow users to see the
+        // // highlight when scrolling to the element with the button.
+        // annotate.toggleHighlight(error.$el, $trigger);
+        // annotate.toggleHighlight(error.$el, $scroll);
+        //
+        // // Add code from error.$el to the information panel
+        // let errorHTML = error.$el[0].outerHTML;
+        //
+        // // Trim the code block if it is over 300 characters
+        // if (errorHTML.length > 300) {
+        //     errorHTML = errorHTML.substring(0, 300) + "...";
+        // }
+        //
+        // let $relevantCode = $error.find(
+        //     ".tota11y-info-error-description-code-container code");
+        // $relevantCode.text(errorHTML);
+
+      });
+      $errorsTab = $activeTab = this._addTab("Errors", $errors); // Add a small badge next to the tab title
+
+      let $badge = $("<div>").addClass("tota11y-info-error-count").text(this.errors.length);
+      $activeTab.find(".tota11y-info-tab-anchor").append($badge);
+    }
+
+    if ($activeTab) {
+      $activeTab.trigger("activate"); // hasContent is technically coupled to $activeTab, since if there
+      // is no $activeTab then there is no content. This behavior may
+      // change in the future.
+
+      hasContent = true;
+    }
+
+    if (hasContent) {
+      this.initAndPosition();
+    } // (a11y) Shift focus to the newly-opened info panel
+
+
+    this.$el.focus();
+    return this.$el;
+  }
+
+  destroy() {
+    // Reset contents
+    this.about = null;
+    this.summary = null;
+    this.errors = []; // Remove the element
+
+    if (this.$el) {
+      this.$el.remove();
+      this.$el = null;
+    } // Remove the annotations
+
+
+    annotate.removeAll();
+  }
+
+} // copy tab method
+
+
+ActivePanel.prototype._addTab = InfoPanel.prototype._addTab;
+module.exports = InfoPanelController;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./utils/element */ "./utils/element.js")))
+
+/***/ }),
+
 /***/ "./plugins/shared/info-panel/error.handlebars":
 /*!****************************************************!*\
   !*** ./plugins/shared/info-panel/error.handlebars ***!
@@ -13714,6 +14051,7 @@ __webpack_require__(/*! ./style.less */ "./plugins/shared/info-panel/style.less"
 const INITIAL_PANEL_MARGIN_PX = 10;
 const COLLAPSED_CLASS_NAME = "tota11y-collapsed";
 const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
+const PORT_NAME = "info-panel";
 
 class InfoPanel {
   constructor(plugin) {
@@ -13730,6 +14068,13 @@ class InfoPanel {
 
   setAbout(about) {
     this.about = about;
+
+    if (browser && this.port) {
+      this.port.postMessage({
+        msg: "about",
+        setAbout: about
+      });
+    }
   }
   /**
    * Sets the contents of the summary section as HTML
@@ -13738,6 +14083,13 @@ class InfoPanel {
 
   setSummary(summary) {
     this.summary = summary;
+
+    if (browser && this.port) {
+      this.port.postMessage({
+        msg: "summary",
+        setSummary: summary
+      });
+    }
   }
   /**
    * Adds an error to the errors tab. Also receives a jQuery element to
@@ -13752,6 +14104,17 @@ class InfoPanel {
       $el
     };
     this.errors.push(error);
+
+    if (browser && this.port) {
+      this.port.postMessage({
+        msg: "error",
+        addError: true,
+        title: title // TODO: Work out how to send highlight on hover
+        // information over JSON
+
+      });
+    }
+
     return error;
   }
 
@@ -13849,7 +14212,14 @@ class InfoPanel {
   }
 
   render() {
-    // Destroy the existing info panel to prevent double-renders
+    if (browser && this.port) {
+      this.port.postMessage({
+        msg: "render",
+        render: true
+      });
+    } // Destroy the existing info panel to prevent double-renders
+
+
     if (this.$el) {
       this.$el.remove();
     }
@@ -14007,11 +14377,42 @@ class InfoPanel {
 
 
     annotate.removeAll();
+
+    if (browser && this.port) {
+      this.port.disconnect();
+      this.port = undefined;
+    }
+  }
+  /**
+   * Opens a port to communicate to an InfoPanelController
+   * over the browser.runtime API.
+   */
+
+
+  delegate() {
+    if (browser) {
+      console.log("Opening port");
+      let port = browser.runtime.connect({
+        name: PORT_NAME
+      });
+      this.port = port;
+      port.postMessage({
+        msg: "Opened port",
+        registerActive: true,
+        plugin: this.plugin.getName()
+      });
+      port.onMessage.addListener(json => {
+        console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
+      }); // TODO: Hide this panel
+    }
   }
 
 }
 
-module.exports = InfoPanel;
+module.exports = {
+  panel: InfoPanel,
+  port: PORT_NAME
+};
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./utils/element */ "./utils/element.js")))
 
 /***/ }),
@@ -14081,6 +14482,10 @@ module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,"
 let plugins = __webpack_require__(/*! ./plugins */ "./plugins/index.js");
 
 let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./templates/logo.handlebars");
+
+const PORT_NAME = "toolbar";
+let allPlugins = [...plugins.default, ...plugins.experimental];
+let namedPlugins = allPlugins.map(p => p.getName());
 /**
  * In a standalone script the toolbar is responsible for switching
  * active plugins and drawing its UI.
@@ -14091,7 +14496,6 @@ let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./tem
  * everything but the UI, and the UI is synced to the rest of
  * the WebExtension over a Port.
  */
-
 
 class Toolbar {
   constructor() {
@@ -14182,14 +14586,12 @@ class Toolbar {
     if (browser) {
       console.log("Opening port");
       let port = browser.runtime.connect({
-        name: "toolbar"
+        name: PORT_NAME
       });
       this.port = port;
       port.postMessage({
         msg: "Opened port"
       });
-      let allPlugins = [...plugins.default, ...plugins.experimental];
-      let namedPlugins = allPlugins.map(p => p.getName());
       port.onMessage.addListener(json => {
         console.log(`Toolbar received msg: ${json.msg}, ${json}`);
 
@@ -14220,10 +14622,14 @@ class ToolbarController {
   constructor() {
     if (browser) {
       browser.runtime.onConnect.addListener(port => {
+        if (port.name !== PORT_NAME) {
+          return;
+        }
+
         this.port = port;
         port.onMessage.addListener(json => {
           console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
-        }); //this.handlePluginClick(plugins.default[4]);
+        });
       });
     }
   }
