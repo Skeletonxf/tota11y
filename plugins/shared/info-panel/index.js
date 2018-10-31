@@ -39,12 +39,12 @@ class InfoPanel {
     /**
      * Sets the contents of the about section as HTML
      */
-    setAbout(about) {
-        this.about = about;
+    setAbout($html) {
+        this.about = $html;
         if (browser && this.port) {
             this.port.postMessage({
                 msg: "about",
-                setAbout: about,
+                setAbout: this.htmlToString($html),
             });
         }
     }
@@ -52,12 +52,12 @@ class InfoPanel {
     /**
      * Sets the contents of the summary section as HTML
      */
-    setSummary(summary) {
-        this.summary = summary;
+    setSummary($html) {
+        this.summary = $html;
         if (browser && this.port) {
             this.port.postMessage({
                 msg: "summary",
-                setSummary: summary,
+                setSummary: this.htmlToString($html),
             });
         }
     }
@@ -74,6 +74,8 @@ class InfoPanel {
                 msg: "error",
                 addError: true,
                 title: title,
+                description: this.htmlToString($description),
+                el: this.htmlToString($el),
                 // TODO: Work out how to send highlight on hover
                 // information over JSON
             });
@@ -425,6 +427,15 @@ class InfoPanel {
 
             // TODO: Hide this panel
         }
+    }
+
+    htmlToString($html) {
+        if (typeof $html === 'string') {
+            // already a string
+            return $html;
+        }
+        // Convert jQuery HTML object to HTML string
+        return $html.prop('outerHTML');
     }
 }
 

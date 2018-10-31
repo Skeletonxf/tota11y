@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-10-20
+ * Date: 2018-10-31
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13735,13 +13735,13 @@ class InfoPanel {
    */
 
 
-  setAbout(about) {
-    this.about = about;
+  setAbout($html) {
+    this.about = $html;
 
     if (browser && this.port) {
       this.port.postMessage({
         msg: "about",
-        setAbout: about
+        setAbout: this.htmlToString($html)
       });
     }
   }
@@ -13750,13 +13750,13 @@ class InfoPanel {
    */
 
 
-  setSummary(summary) {
-    this.summary = summary;
+  setSummary($html) {
+    this.summary = $html;
 
     if (browser && this.port) {
       this.port.postMessage({
         msg: "summary",
-        setSummary: summary
+        setSummary: this.htmlToString($html)
       });
     }
   }
@@ -13778,7 +13778,9 @@ class InfoPanel {
       this.port.postMessage({
         msg: "error",
         addError: true,
-        title: title // TODO: Work out how to send highlight on hover
+        title: title,
+        description: this.htmlToString($description),
+        el: this.htmlToString($el) // TODO: Work out how to send highlight on hover
         // information over JSON
 
       });
@@ -14074,6 +14076,16 @@ class InfoPanel {
         console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
       }); // TODO: Hide this panel
     }
+  }
+
+  htmlToString($html) {
+    if (typeof $html === 'string') {
+      // already a string
+      return $html;
+    } // Convert jQuery HTML object to HTML string
+
+
+    return $html.prop('outerHTML');
   }
 
 }

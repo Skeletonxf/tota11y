@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-10-20
+ * Date: 2018-10-31
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13717,6 +13717,8 @@ let errorTemplate = __webpack_require__(/*! ./error.handlebars */ "./plugins/sha
 
 __webpack_require__(/*! ./style.less */ "./plugins/shared/info-panel/style.less");
 
+const COLLAPSED_CLASS_NAME = "tota11y-collapsed";
+const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
 const PORT_NAME = infoPanel.port;
 const InfoPanel = infoPanel.panel;
 let allPlugins = [...plugins.default, ...plugins.experimental];
@@ -13782,21 +13784,28 @@ class ActivePanel {
       console.log(`ActivePanel received msg: ${json.msg}, ${json}`);
 
       if (json.setAbout) {
-        this.about = json.setAbout;
+        console.log(`About ${json.setAbout}`); // convert HTML string back to jQuery HTML object
+
+        this.about = $(json.setAbout);
       }
 
       if (json.setSummary) {
-        this.summary = json.summary;
+        console.log(`Summary ${json.setSummary}`); // convert HTML string back to jQuery HTML object
+
+        this.summary = $(json.summary);
       }
 
       if (json.addError) {
         console.log("Recieved error");
-        console.log(json.title); // TODO: Highlight information
+        console.log(json.title);
+        console.log(json.description);
+        console.log(json.el); // TODO: Highlight information
 
         let error = {
           title: json.title,
-          $description: null,
-          $el: null
+          // convert HTML strings back to jQuery HTML objects
+          $description: $(json.description),
+          $el: $(json.el)
         };
         this.errors.push(error);
       }
@@ -13858,6 +13867,7 @@ class ActivePanel {
     }
 
     if (this.summary) {
+      console.log("Adding summary tab");
       $activeTab = this._addTab("Summary", this.summary);
     } // Wire annotation toggling
 
@@ -13876,27 +13886,21 @@ class ActivePanel {
 
       let $errorsTab;
       this.errors.forEach((error, i) => {
-        let $error = $(errorTemplate(error)); //
-        // // Insert description jQuery object into template.
-        // // Description is passed as jQuery object
-        // // so that functionality can be inserted.
-        // $error
-        //     .find(".tota11y-info-error-description")
-        //     .prepend(error.$description);
-        //
+        let $error = $(errorTemplate(error)); // Insert description jQuery object into template.
+        // Description is passed as jQuery object
+        // so that functionality can be inserted.
 
-        $errors.append($error); //
-        // // Wire up the expand/collapse trigger
-        // let $trigger = $error.find(".tota11y-info-error-trigger");
-        // let $desc = $error.find(".tota11y-info-error-description");
-        //
-        // $trigger.click((e) => {
-        //     e.preventDefault();
-        //     e.stopPropagation();
-        //     $trigger.toggleClass(COLLAPSED_CLASS_NAME);
-        //     $desc.toggleClass(COLLAPSED_CLASS_NAME);
-        // });
-        // Attach a function to the original error object to open
+        $error.find(".tota11y-info-error-description").prepend(error.$description);
+        $errors.append($error); // Wire up the expand/collapse trigger
+
+        let $trigger = $error.find(".tota11y-info-error-trigger");
+        let $desc = $error.find(".tota11y-info-error-description");
+        $trigger.click(e => {
+          e.preventDefault();
+          e.stopPropagation();
+          $trigger.toggleClass(COLLAPSED_CLASS_NAME);
+          $desc.toggleClass(COLLAPSED_CLASS_NAME);
+        }); // Attach a function to the original error object to open
         // this error so it can be done externally. We'll use this to
         // access error entries in the info panel from labels.
 
@@ -13927,30 +13931,29 @@ class ActivePanel {
         //     // TODO: This attempts to scroll to fixed elements
         //     $(document).scrollTop(error.$el.offset().top - 80);
         // });
-        // // Expand the first violation
-        // if (i === 0) {
-        //     $desc.toggleClass(COLLAPSED_CLASS_NAME);
-        //     $trigger.toggleClass(COLLAPSED_CLASS_NAME);
-        // }
-        //
+        // Expand the first violation
+
+
+        if (i === 0) {
+          $desc.toggleClass(COLLAPSED_CLASS_NAME);
+          $trigger.toggleClass(COLLAPSED_CLASS_NAME);
+        } //
         // // Highlight the violating element on hover/focus. We do it
         // // for both $trigger and $scroll to allow users to see the
         // // highlight when scrolling to the element with the button.
         // annotate.toggleHighlight(error.$el, $trigger);
         // annotate.toggleHighlight(error.$el, $scroll);
-        //
-        // // Add code from error.$el to the information panel
-        // let errorHTML = error.$el[0].outerHTML;
-        //
-        // // Trim the code block if it is over 300 characters
-        // if (errorHTML.length > 300) {
-        //     errorHTML = errorHTML.substring(0, 300) + "...";
-        // }
-        //
-        // let $relevantCode = $error.find(
-        //     ".tota11y-info-error-description-code-container code");
-        // $relevantCode.text(errorHTML);
+        // Add code from error.$el to the information panel
 
+
+        let errorHTML = error.$el[0].outerHTML; // Trim the code block if it is over 300 characters
+
+        if (errorHTML.length > 300) {
+          errorHTML = errorHTML.substring(0, 300) + "...";
+        }
+
+        let $relevantCode = $error.find(".tota11y-info-error-description-code-container code");
+        $relevantCode.text(errorHTML);
       });
       $errorsTab = $activeTab = this._addTab("Errors", $errors); // Add a small badge next to the tab title
 
@@ -14066,13 +14069,13 @@ class InfoPanel {
    */
 
 
-  setAbout(about) {
-    this.about = about;
+  setAbout($html) {
+    this.about = $html;
 
     if (browser && this.port) {
       this.port.postMessage({
         msg: "about",
-        setAbout: about
+        setAbout: this.htmlToString($html)
       });
     }
   }
@@ -14081,13 +14084,13 @@ class InfoPanel {
    */
 
 
-  setSummary(summary) {
-    this.summary = summary;
+  setSummary($html) {
+    this.summary = $html;
 
     if (browser && this.port) {
       this.port.postMessage({
         msg: "summary",
-        setSummary: summary
+        setSummary: this.htmlToString($html)
       });
     }
   }
@@ -14109,7 +14112,9 @@ class InfoPanel {
       this.port.postMessage({
         msg: "error",
         addError: true,
-        title: title // TODO: Work out how to send highlight on hover
+        title: title,
+        description: this.htmlToString($description),
+        el: this.htmlToString($el) // TODO: Work out how to send highlight on hover
         // information over JSON
 
       });
@@ -14405,6 +14410,16 @@ class InfoPanel {
         console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
       }); // TODO: Hide this panel
     }
+  }
+
+  htmlToString($html) {
+    if (typeof $html === 'string') {
+      // already a string
+      return $html;
+    } // Convert jQuery HTML object to HTML string
+
+
+    return $html.prop('outerHTML');
   }
 
 }
