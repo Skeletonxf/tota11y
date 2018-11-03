@@ -116,7 +116,7 @@ class Toolbar {
      */
     delegate() {
         if (browser) {
-            console.log("Opening port");
+            console.log("Opening toolbar port");
             let port = browser.runtime.connect({
                 name: PORT_NAME
             });

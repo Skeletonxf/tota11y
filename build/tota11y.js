@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-10-31
+ * Date: 2018-11-03
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -127,6 +127,7 @@ __webpack_require__(/*! script-loader!./node_modules/accessibility-developer-too
 
 $(function () {
   var bar = new Toolbar();
+  console.log("Delegating toolbar");
   bar.delegate();
   console.log("appending toolbar to body"); // TODO: Make this customizable
 
@@ -12478,11 +12479,6 @@ __webpack_require__(/*! ./style.less */ "./plugins/style.less");
 class Plugin {
   constructor() {
     this.panel = new InfoPanel(this);
-
-    if (browser) {
-      this.panel.delegate();
-    }
-
     this.$checkbox = null;
   }
 
@@ -12552,6 +12548,12 @@ class Plugin {
 
 
   activate() {
+    console.log("Activating plugin");
+
+    if (browser) {
+      this.panel.delegate();
+    }
+
     this.run();
     this.panel.render();
   }
@@ -12561,6 +12563,7 @@ class Plugin {
 
 
   deactivate() {
+    console.log("Deactivating plugin");
     this.cleanup();
     this.panel.destroy();
     this.$checkbox.prop("checked", false);
@@ -14062,7 +14065,7 @@ class InfoPanel {
 
   delegate() {
     if (browser) {
-      console.log("Opening port");
+      console.log(`Opening info panel port ${this.plugin.getName()}`);
       let port = browser.runtime.connect({
         name: PORT_NAME
       });
@@ -14083,6 +14086,7 @@ class InfoPanel {
       // already a string
       return $html;
     } // Convert jQuery HTML object to HTML string
+    // https://stackoverflow.com/questions/652763/how-do-you-convert-a-jquery-object-into-a-string
 
 
     return $html.prop('outerHTML');
@@ -14265,7 +14269,7 @@ class Toolbar {
 
   delegate() {
     if (browser) {
-      console.log("Opening port");
+      console.log("Opening toolbar port");
       let port = browser.runtime.connect({
         name: PORT_NAME
       });

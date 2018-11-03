@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-10-31
+ * Date: 2018-11-03
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -145,12 +145,14 @@ let infoPanelController = new InfoPanelController();
  */
 
 function updateContent() {
+  console.log("Updating content");
   browser.tabs.query({
     windowId: windowId,
     active: true
   }).then(tabs => {
     return tabs[0];
   }).then(tab => {
+    console.log(`Inserting tota11y into the page ${tab.url}`);
     browser.tabs.executeScript(tab.id, {
       file: "/build/tota11y.js"
     }).catch(onError("failed to execute script"));
@@ -12481,11 +12483,6 @@ __webpack_require__(/*! ./style.less */ "./plugins/style.less");
 class Plugin {
   constructor() {
     this.panel = new InfoPanel(this);
-
-    if (browser) {
-      this.panel.delegate();
-    }
-
     this.$checkbox = null;
   }
 
@@ -12555,6 +12552,12 @@ class Plugin {
 
 
   activate() {
+    console.log("Activating plugin");
+
+    if (browser) {
+      this.panel.delegate();
+    }
+
     this.run();
     this.panel.render();
   }
@@ -12564,6 +12567,7 @@ class Plugin {
 
 
   deactivate() {
+    console.log("Deactivating plugin");
     this.cleanup();
     this.panel.destroy();
     this.$checkbox.prop("checked", false);
@@ -13710,9 +13714,6 @@ let plugins = __webpack_require__(/*! ../../../plugins */ "./plugins/index.js");
 
 let infoPanel = __webpack_require__(/*! ./index.js */ "./plugins/shared/info-panel/index.js");
 
-console.log('GETTING PLUGINS');
-console.log(plugins);
-
 let errorTemplate = __webpack_require__(/*! ./error.handlebars */ "./plugins/shared/info-panel/error.handlebars");
 
 __webpack_require__(/*! ./style.less */ "./plugins/shared/info-panel/style.less");
@@ -13755,9 +13756,9 @@ class InfoPanelController {
           let activePanels = new Set();
 
           for (let ap of this.activePanels) {
-            console.log('discarding active panel'); // discard the active panel with the port
-
             if (ap.port === port) {
+              console.log(`Discarding active panel ${ap.plugin.getName()}`); // discard the active panel with the port
+
               ap.destroy();
             } else {
               activePanels.add(ap);
@@ -13784,22 +13785,22 @@ class ActivePanel {
       console.log(`ActivePanel received msg: ${json.msg}, ${json}`);
 
       if (json.setAbout) {
-        console.log(`About ${json.setAbout}`); // convert HTML string back to jQuery HTML object
-
+        //console.log(`About ${json.setAbout}`);
+        // convert HTML string back to jQuery HTML object
         this.about = $(json.setAbout);
       }
 
       if (json.setSummary) {
-        console.log(`Summary ${json.setSummary}`); // convert HTML string back to jQuery HTML object
-
+        //console.log(`Summary ${json.setSummary}`);
+        // convert HTML string back to jQuery HTML object
         this.summary = $(json.summary);
       }
 
       if (json.addError) {
-        console.log("Recieved error");
-        console.log(json.title);
-        console.log(json.description);
-        console.log(json.el); // TODO: Highlight information
+        console.log("Recieved error"); // console.log(json.title);
+        // console.log(json.description);
+        // console.log(json.el);
+        // TODO: Highlight information
 
         let error = {
           title: json.title,
@@ -14396,7 +14397,7 @@ class InfoPanel {
 
   delegate() {
     if (browser) {
-      console.log("Opening port");
+      console.log(`Opening info panel port ${this.plugin.getName()}`);
       let port = browser.runtime.connect({
         name: PORT_NAME
       });
@@ -14417,6 +14418,7 @@ class InfoPanel {
       // already a string
       return $html;
     } // Convert jQuery HTML object to HTML string
+    // https://stackoverflow.com/questions/652763/how-do-you-convert-a-jquery-object-into-a-string
 
 
     return $html.prop('outerHTML');
@@ -14599,7 +14601,7 @@ class Toolbar {
 
   delegate() {
     if (browser) {
-      console.log("Opening port");
+      console.log("Opening toolbar port");
       let port = browser.runtime.connect({
         name: PORT_NAME
       });

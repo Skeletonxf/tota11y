@@ -29,8 +29,6 @@ let annotate = require("../annotate")("info-panel");
 let plugins = require("../../../plugins");
 let infoPanel = require("./index.js");
 
-console.log('GETTING PLUGINS');
-console.log(plugins);
 let errorTemplate = require("./error.handlebars");
 require("./style.less");
 
@@ -67,9 +65,11 @@ class InfoPanelController {
                 port.onDisconnect.addListener((port) => {
                     let activePanels = new Set();
                     for (let ap of this.activePanels) {
-                        console.log('discarding active panel');
-                        // discard the active panel with the port
                         if (ap.port === port) {
+                            console.log(
+                                `Discarding active panel ${ap.plugin.getName()}`
+                            );
+                            // discard the active panel with the port
                             ap.destroy();
                         } else {
                             activePanels.add(ap);
@@ -96,20 +96,20 @@ class ActivePanel {
         port.onMessage.addListener((json) => {
             console.log(`ActivePanel received msg: ${json.msg}, ${json}`);
             if (json.setAbout) {
-                console.log(`About ${json.setAbout}`);
+                //console.log(`About ${json.setAbout}`);
                 // convert HTML string back to jQuery HTML object
                 this.about = $(json.setAbout);
             }
             if (json.setSummary) {
-                console.log(`Summary ${json.setSummary}`);
+                //console.log(`Summary ${json.setSummary}`);
                 // convert HTML string back to jQuery HTML object
                 this.summary = $(json.summary);
             }
             if (json.addError) {
                 console.log("Recieved error");
-                console.log(json.title);
-                console.log(json.description);
-                console.log(json.el);
+                // console.log(json.title);
+                // console.log(json.description);
+                // console.log(json.el);
                 // TODO: Highlight information
                 let error = {
                     title: json.title,

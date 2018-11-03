@@ -36,11 +36,13 @@ let infoPanelController = new InfoPanelController();
  * Update the sidebar for this active tab
  */
 function updateContent() {
+    console.log("Updating content");
     browser.tabs.query({windowId: windowId, active: true})
     .then((tabs) => {
         return tabs[0];
     })
     .then((tab) => {
+        console.log(`Inserting tota11y into the page ${tab.url}`);
         browser.tabs.executeScript(tab.id, {
             file: "/build/tota11y.js"
         }).catch(onError("failed to execute script"));

@@ -410,7 +410,7 @@ class InfoPanel {
      */
     delegate() {
         if (browser) {
-            console.log("Opening port");
+            console.log(`Opening info panel port ${this.plugin.getName()}`);
             let port = browser.runtime.connect({
                 name: PORT_NAME
             });
@@ -435,6 +435,7 @@ class InfoPanel {
             return $html;
         }
         // Convert jQuery HTML object to HTML string
+        // https://stackoverflow.com/questions/652763/how-do-you-convert-a-jquery-object-into-a-string
         return $html.prop('outerHTML');
     }
 }

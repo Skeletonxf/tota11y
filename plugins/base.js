@@ -18,9 +18,6 @@ require("./style.less");
 class Plugin {
     constructor() {
         this.panel = new InfoPanel(this);
-        if (browser) {
-            this.panel.delegate();
-        }
         this.$checkbox = null;
     }
 
@@ -98,6 +95,9 @@ class Plugin {
      * Activate the plugin from the UI.
      */
     activate() {
+        if (browser) {
+            this.panel.delegate();
+        }
         this.run();
         this.panel.render();
     }
@@ -106,6 +106,7 @@ class Plugin {
      * Deactivate the plugin from the UI.
      */
     deactivate() {
+        console.log("Deactivating plugin");
         this.cleanup();
         this.panel.destroy();
 
