@@ -4,10 +4,11 @@
   "name": "Tota11y prototype",
   "version": "1.0",
 
-  "permissions": ["tabs", "https://*/*", "http://*/*", "activeTab"],
+  "permissions": ["tabs", "https://*/*", "http://*/*", "file://*/*", "activeTab"],
 
   "background": {
-    "scripts": ["background.js"
+    "scripts": [
+      "background.js"
     ]
   },
 
