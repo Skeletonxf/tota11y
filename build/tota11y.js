@@ -12548,8 +12548,6 @@ class Plugin {
 
 
   activate() {
-    console.log("Activating plugin");
-
     if (browser) {
       this.panel.delegate();
     }
@@ -14260,6 +14258,7 @@ class Toolbar {
       className: "tota11y-toolbar-body"
     }, $plugins), $toggle);
     $el.append($toolbar);
+    this.$el = $toolbar;
   }
   /**
    * Opens a port to communicate to a ToolbarController
@@ -14287,10 +14286,48 @@ class Toolbar {
           if (index !== -1) {
             let plugin = allPlugins[index];
             console.log(`Plugin click sent through port ${plugin.getName()}`);
-            this.handlePluginClick(plugin);
+            let doToggle = this.activePlugins.has(plugin) != json.active;
+
+            if (doToggle) {
+              // only toggle the plugin if not in sync with
+              // controller
+              this.handlePluginClick(plugin);
+            } else {
+              console.log("Skipped, plugin already synced state");
+            }
           } else {
             port.postMessage("Unrecognised plugin");
           }
+        }
+
+        if (json.sync) {
+          console.log("Syncing active plugins to controller");
+          let activePlugins = new Set(json.activePlugins);
+
+          for (let plugin of allPlugins) {
+            let activate = activePlugins.has(plugin.getName());
+            let active = this.activePlugins.has(plugin);
+
+            if (activate != active) {
+              // toggle all plugins that aren't
+              // in sync with the controller
+              this.handlePluginClick(plugin);
+            }
+          }
+        }
+      });
+      port.onDisconnect.addListener(() => {
+        // clean up
+        for (let plugin of this.activePlugins) {
+          // toggle all plugins off
+          this.handlePluginClick(plugin);
+        }
+
+        console.log("Destroying toolbar"); // Remove this toobar element
+
+        if (this.$el) {
+          this.$el.remove();
+          this.$el = null;
         }
       }); // TODO: Hide this toolbar
     }
@@ -14306,25 +14343,57 @@ class Toolbar {
 class ToolbarController {
   constructor() {
     if (browser) {
+      this.activePlugins = new Set();
       browser.runtime.onConnect.addListener(port => {
         if (port.name !== PORT_NAME) {
           return;
         }
 
+        if (this.port) {
+          console.log("Disconnecting old Port");
+          this.port.disconnect();
+        }
+
         this.port = port;
-        port.onMessage.addListener(json => {
+        this.port.onMessage.addListener(json => {
           console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
         });
+        this.syncActivePlugins();
       });
     }
   }
 
+  syncActivePlugins() {
+    if (!this.port) {
+      return;
+    }
+
+    this.port.postMessage({
+      msg: "Sync active plugins",
+      sync: true,
+      activePlugins: [...this.activePlugins].map(p => p.getName())
+    });
+  }
+
   handlePluginClick(plugin) {
+    if (this.activePlugins.has(plugin)) {
+      this.activePlugins.delete(plugin); // use function scoping so we can access this
+      // outside the if statement
+
+      var active = false;
+    } else {
+      this.activePlugins.add(plugin); // use function scoping so we can access this
+      // outside the if statement
+
+      var active = true;
+    }
+
     this.port.postMessage({
       msg: "Plugin click",
       // Plugin instance will be different and not go
       // through JSON so pass the name instead.
-      click: plugin.getName()
+      click: plugin.getName(),
+      active: active
     });
   }
   /**
