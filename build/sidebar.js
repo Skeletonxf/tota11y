@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-11-03
+ * Date: 2018-11-06
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13062,8 +13062,10 @@ let LinkTextPlugin = __webpack_require__(/*! ./link-text */ "./plugins/link-text
 
 let A11yTextWand = __webpack_require__(/*! ./a11y-text-wand */ "./plugins/a11y-text-wand/index.js");
 
+let TablesPlugin = __webpack_require__(/*! ./tables */ "./plugins/tables/index.js");
+
 module.exports = {
-  default: [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new LandmarksPlugin()],
+  default: [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new LandmarksPlugin(), new TablesPlugin()],
   experimental: [new A11yTextWand()]
 };
 
@@ -14467,6 +14469,122 @@ if(typeof content === 'string') content = [[module.i, content, '']];
 var update = __webpack_require__(/*! ../node_modules/style-loader/addStyles.js */ "./node_modules/style-loader/addStyles.js")(content, {});
 // Hot Module Replacement
 if(false) {}
+
+/***/ }),
+
+/***/ "./plugins/tables/error-template.handlebars":
+/*!**************************************************!*\
+  !*** ./plugins/tables/error-template.handlebars ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+    return "    <p>\n        Presentation tables should not have table headers (<code>th</code>)\n    </p>\n\n    <p>\n        If the table is not for presentation you can remove the presentation\n        role like so:\n        <pre><code>&lt;table&gt;&lt;/table&gt;</code></pre>\n    </p>\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.noHeadings : depth0),{"name":"if","hash":{},"fn":container.program(4, data, 0),"inverse":container.program(6, data, 0),"data":data})) != null ? stack1 : "")
+    + "\n    <pre><code>&lt;table&gt;\n  &lt;tr&gt;\n    &lt;th>Header&lt;/th&gt;\n    &lt;th>Header&lt;/th&gt;\n  &lt;/tr&gt;\n  &lt;tr&gt;\n    &lt;td>Cell&lt;/td&gt;\n    &lt;td>Cell&lt;/td&gt;\n  &lt;/tr&gt;\n&lt;/table&gt;</code></pre>\n\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.noHeadings : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "    <p>\n        If the table is purely presentational you can mark it like so:\n        <pre><code>&lt;table role=\"presentation\"&gt;&lt;/table&gt;</code></pre>\n    </p>\n";
+},"4":function(container,depth0,helpers,partials,data) {
+    return "        <p>\n            You can give this table headings with <code>th</code> like so\n        </p>\n";
+},"6":function(container,depth0,helpers,partials,data) {
+    return "        <p>Headings must be on the entire first column, row, or both</p>\n";
+},"8":function(container,depth0,helpers,partials,data) {
+    return "        <p>Headings can be on the first column, row, or both</p>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.presentation : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "");
+},"useData":true});
+
+/***/ }),
+
+/***/ "./plugins/tables/index.js":
+/*!*********************************!*\
+  !*** ./plugins/tables/index.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * A plugin to identify malformed tables
+ */
+let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
+let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
+
+let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("tables");
+
+let audit = __webpack_require__(/*! ../shared/audit */ "./plugins/shared/audit.js");
+
+let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/tables/error-template.handlebars");
+
+class TablesPlugin extends Plugin {
+  getName() {
+    return "table-headers";
+  }
+
+  getTitle() {
+    return "Tables";
+  }
+
+  getDescription() {
+    return "Identifies tables with missing or incomplete headers";
+  }
+
+  errorMessage($el) {
+    return errorTemplate({
+      id: $el.attr("id"),
+      presentation: $el.attr("role") === "presentation",
+      noHeadings: $el.find('th').length === 0,
+      tagName: $el.prop("tagName").toLowerCase()
+    });
+  }
+
+  run() {
+    /*
+    ariaOnReservedElement,ariaOwnsDescendant,ariaRoleNotScoped,audioWithoutControls,badAriaAttribute,badAriaAttributeValue,badAriaRole,controlsWithoutLabel,duplicateId,focusableElementNotVisibleAndNotAriaHidden,humanLangMissing,imagesWithoutAltText,linkWithUnclearPurpose,lowContrastElements,mainRoleOnInappropriateElement,elementsWithMeaningfulBackgroundImage,multipleAriaOwners,multipleLabelableElementsPerLabel,nonExistentRelatedElement,pageWithoutTitle,requiredAriaAttributeMissing,requiredOwnedAriaRoleMissing,roleTooltipRequiresDescribedby,tabIndexGreaterThanZero,tableHasAppropriateHeaders,uncontrolledTabpanel,unfocusableElementsWithOnClick,unsupportedAriaAttribute,videoWithoutCaptions
+    */
+    let {
+      result,
+      elements
+    } = audit("tableHasAppropriateHeaders");
+
+    if (result === "FAIL") {
+      elements.forEach(element => {
+        let $el = $(element);
+        let presentation = $el.attr("role") === "presentation";
+        let noHeadings = $el.find('th').length === 0;
+        let title = "Table has a problem with its headers";
+
+        if (presentation && !noHeadings) {
+          title = "Presentational table should not have headers";
+        }
+
+        if (!presentation && noHeadings) {
+          title = "Table is missing headers";
+        } // Place an error label on the element and register it as an
+        // error in the info panel
+
+
+        let entry = this.error(title, $(this.errorMessage($el)), $el);
+        annotate.errorLabel($el, "", title, entry);
+      });
+    }
+  }
+
+  cleanup() {
+    annotate.removeAll();
+  }
+
+}
+
+module.exports = TablesPlugin;
 
 /***/ }),
 

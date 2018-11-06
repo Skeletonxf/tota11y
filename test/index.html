@@ -170,6 +170,142 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Good: Table has header row -->
+                <table>
+                    <tr>
+                        <th>Header</th>
+                        <th>Header</th>
+                        <th>Header</th>
+                    </tr>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <!-- Good: Table has header column -->
+                <table>
+                    <tr>
+                        <th>Header</th>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <th>Header</th>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <!-- Good: Table has grid layout -->
+                <table>
+                    <tr>
+                        <td>Cell</td>
+                        <th>Header</th>
+                        <th>Header</th>
+                    </tr>
+                    <tr>
+                        <th>Header</th>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <th>Header</th>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Bad: Table has incomplete header row -->
+                <table>
+                    <tr>
+                        <th>Header</th>
+                        <th>Header</th>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <!-- Bad: Table has incomplete header column -->
+                <table>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <th>Header</th>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <!-- Bad: Table has no headers -->
+                <table>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Good: Table has no headers -->
+                <table role="presentation">
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <!-- Bad: Table has headers -->
+                <table role="presentation">
+                    <tr>
+                        <th>Header</th>
+                        <th>Header</th>
+                        <th>Header</th>
+                    </tr>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+
         <hr>
 
         <footer>

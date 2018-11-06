@@ -1,0 +1,38 @@
+{{#if presentation}}
+    <p>
+        Presentation tables should not have table headers (<code>th</code>)
+    </p>
+
+    <p>
+        If the table is not for presentation you can remove the presentation
+        role like so:
+        <pre><code>&lt;table&gt;&lt;/table&gt;</code></pre>
+    </p>
+{{else}}
+    {{#if noHeadings}}
+        <p>
+            You can give this table headings with <code>th</code> like so
+        </p>
+    {{else}}
+        <p>Headings must be on the entire first column, row, or both</p>
+    {{/if}}
+
+    <pre><code>&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th>Header&lt;/th&gt;
+    &lt;th>Header&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td>Cell&lt;/td&gt;
+    &lt;td>Cell&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+    {{#if noHeadings}}
+        <p>Headings can be on the first column, row, or both</p>
+    {{/if}}
+    <p>
+        If the table is purely presentational you can mark it like so:
+        <pre><code>&lt;table role="presentation"&gt;&lt;/table&gt;</code></pre>
+    </p>
+{{/if}}
