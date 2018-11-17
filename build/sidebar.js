@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-11-06
+ * Date: 2018-11-17
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13308,7 +13308,7 @@ class LinkTextPlugin extends Plugin {
       let extractedText = axs.properties.findTextAlternatives(el, alts);
 
       if (!this.isDescriptiveText(extractedText)) {
-        let $description = buildElement("div", null, "The text", " ", buildElement("i", null, "\"", extractedText, "\""), " ", "is unclear without context and may be confusing to screen readers. Consider rearranging the", " ", buildElement("code", null, "&lt;a&gt;&lt;/a&gt;"), " ", "tags or including special screen reader text.");
+        let $description = buildElement("div", null, "The text", " ", buildElement("i", null, "\"", extractedText, "\""), " ", "is unclear without context and may be confusing to screen readers. Consider rearranging the", " ", buildElement("code", null, "&lt;a&gt;&lt;/a&gt;"), " ", "tags or including special screen reader text such as", " ", buildElement("code", null, "aria-label=\"detailed description\""), " ", "or", " ", buildElement("code", null, "aria-labelledby=\"labeling element id\""));
         this.reportError($el, $description, extractedText);
       }
     });
@@ -14076,7 +14076,7 @@ class InfoPanel {
     if (browser && this.port) {
       this.port.postMessage({
         msg: "about",
-        setAbout: this.htmlToString($html)
+        setAbout: this.elToString($html)
       });
     }
   }
@@ -14091,7 +14091,7 @@ class InfoPanel {
     if (browser && this.port) {
       this.port.postMessage({
         msg: "summary",
-        setSummary: this.htmlToString($html)
+        setSummary: this.elToString($html)
       });
     }
   }
@@ -14114,8 +14114,8 @@ class InfoPanel {
         msg: "error",
         addError: true,
         title: title,
-        description: this.htmlToString($description),
-        el: this.htmlToString($el) // TODO: Work out how to send highlight on hover
+        description: this.elToString($description),
+        el: this.elToString($el) // TODO: Work out how to send highlight on hover
         // information over JSON
 
       });
@@ -14413,15 +14413,20 @@ class InfoPanel {
     }
   }
 
-  htmlToString($html) {
-    if (typeof $html === 'string') {
+  elToString($el) {
+    if (typeof $el === 'string') {
       // already a string
-      return $html;
+      return $el;
     } // Convert jQuery HTML object to HTML string
-    // https://stackoverflow.com/questions/652763/how-do-you-convert-a-jquery-object-into-a-string
 
 
-    return $html.prop('outerHTML');
+    return $el.map(function () {
+      // `this` refers to the DOM element provided function()
+      // is used and not => syntax
+      return this.outerHTML;
+    }) // retrieve the array
+    .get() // convert into a single string
+    .join("");
   }
 
 }

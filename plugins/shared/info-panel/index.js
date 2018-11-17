@@ -44,7 +44,7 @@ class InfoPanel {
         if (browser && this.port) {
             this.port.postMessage({
                 msg: "about",
-                setAbout: this.htmlToString($html),
+                setAbout: this.elToString($html),
             });
         }
     }
@@ -57,7 +57,7 @@ class InfoPanel {
         if (browser && this.port) {
             this.port.postMessage({
                 msg: "summary",
-                setSummary: this.htmlToString($html),
+                setSummary: this.elToString($html),
             });
         }
     }
@@ -74,8 +74,8 @@ class InfoPanel {
                 msg: "error",
                 addError: true,
                 title: title,
-                description: this.htmlToString($description),
-                el: this.htmlToString($el),
+                description: this.elToString($description),
+                el: this.elToString($el),
                 // TODO: Work out how to send highlight on hover
                 // information over JSON
             });
@@ -429,14 +429,21 @@ class InfoPanel {
         }
     }
 
-    htmlToString($html) {
-        if (typeof $html === 'string') {
+    elToString($el) {
+        if (typeof $el === 'string') {
             // already a string
-            return $html;
+            return $el;
         }
         // Convert jQuery HTML object to HTML string
-        // https://stackoverflow.com/questions/652763/how-do-you-convert-a-jquery-object-into-a-string
-        return $html.prop('outerHTML');
+        return $el.map(function() {
+            // `this` refers to the DOM element provided function()
+            // is used and not => syntax
+            return this.outerHTML;
+        })
+        // retrieve the array
+        .get()
+        // convert into a single string
+        .join("");
     }
 }
 
