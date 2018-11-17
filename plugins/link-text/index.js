@@ -99,7 +99,13 @@ class LinkTextPlugin extends Plugin {
                         {" "}
                         <code>{"&lt;a&gt;&lt;/a&gt;"}</code>
                         {" "}
-                        tags or including special screen reader text.
+                        tags or including special screen reader text such as
+                        {" "}
+                        <code>aria-label="detailed description"</code>
+                        {" "}
+                        or
+                        {" "}
+                        <code>aria-labelledby="labeling element id"</code>
                     </div>
                 );
 
