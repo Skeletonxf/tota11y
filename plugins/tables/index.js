@@ -38,12 +38,29 @@ class TablesPlugin extends Plugin {
 
         let {result, elements} = audit("tableHasAppropriateHeaders");
 
+        // Find all presentation tables that also have headers
+        let presentationElements = $('table[role="presentation"]')
+            .filter(function() {
+                return $(this).find("th").length !== 0;
+            })
+            .get();
+
+        if (result === "FAIL") {
+            // Audit misses tables with headings that shouldn't have them
+            elements = [...new Set([...elements, ...presentationElements])];
+        } else {
+            if (presentationElements.length !== 0) {
+                result = "FAIL";
+                elements = presentationElements;
+            }
+        }
+
         if (result === "FAIL") {
             elements.forEach((element) => {
                 let $el = $(element);
 
                 let presentation = $el.attr("role") === "presentation";
-                let noHeadings = $el.find('th').length === 0;
+                let noHeadings = $el.find("th").length === 0;
 
                 let title = "Table has a problem with its headers";
                 if (presentation && !noHeadings) {
@@ -51,6 +68,10 @@ class TablesPlugin extends Plugin {
                 }
                 if (!presentation && noHeadings) {
                     title = "Table is missing headers";
+                }
+                if (presentation && noHeadings) {
+                    // false positive from audit
+                    return;
                 }
 
                 // Place an error label on the element and register it as an
