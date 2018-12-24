@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-11-21
+ * Date: 2018-12-24
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -140,11 +140,16 @@ function onError(msg) {
 let toolbarController = new ToolbarController();
 toolbarController.appendTo($("body"));
 let infoPanelController = new InfoPanelController();
+let activeTabInfo = {
+  id: null,
+  url: null,
+  status: "complete"
+};
 /*
  * Update the sidebar for this active tab
  */
 
-function updateContent() {
+function updateContent(tabId, changeInfo, tabInfo) {
   console.log("Updating content");
   browser.tabs.query({
     windowId: windowId,
@@ -152,6 +157,55 @@ function updateContent() {
   }).then(tabs => {
     return tabs[0];
   }).then(tab => {
+    if (tabId && tabId !== tab.id) {
+      console.log("Different tab updated, not active tab, ignoring");
+      return;
+    }
+
+    if (tabInfo) {
+      if (tabInfo.id === activeTabInfo.id && tabInfo.url === activeTabInfo.url && tabInfo.status === activeTabInfo.status) {
+        console.log("Active tab and url unchanged, ignoring");
+        return;
+      }
+
+      activeTabInfo.id = tabInfo.id;
+      activeTabInfo.url = tabInfo.url; // We want to reapply tota11y if a tab is refreshed
+      // in which case its id and url will not change but
+      // its status will go to "loading" before back to
+      // "complete"
+
+      activeTabInfo.status = tabInfo.status;
+    }
+
+    if (tabInfo && tabInfo.status === "loading") {
+      console.log("Tab is still loading, waiting till complete");
+      return;
+    }
+
+    if (tabInfo) {
+      console.log("Tab info:");
+
+      for (let property in tabInfo) {
+        console.log(`${property} ${tabInfo[property]}`);
+      }
+    } // if (tab.id !== tabContent.id) {
+    //     console.log("Active tab id changed");
+    // }
+    // if ((tabContent.id === tab.id) && (tabContent.url === tab.url)) {
+    //     console.log("Same tab as before, checking if loading");
+    //     if (changeInfo && changeInfo.status) {
+    //         if (changeInfo.status !== activeTabContent.status) {
+    //
+    //         }
+    //     }
+    // }
+    // tabContent.id = tab.id;
+    // tabContent.url = tab.url;
+    // if (changeInfo && changeInfo.status) {
+    //     tabContent.status = status;
+    // }
+
+
     console.log(`Inserting tota11y into the page ${tab.url}`);
     browser.tabs.executeScript(tab.id, {
       file: "/build/tota11y.js"
@@ -14487,7 +14541,7 @@ if(false) {}
 var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
 function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
-    return "    <p>\n        Presentation tables should not have table headers (<code>th</code>)\n    </p>\n\n    <p>\n        If the table is not for presentation you can remove the presentation\n        role like so:\n        <pre><code>&lt;table&gt; <del>role=\"presentation\"</del> &lt;/table&gt;</code></pre>\n    </p>\n";
+    return "    <p>\n        Presentation tables should not have table headers (<code>th</code>)\n    </p>\n\n    <p>\n        If the table is not for presentation you can remove the presentation\n        role like so:\n        <pre><code>&lt;table&gt;<del>role=\"presentation\"</del>&lt;/table&gt;</code></pre>\n    </p>\n";
 },"3":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 

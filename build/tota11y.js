@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-11-21
+ * Date: 2018-12-24
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -12033,7 +12033,7 @@ module.exports = function(src) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! !./node_modules/script-loader/addScript.js */ "./node_modules/script-loader/addScript.js")(__webpack_require__(/*! !./node_modules/raw-loader!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js */ "./node_modules/raw-loader/index.js!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js")+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///home/skeletonxf/Documents/Sheffield/Dissertation/dissertation/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
+__webpack_require__(/*! !./node_modules/script-loader/addScript.js */ "./node_modules/script-loader/addScript.js")(__webpack_require__(/*! !./node_modules/raw-loader!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js */ "./node_modules/raw-loader/index.js!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js")+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///home/skeletonxf/Documents/Sheffield/Dissertation/tota11y/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
 
 /***/ }),
 
@@ -14155,7 +14155,7 @@ if(false) {}
 var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
 function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
-    return "    <p>\n        Presentation tables should not have table headers (<code>th</code>)\n    </p>\n\n    <p>\n        If the table is not for presentation you can remove the presentation\n        role like so:\n        <pre><code>&lt;table&gt; <del>role=\"presentation\"</del> &lt;/table&gt;</code></pre>\n    </p>\n";
+    return "    <p>\n        Presentation tables should not have table headers (<code>th</code>)\n    </p>\n\n    <p>\n        If the table is not for presentation you can remove the presentation\n        role like so:\n        <pre><code>&lt;table&gt;<del>role=\"presentation\"</del>&lt;/table&gt;</code></pre>\n    </p>\n";
 },"3":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
