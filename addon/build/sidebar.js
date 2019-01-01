@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2018-12-31
+ * Date: 2019-01-01
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -134,7 +134,7 @@ let windowId;
 
 function propagateError(msg) {
   return error => {
-    console.log(`Error: ${error}, at: ${msg}`);
+    console.error(`Error: ${error}, at: ${msg}`);
     throw error;
   };
 } // We only need 1 of each controller for n content scripts
@@ -145,8 +145,14 @@ let toolbarController = new ToolbarController();
 toolbarController.appendTo($("body"));
 let infoPanelController = new InfoPanelController();
 let activeTabId = -1;
+let insertingTabIdLock = -1;
 
-function updateSidebar(data, updateType) {
+async function updateSidebar(data, updateType) {
+  if (insertingTabIdLock !== -1) {
+    console.log("Already inserting tota11y");
+    return;
+  }
+
   let triggerUpdate = false;
 
   if (updateType === "first-load") {
@@ -157,17 +163,39 @@ function updateSidebar(data, updateType) {
 
   if (updateType === "new-active") {
     // Always update to stay in the active tab.
-    console.log(`Updating if active tab is different from previous ${activeTabId !== data.tabId}`);
     triggerUpdate = activeTabId !== data.tabId;
-    console.log("Updating active tab id cache");
+    console.log(`Updating if active tab is different from previous ${triggerUpdate}`);
     activeTabId = data.tabId;
   }
 
   if (updateType === 'new-page') {
     // Update if a new page is loaded into the active tab
     // (ie F5).
-    console.log(`Updating if new page is loaded into the active tab ${activeTabId === data.tabId}, ${data.tabId}`);
-    triggerUpdate = activeTabId === data.tabId;
+    triggerUpdate = true // ignore loading of non active tabs
+    && activeTabId === data.tabId // ignore incomplete loading
+    && data.changeInfo.status === "complete";
+
+    if (triggerUpdate) {
+      let scriptTabId = await toolbarController.getTabId();
+
+      if (scriptTabId && scriptTabId === activeTabId) {
+        console.log("Still tota11y script in active tab, ignoring");
+        triggerUpdate = false;
+      } else {
+        console.log("No tota11y script identified in active tab");
+      }
+    }
+
+    console.log(`Updating if new page loaded into active tab ${triggerUpdate}`);
+
+    if (triggerUpdate) {
+      console.log(`Change info: ${JSON.stringify(data.changeInfo)}`);
+    }
+  }
+
+  if (insertingTabIdLock !== -1) {
+    console.log("Already inserting tota11y");
+    triggerUpdate = false;
   }
 
   if (!triggerUpdate) {
@@ -175,30 +203,47 @@ function updateSidebar(data, updateType) {
     return;
   }
 
+  console.log("Going to insert tota11y into the page");
   browser.tabs.query({
     windowId: windowId,
     active: true
   }).then(tabs => {
-    console.log("Got active tab");
     return tabs[0];
   }).catch(propagateError("Querying active tab")).then(tab => {
-    // console.log(`Active tab id is now: ${tab.id}`);
-    // activeTabId = tab.id;
+    if (tab.url.startsWith("about") || tab.url.startsWith("view-source")) {
+      throw new Error(`${tab.url} ignored, cannot inject tota11y`);
+    }
+
+    if (insertingTabIdLock !== -1) {
+      throw new Error("Already inserting tota11y");
+    }
+
     console.log(`Inserting tota11y into the page ${tab.url}, tab id: ${tab.id}`);
-    return browser.tabs.executeScript(tab.id, {
+    console.log(`Setting lock on tab id ${tab.id}`);
+    insertingTabIdLock = tab.id;
+    let executing = browser.tabs.executeScript(tab.id, {
       file: "/build/tota11y.js"
     });
-  }).then(() => console.log("Executed script")).catch(propagateError("Executing script"));
+    executing.then(() => {
+      console.log(`Sending tab id ${tab.id} to tota11y script`);
+      toolbarController.sendTabId(tab.id);
+    });
+    return executing;
+  }).then(() => {
+    console.log("Executed script");
+    insertingTabIdLock = -1;
+    console.log("Freed lock on inserting");
+  }).catch(propagateError("Executing script"));
 }
 /*
  * Update content when a new tab becomes active.
  */
 
 
-browser.tabs.onActivated.addListener((tabId, windowId) => {
+browser.tabs.onActivated.addListener(activeInfo => {
   updateSidebar({
-    tabId: tabId,
-    windowId: windowId
+    tabId: activeInfo.tabId,
+    windowId: activeInfo.windowId
   }, "new-active");
 });
 /*
@@ -14835,6 +14880,17 @@ class Toolbar {
             }
           }
         }
+
+        if (json.getTabId) {
+          port.postMessage({
+            msg: "Tab ID",
+            tabId: this.tabId
+          });
+        }
+
+        if (json.setTabId) {
+          this.tabId = json.tabId;
+        }
       });
       port.onDisconnect.addListener(() => {
         // clean up
@@ -14863,6 +14919,7 @@ class Toolbar {
 class ToolbarController {
   constructor() {
     if (browser) {
+      this.receivedTabId = undefined;
       this.activePlugins = new Set();
       browser.runtime.onConnect.addListener(port => {
         if (port.name !== PORT_NAME) {
@@ -14877,6 +14934,10 @@ class ToolbarController {
         this.port = port;
         this.port.onMessage.addListener(json => {
           console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
+
+          if (json.getTabId) {
+            this.receivedTabId = json.getTabId;
+          }
         });
         this.syncActivePlugins();
       });
@@ -14955,6 +15016,49 @@ class ToolbarController {
       className: "tota11y-toolbar-body"
     }, $plugins));
     $el.append($toolbar);
+  }
+
+  sendTabId(tabId) {
+    if (!this.port) {
+      return;
+    }
+
+    this.port.postMessage({
+      msg: "Tab ID",
+      setTabId: tabId
+    });
+  }
+  /*
+   * Attempts to ping the Toolbar using the Port, returning
+   * the tab id if the query is sent and the id returned.
+   * Because this will take some time this returns a Promise and runs
+   * async.
+   *
+   * If the port has been disconencted due to navigating
+   * to a different page than where the content script was
+   * placed then this will fail and return undefined.
+   */
+
+
+  getTabId() {
+    this.receivedTabId = undefined;
+
+    try {
+      // If the Toolbar is still on the page it will receive the
+      // query and send its tabId which will set receivedTabId
+      // in the ToolbarController's message listener.
+      this.port.postMessage({
+        msg: "Get Tab ID",
+        getTabId: true
+      });
+      return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(this.receivedTabId), 1000);
+      });
+    } catch (error) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(undefined), 1000);
+      });
+    }
   }
 
 }

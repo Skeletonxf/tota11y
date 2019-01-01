@@ -19,12 +19,9 @@ require("script-loader!./node_modules/accessibility-developer-tools/dist/js/axs_
 
 $(function() {
     var bar = new Toolbar();
-
-    console.log("Delegating toolbar");
     bar.delegate();
 
-    console.log("appending toolbar to body");
     // TODO: Make this customizable
     bar.appendTo($("body"));
-    console.log("done");
+    console.log("Tota11y started");
 });

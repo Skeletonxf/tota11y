@@ -128,7 +128,7 @@ class Toolbar {
                 console.log(`Toolbar received msg: ${json.msg}, ${json}`);
                 if (json.click) {
                     // retrieve the plugin instance from the name
-                    let index = namedPlugins.findIndex((p) => p === json.click);
+                    let index = namedPlugins.findIndex(p => p === json.click);
                     if (index !== -1) {
                         let plugin = allPlugins[index];
                         console.log(`Plugin click sent through port ${plugin.getName()}`);
@@ -160,6 +160,15 @@ class Toolbar {
                         }
                     }
                 }
+                if (json.getTabId) {
+                    port.postMessage({
+                        msg: "Tab ID",
+                        tabId: this.tabId
+                    });
+                }
+                if (json.setTabId) {
+                    this.tabId = json.tabId;
+                }
             });
             port.onDisconnect.addListener(() => {
                 // clean up
@@ -186,6 +195,7 @@ class Toolbar {
 class ToolbarController {
     constructor() {
         if (browser) {
+            this.receivedTabId = undefined;
             this.activePlugins = new Set();
             browser.runtime.onConnect.addListener((port) => {
                 if (port.name !== PORT_NAME) {
@@ -198,6 +208,9 @@ class ToolbarController {
                 this.port = port;
                 this.port.onMessage.addListener((json) => {
                     console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
+                    if (json.getTabId) {
+                        this.receivedTabId = json.getTabId;
+                    }
                 });
                 this.syncActivePlugins();
             })
@@ -285,6 +298,46 @@ class ToolbarController {
         );
 
         $el.append($toolbar);
+    }
+
+    sendTabId(tabId) {
+        if (!this.port) {
+            return;
+        }
+        this.port.postMessage({
+            msg: "Tab ID",
+            setTabId: tabId
+        })
+    }
+
+    /*
+     * Attempts to ping the Toolbar using the Port, returning
+     * the tab id if the query is sent and the id returned.
+     * Because this will take some time this returns a Promise and runs
+     * async.
+     *
+     * If the port has been disconencted due to navigating
+     * to a different page than where the content script was
+     * placed then this will fail and return undefined.
+     */
+    getTabId() {
+        this.receivedTabId = undefined;
+        try {
+            // If the Toolbar is still on the page it will receive the
+            // query and send its tabId which will set receivedTabId
+            // in the ToolbarController's message listener.
+            this.port.postMessage({
+                msg: "Get Tab ID",
+                getTabId: true
+            });
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolve(this.receivedTabId), 1000);
+            });
+        } catch(error) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolve(undefined), 1000);
+            });
+        }
     }
 }
 
