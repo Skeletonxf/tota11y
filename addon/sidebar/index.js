@@ -10,6 +10,8 @@ let $ = require("jquery");
 let plugins = require("../../plugins");
 let toolbar = require("../../toolbar.js");
 
+const Lock = require("./lock.js");
+
 const InfoPanelController = require("../../plugins/shared/info-panel/controller.js")
 const ToolbarController = toolbar.controller;
 
@@ -36,9 +38,10 @@ toolbarController.appendTo($("body"));
 let infoPanelController = new InfoPanelController();
 
 let activeTabId = -1;
-let insertingTabIdLock = -1;
+let insertingLock = new Lock();
+
 async function updateSidebar(data, updateType) {
-    if (insertingTabIdLock !== -1) {
+    if (insertingLock.locked()) {
         console.log("Already inserting tota11y");
         return;
     }
@@ -54,8 +57,9 @@ async function updateSidebar(data, updateType) {
     if (updateType === "new-active") {
         // Always update to stay in the active tab.
         triggerUpdate = activeTabId !== data.tabId;
-        console.log(`Updating if active tab is different from previous ${triggerUpdate}`);
+        console.log(`Updating if active tab different ${triggerUpdate}`);
 
+        // Update the cache of the active tab id
         activeTabId = data.tabId;
     }
 
@@ -68,33 +72,18 @@ async function updateSidebar(data, updateType) {
             // ignore incomplete loading
             && (data.changeInfo.status === "complete");
 
-        if (triggerUpdate) {
-            let scriptTabId = await toolbarController.getTabId();
-            if ((scriptTabId) && (scriptTabId === activeTabId)) {
-                console.log("Still tota11y script in active tab, ignoring");
-                triggerUpdate = false;
-            } else {
-                console.log("No tota11y script identified in active tab");
-            }
-        }
-
-        console.log(`Updating if new page loaded into active tab ${triggerUpdate}`);
-        if (triggerUpdate) {
-            console.log(`Change info: ${JSON.stringify(data.changeInfo)}`);
-        }
-    }
-
-    if (insertingTabIdLock !== -1) {
-        console.log("Already inserting tota11y");
-        triggerUpdate = false;
+        console.log(`Updating if new page loaded in active tab ${triggerUpdate}`);
     }
 
     if (!triggerUpdate) {
-        console.log(`Ignoring update, activeTabId: ${activeTabId}`);
         return;
     }
 
-    console.log("Going to insert tota11y into the page");
+    if (insertingLock.locked()) {
+        console.log("Already inserting tota11y");
+        return;
+    }
+
     browser.tabs.query({windowId: windowId, active: true})
     .then((tabs) => {
         return tabs[0];
@@ -106,13 +95,13 @@ async function updateSidebar(data, updateType) {
             throw new Error(`${tab.url} ignored, cannot inject tota11y`);
         }
 
-        if (insertingTabIdLock !== -1) {
+        if (insertingLock.locked()) {
             throw new Error("Already inserting tota11y");
         }
 
-        console.log(`Inserting tota11y into the page ${tab.url}, tab id: ${tab.id}`);
+        console.log(`Inserting tota11y into the page ${tab.url}`);
         console.log(`Setting lock on tab id ${tab.id}`);
-        insertingTabIdLock = tab.id;
+        insertingLock.lock(); // will throw error if already locked
 
         let executing = browser.tabs.executeScript(tab.id, {
             file: "/build/tota11y.js"
@@ -124,9 +113,8 @@ async function updateSidebar(data, updateType) {
         return executing;
     })
     .then(() => {
-        console.log("Executed script");
-        insertingTabIdLock = -1;
-        console.log("Freed lock on inserting");
+        insertingLock.unlock();
+        console.log("Freed lock");
     })
     .catch(propagateError("Executing script"));
 }

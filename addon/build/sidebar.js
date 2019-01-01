@@ -120,6 +120,8 @@ let plugins = __webpack_require__(/*! ../../plugins */ "./plugins/index.js");
 
 let toolbar = __webpack_require__(/*! ../../toolbar.js */ "./toolbar.js");
 
+const Lock = __webpack_require__(/*! ./lock.js */ "./addon/sidebar/lock.js");
+
 const InfoPanelController = __webpack_require__(/*! ../../plugins/shared/info-panel/controller.js */ "./plugins/shared/info-panel/controller.js");
 
 const ToolbarController = toolbar.controller;
@@ -145,10 +147,10 @@ let toolbarController = new ToolbarController();
 toolbarController.appendTo($("body"));
 let infoPanelController = new InfoPanelController();
 let activeTabId = -1;
-let insertingTabIdLock = -1;
+let insertingLock = new Lock();
 
 async function updateSidebar(data, updateType) {
-  if (insertingTabIdLock !== -1) {
+  if (insertingLock.locked()) {
     console.log("Already inserting tota11y");
     return;
   }
@@ -164,7 +166,8 @@ async function updateSidebar(data, updateType) {
   if (updateType === "new-active") {
     // Always update to stay in the active tab.
     triggerUpdate = activeTabId !== data.tabId;
-    console.log(`Updating if active tab is different from previous ${triggerUpdate}`);
+    console.log(`Updating if active tab different ${triggerUpdate}`); // Update the cache of the active tab id
+
     activeTabId = data.tabId;
   }
 
@@ -174,36 +177,18 @@ async function updateSidebar(data, updateType) {
     triggerUpdate = true // ignore loading of non active tabs
     && activeTabId === data.tabId // ignore incomplete loading
     && data.changeInfo.status === "complete";
-
-    if (triggerUpdate) {
-      let scriptTabId = await toolbarController.getTabId();
-
-      if (scriptTabId && scriptTabId === activeTabId) {
-        console.log("Still tota11y script in active tab, ignoring");
-        triggerUpdate = false;
-      } else {
-        console.log("No tota11y script identified in active tab");
-      }
-    }
-
-    console.log(`Updating if new page loaded into active tab ${triggerUpdate}`);
-
-    if (triggerUpdate) {
-      console.log(`Change info: ${JSON.stringify(data.changeInfo)}`);
-    }
-  }
-
-  if (insertingTabIdLock !== -1) {
-    console.log("Already inserting tota11y");
-    triggerUpdate = false;
+    console.log(`Updating if new page loaded in active tab ${triggerUpdate}`);
   }
 
   if (!triggerUpdate) {
-    console.log(`Ignoring update, activeTabId: ${activeTabId}`);
     return;
   }
 
-  console.log("Going to insert tota11y into the page");
+  if (insertingLock.locked()) {
+    console.log("Already inserting tota11y");
+    return;
+  }
+
   browser.tabs.query({
     windowId: windowId,
     active: true
@@ -214,13 +199,14 @@ async function updateSidebar(data, updateType) {
       throw new Error(`${tab.url} ignored, cannot inject tota11y`);
     }
 
-    if (insertingTabIdLock !== -1) {
+    if (insertingLock.locked()) {
       throw new Error("Already inserting tota11y");
     }
 
-    console.log(`Inserting tota11y into the page ${tab.url}, tab id: ${tab.id}`);
+    console.log(`Inserting tota11y into the page ${tab.url}`);
     console.log(`Setting lock on tab id ${tab.id}`);
-    insertingTabIdLock = tab.id;
+    insertingLock.lock(); // will throw error if already locked
+
     let executing = browser.tabs.executeScript(tab.id, {
       file: "/build/tota11y.js"
     });
@@ -230,9 +216,8 @@ async function updateSidebar(data, updateType) {
     });
     return executing;
   }).then(() => {
-    console.log("Executed script");
-    insertingTabIdLock = -1;
-    console.log("Freed lock on inserting");
+    insertingLock.unlock();
+    console.log("Freed lock");
   }).catch(propagateError("Executing script"));
 }
 /*
@@ -271,6 +256,49 @@ browser.windows.getCurrent({
   windowId = windowInfo.id;
   updateSidebar({}, "first-load");
 });
+
+/***/ }),
+
+/***/ "./addon/sidebar/lock.js":
+/*!*******************************!*\
+  !*** ./addon/sidebar/lock.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+ * A simple Lock class.
+ *
+ * JS is single threaded so this is a rare need, but
+ * the chain of then's in the event listeners to page and tab
+ * updates take several JS loops to complete, and during this
+ * time the listeners can be fired again, causing concurrency
+ * problems.
+ */
+class Lock {
+  constructor() {
+    this._locked = false;
+  }
+
+  lock() {
+    if (!this._locked) {
+      this._locked = true;
+    } else {
+      throw new Error("Already locked");
+    }
+  }
+
+  locked() {
+    return this._locked;
+  }
+
+  unlock() {
+    this._locked = false;
+  }
+
+}
+
+module.exports = Lock;
 
 /***/ }),
 
@@ -14880,17 +14908,6 @@ class Toolbar {
             }
           }
         }
-
-        if (json.getTabId) {
-          port.postMessage({
-            msg: "Tab ID",
-            tabId: this.tabId
-          });
-        }
-
-        if (json.setTabId) {
-          this.tabId = json.tabId;
-        }
       });
       port.onDisconnect.addListener(() => {
         // clean up
@@ -14919,7 +14936,6 @@ class Toolbar {
 class ToolbarController {
   constructor() {
     if (browser) {
-      this.receivedTabId = undefined;
       this.activePlugins = new Set();
       browser.runtime.onConnect.addListener(port => {
         if (port.name !== PORT_NAME) {
@@ -14934,10 +14950,6 @@ class ToolbarController {
         this.port = port;
         this.port.onMessage.addListener(json => {
           console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
-
-          if (json.getTabId) {
-            this.receivedTabId = json.getTabId;
-          }
         });
         this.syncActivePlugins();
       });
@@ -15016,49 +15028,6 @@ class ToolbarController {
       className: "tota11y-toolbar-body"
     }, $plugins));
     $el.append($toolbar);
-  }
-
-  sendTabId(tabId) {
-    if (!this.port) {
-      return;
-    }
-
-    this.port.postMessage({
-      msg: "Tab ID",
-      setTabId: tabId
-    });
-  }
-  /*
-   * Attempts to ping the Toolbar using the Port, returning
-   * the tab id if the query is sent and the id returned.
-   * Because this will take some time this returns a Promise and runs
-   * async.
-   *
-   * If the port has been disconencted due to navigating
-   * to a different page than where the content script was
-   * placed then this will fail and return undefined.
-   */
-
-
-  getTabId() {
-    this.receivedTabId = undefined;
-
-    try {
-      // If the Toolbar is still on the page it will receive the
-      // query and send its tabId which will set receivedTabId
-      // in the ToolbarController's message listener.
-      this.port.postMessage({
-        msg: "Get Tab ID",
-        getTabId: true
-      });
-      return new Promise((resolve, reject) => {
-        setTimeout(() => resolve(this.receivedTabId), 1000);
-      });
-    } catch (error) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => resolve(undefined), 1000);
-      });
-    }
   }
 
 }
