@@ -13302,7 +13302,7 @@ class LinkTextPlugin extends Plugin {
       let extractedText = axs.properties.findTextAlternatives(el, alts);
 
       if (!this.isDescriptiveText(extractedText)) {
-        let $description = buildElement("div", null, "The text", " ", buildElement("i", null, "\"", extractedText, "\""), " ", "is unclear without context and may be confusing to screen readers. Consider rearranging the", " ", buildElement("code", null, "&lt;a&gt;&lt;/a&gt;"), " ", "tags or including special screen reader text such as", " ", buildElement("code", null, "aria-label=\"detailed description\""), " ", "or", " ", buildElement("code", null, "aria-labelledby=\"labeling element id\""));
+        let $description = buildElement("div", null, "The text", " ", buildElement("i", null, "\"", extractedText, "\""), " ", "is unclear without context and may be confusing to screen readers. Consider rearranging the", " ", buildElement("code", null, "&lt;a&gt;&lt;/a&gt;"), " ", "tags or including special screen reader text such as", " ", buildElement("code", null, "aria-label=\"detailed description\""), " ", "or", " ", buildElement("code", null, "aria-labelledby=\"labeling element id\""), " ", "in the", " ", buildElement("code", null, "&lt;a&gt;"), " ", "element to provide more context.");
         this.reportError($el, $description, extractedText);
       }
     });

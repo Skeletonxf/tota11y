@@ -106,6 +106,12 @@ class LinkTextPlugin extends Plugin {
                         or
                         {" "}
                         <code>aria-labelledby="labeling element id"</code>
+                        {" "}
+                        in the
+                        {" "}
+                        <code>{"&lt;a&gt;"}</code>
+                        {" "}
+                        element to provide more context.
                     </div>
                 );
 
