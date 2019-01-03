@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-01-01
+ * Date: 2019-01-03
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13843,6 +13843,11 @@ const PORT_NAME = infoPanel.port;
 const InfoPanel = infoPanel.panel;
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map(p => p.getName());
+/*
+ * The controller of all n info panels, delegating each
+ * to an ActivePanel to mirror the InfoPanel instance on
+ * the content script.
+ */
 
 class InfoPanelController {
   constructor() {
@@ -13891,6 +13896,11 @@ class InfoPanelController {
   }
 
 }
+/*
+ * A currentely active info panel in the side bar, with a 1 to 1
+ * correspondence to active info panels running in the content script.
+ */
+
 
 class ActivePanel {
   constructor(port, plugin) {
@@ -13901,7 +13911,7 @@ class ActivePanel {
     this.errors = [];
     this.$el = null;
     port.onMessage.addListener(json => {
-      console.log(`ActivePanel received msg: ${json.msg}, ${json}`);
+      console.log(`ActivePanel received msg: ${json.msg}, ${JSON.stringify(json)}`);
 
       if (json.setAbout) {
         //console.log(`About ${json.setAbout}`);
@@ -13912,7 +13922,7 @@ class ActivePanel {
       if (json.setSummary) {
         //console.log(`Summary ${json.setSummary}`);
         // convert HTML string back to jQuery HTML object
-        this.summary = $(json.summary);
+        this.summary = $(json.setSummary);
       }
 
       if (json.addError) {
