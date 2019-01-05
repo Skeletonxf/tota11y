@@ -34,6 +34,7 @@ require("./style.less");
 
 const COLLAPSED_CLASS_NAME = "tota11y-collapsed";
 const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
+const FIRST_ERROR_ID = 0;
 const PORT_NAME = infoPanel.port;
 const InfoPanel = infoPanel.panel;
 
@@ -98,7 +99,8 @@ class ActivePanel {
 
         this.about = null;
         this.summary = null;
-        this.errors = [];
+
+        this.errors = new Map();
 
         this.$el = null;
 
@@ -116,20 +118,27 @@ class ActivePanel {
             }
             if (json.addError) {
                 console.log("Recieved error");
-                // console.log(json.title);
-                // console.log(json.description);
-                // console.log(json.el);
                 // TODO: Highlight information
                 let error = {
                     title: json.title,
                     // convert HTML strings back to jQuery HTML objects
                     $description: $(json.description),
                     $el: $(json.el),
+                    id: json.id
                 };
-                this.errors.push(error);
+                // We use the same ids as the InfoPanel in the content
+                // script generates so we can map between our error
+                // objects and the content script's error objects
+                // by indexing the errors Map.
+                this.errors.set(json.id, error);
             }
             if (json.render) {
                 this.render();
+            }
+            if (json.showError) {
+                if (json.plugin === this.plugin.getName()) {
+                    this.showError(json.errorId);
+                }
             }
         });
     }
@@ -200,14 +209,10 @@ class ActivePanel {
             }
         });
 
-        if (this.errors.length > 0) {
+        if (this.errors.size > 0) {
             let $errors = $("<ul>").addClass("tota11y-info-errors");
 
-            // Store a reference to the "Errors" tab so we can switch to it
-            // later
-            let $errorsTab;
-
-            this.errors.forEach((error, i) => {
+            this.errors.forEach((error, id) => {
                 let $error = $(errorTemplate(error));
 
                 // Insert description jQuery object into template.
@@ -230,32 +235,19 @@ class ActivePanel {
                     $desc.toggleClass(COLLAPSED_CLASS_NAME);
                 });
 
-                // Attach a function to the original error object to open
-                // this error so it can be done externally. We'll use this to
-                // access error entries in the info panel from labels.
-                error.show = () => {
-                    // // Make sure info panel is visible
-                    // this.$el.removeClass(HIDDEN_CLASS_NAME);
-                    //
-                    // // Open the error entry
-                    // $trigger.removeClass(COLLAPSED_CLASS_NAME);
-                    // $desc.removeClass(COLLAPSED_CLASS_NAME);
+                // Hold references to our $trigger and $desc for this error
+                // to access externally when messaged to via the Port.
+                error.$trigger = $trigger;
+                error.$desc = $desc;
 
-                    // Switch to the "Errors" tab
-                    $errorsTab.trigger("activate");
-
-                    // // Scroll to the error entry
-                    // let $scrollParent = $trigger.parents(
-                    //     ".tota11y-info-section");
-                    // $scrollParent[0].scrollTop = $trigger[0].offsetTop - 10;
-                };
                 //
                 // // Attach the `$trigger` as well so can access it externally.
                 // // We use this to highlight the trigger when hovering over
                 // // inline error labels.
                 // error.$trigger = $trigger;
                 //
-                // // Wire up the scroll-to-error button
+
+                // Wire up the scroll-to-error button
                 // let $scroll = $error.find(".tota11y-info-error-scroll");
                 // $scroll.click((e) => {
                 //     e.preventDefault();
@@ -266,7 +258,7 @@ class ActivePanel {
                 // });
 
                 // Expand the first violation
-                if (i === 0) {
+                if (id === FIRST_ERROR_ID) {
                     $desc.toggleClass(COLLAPSED_CLASS_NAME);
                     $trigger.toggleClass(COLLAPSED_CLASS_NAME);
                 }
@@ -290,12 +282,14 @@ class ActivePanel {
                 $relevantCode.text(errorHTML);
             });
 
-            $errorsTab = $activeTab = this._addTab("Errors", $errors);
+            // Store a reference to the "Errors" tab so we can switch to it
+            // later
+            this.$errorsTab = $activeTab = this._addTab("Errors", $errors);
 
             // Add a small badge next to the tab title
             let $badge = $("<div>")
                 .addClass("tota11y-info-error-count")
-                .text(this.errors.length);
+                .text(this.errors.size);
 
             $activeTab.find(".tota11y-info-tab-anchor").append($badge);
         }
@@ -318,11 +312,44 @@ class ActivePanel {
         return this.$el;
     }
 
+    /*
+     * Maps an error id back to the error object held by this port
+     * to display the error. We'll use this to access error entries
+     * in this active panel from the content script's labels.
+     *
+     * Note that we are using our error object which we created
+     * in the sidebar and not the same object the InfoPanel in
+     * the content script created (but they will have the same ids).
+     */
+    showError(errorId) {
+        let error = this.errors.get(errorId);
+
+        if (error === undefined) {
+            return;
+        }
+
+        // Make sure active panel is visible
+        this.$el.removeClass(HIDDEN_CLASS_NAME);
+
+        // Open the error entry
+        error.$trigger.removeClass(COLLAPSED_CLASS_NAME);
+        error.$desc.removeClass(COLLAPSED_CLASS_NAME);
+
+        // Switch to the "Errors" tab
+        this.$errorsTab.trigger("activate");
+
+        // Scroll to the error entry smoothly
+        $('html, body').animate({
+            scrollTop: error.$trigger.offset().top - 10
+        }, 50);
+        console.log("Finished scrolling");
+    }
+
     destroy() {
         // Reset contents
         this.about = null;
         this.summary = null;
-        this.errors = [];
+        this.errors = new Map();
 
         // Remove the element
         if (this.$el) {

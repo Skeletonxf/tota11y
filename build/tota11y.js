@@ -13722,13 +13722,15 @@ const INITIAL_PANEL_MARGIN_PX = 10;
 const COLLAPSED_CLASS_NAME = "tota11y-collapsed";
 const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
 const PORT_NAME = "info-panel";
+const FIRST_ERROR_ID = 0;
 
 class InfoPanel {
   constructor(plugin) {
     this.plugin = plugin;
     this.about = null;
     this.summary = null;
-    this.errors = [];
+    this.error_ids = FIRST_ERROR_ID;
+    this.errors = new Map();
     this.$el = null;
   }
   /**
@@ -13773,7 +13775,9 @@ class InfoPanel {
       $description,
       $el
     };
-    this.errors.push(error);
+    let id = this.error_ids++;
+    error.id = id;
+    this.errors.set(id, error);
 
     if (browser && this.port) {
       this.port.postMessage({
@@ -13781,7 +13785,8 @@ class InfoPanel {
         addError: true,
         title: title,
         description: this.elToString($description),
-        el: this.elToString($el) // TODO: Work out how to send highlight on hover
+        el: this.elToString($el),
+        id: id // TODO: Work out how to send highlight on hover
         // information over JSON
 
       });
@@ -13943,12 +13948,12 @@ class InfoPanel {
       }
     });
 
-    if (this.errors.length > 0) {
+    if (this.errors.size > 0) {
       let $errors = $("<ul>").addClass("tota11y-info-errors"); // Store a reference to the "Errors" tab so we can switch to it
       // later
 
       let $errorsTab;
-      this.errors.forEach((error, i) => {
+      this.errors.forEach((error, id) => {
         let $error = $(errorTemplate(error)); // Insert description jQuery object into template.
         // Description is passed as jQuery object
         // so that functionality can be inserted.
@@ -13968,7 +13973,19 @@ class InfoPanel {
         // access error entries in the info panel from labels.
 
         error.show = () => {
-          // Make sure info panel is visible
+          if (browser && this.port) {
+            // Send the message to the Sidebar panel
+            // to open the error.
+            this.port.postMessage({
+              msg: "Show error",
+              showError: true,
+              plugin: this.plugin.getName(),
+              errorId: id
+            });
+            return;
+          } // Make sure info panel is visible
+
+
           this.$el.removeClass(HIDDEN_CLASS_NAME); // Open the error entry
 
           $trigger.removeClass(COLLAPSED_CLASS_NAME);
@@ -13993,7 +14010,7 @@ class InfoPanel {
           $(document).scrollTop(error.$el.offset().top - 80);
         }); // Expand the first violation
 
-        if (i === 0) {
+        if (id === FIRST_ERROR_ID) {
           $desc.toggleClass(COLLAPSED_CLASS_NAME);
           $trigger.toggleClass(COLLAPSED_CLASS_NAME);
         } // Highlight the violating element on hover/focus. We do it
@@ -14015,7 +14032,7 @@ class InfoPanel {
       });
       $errorsTab = $activeTab = this._addTab("Errors", $errors); // Add a small badge next to the tab title
 
-      let $badge = $("<div>").addClass("tota11y-info-error-count").text(this.errors.length);
+      let $badge = $("<div>").addClass("tota11y-info-error-count").text(this.errors.size);
       $activeTab.find(".tota11y-info-tab-anchor").append($badge);
     }
 
@@ -14040,7 +14057,8 @@ class InfoPanel {
     // Reset contents
     this.about = null;
     this.summary = null;
-    this.errors = []; // Remove the element
+    this.error_ids = FIRST_ERROR_ID;
+    this.errors = new Map(); // Remove the element
 
     if (this.$el) {
       this.$el.remove();
