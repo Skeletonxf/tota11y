@@ -54,6 +54,7 @@ class InfoPanelController {
                 if (port.name !== PORT_NAME) {
                     return;
                 }
+                this.port = port;
                 port.onMessage.addListener((json) => {
                     console.log(`InfoPanel controller received msg: ${json.msg}, ${json}`);
                     if (json.registerActive) {
@@ -152,8 +153,6 @@ class ActivePanel {
     }
 
     render() {
-        console.log("ActivePanel rendering");
-
         // Destroy the existing info panel to prevent double-renders
         if (this.$el) {
             this.$el.remove();
@@ -247,15 +246,22 @@ class ActivePanel {
                 // error.$trigger = $trigger;
                 //
 
-                // Wire up the scroll-to-error button
-                // let $scroll = $error.find(".tota11y-info-error-scroll");
-                // $scroll.click((e) => {
-                //     e.preventDefault();
-                //     e.stopPropagation();
-                //
-                //     // TODO: This attempts to scroll to fixed elements
-                //     $(document).scrollTop(error.$el.offset().top - 80);
-                // });
+                // Wire up the scroll-to-error button delegate
+                let $scroll = $error.find(".tota11y-info-error-scroll");
+                $scroll.click((e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // The error annotation isn't on the sidebar page
+                    // so send the error id over the Port so we
+                    // can scroll to it from the content script
+                    this.port.postMessage({
+                        msg: "Scroll to error on page",
+                        scrollToError: true,
+                        errorId: id,
+                        plugin: this.plugin.getName(),
+                    });
+                });
 
                 // Expand the first violation
                 if (id === FIRST_ERROR_ID) {
@@ -356,6 +362,8 @@ class ActivePanel {
             this.$el.remove();
             this.$el = null;
         }
+
+        this.port = null;
 
         // Remove the annotations
         annotate.removeAll();

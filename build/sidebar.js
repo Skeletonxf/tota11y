@@ -13860,6 +13860,7 @@ class InfoPanelController {
           return;
         }
 
+        this.port = port;
         port.onMessage.addListener(json => {
           console.log(`InfoPanel controller received msg: ${json.msg}, ${json}`);
 
@@ -13965,8 +13966,7 @@ class ActivePanel {
   }
 
   render() {
-    console.log("ActivePanel rendering"); // Destroy the existing info panel to prevent double-renders
-
+    // Destroy the existing info panel to prevent double-renders
     if (this.$el) {
       this.$el.remove();
     }
@@ -14046,16 +14046,22 @@ class ActivePanel {
         // // inline error labels.
         // error.$trigger = $trigger;
         //
-        // Wire up the scroll-to-error button
-        // let $scroll = $error.find(".tota11y-info-error-scroll");
-        // $scroll.click((e) => {
-        //     e.preventDefault();
-        //     e.stopPropagation();
-        //
-        //     // TODO: This attempts to scroll to fixed elements
-        //     $(document).scrollTop(error.$el.offset().top - 80);
-        // });
-        // Expand the first violation
+        // Wire up the scroll-to-error button delegate
+
+        let $scroll = $error.find(".tota11y-info-error-scroll");
+        $scroll.click(e => {
+          e.preventDefault();
+          e.stopPropagation(); // The error annotation isn't on the sidebar page
+          // so send the error id over the Port so we
+          // can scroll to it from the content script
+
+          this.port.postMessage({
+            msg: "Scroll to error on page",
+            scrollToError: true,
+            errorId: id,
+            plugin: this.plugin.getName()
+          });
+        }); // Expand the first violation
 
         if (id === FIRST_ERROR_ID) {
           $desc.toggleClass(COLLAPSED_CLASS_NAME);
@@ -14143,8 +14149,9 @@ class ActivePanel {
     if (this.$el) {
       this.$el.remove();
       this.$el = null;
-    } // Remove the annotations
+    }
 
+    this.port = null; // Remove the annotations
 
     annotate.removeAll();
   }
@@ -14582,8 +14589,27 @@ class InfoPanel {
       });
       port.onMessage.addListener(json => {
         console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
+
+        if (json.scrollToError) {
+          if (json.plugin === this.plugin.getName()) {
+            this.scrollToError(json.errorId);
+          }
+        }
       }); // TODO: Hide this panel
     }
+  }
+
+  scrollToError(errorId) {
+    let error = this.errors.get(errorId);
+
+    if (error === undefined) {
+      return;
+    } // Scroll to the error annoatation on the page smoothly
+
+
+    $('html, body').animate({
+      scrollTop: error.$el.offset().top - 80
+    }, 300);
   }
 
   elToString($el) {

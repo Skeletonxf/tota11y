@@ -442,10 +442,28 @@ class InfoPanel {
 
             port.onMessage.addListener((json) => {
                 console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
+                if (json.scrollToError) {
+                    if (json.plugin === this.plugin.getName()) {
+                        this.scrollToError(json.errorId);
+                    }
+                }
             });
 
             // TODO: Hide this panel
         }
+    }
+
+    scrollToError(errorId) {
+        let error = this.errors.get(errorId);
+
+        if (error === undefined) {
+            return;
+        }
+
+        // Scroll to the error annoatation on the page smoothly
+        $('html, body').animate({
+            scrollTop: error.$el.offset().top - 80
+        }, 300);
     }
 
     elToString($el) {
