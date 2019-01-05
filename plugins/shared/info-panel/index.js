@@ -441,10 +441,22 @@ class InfoPanel {
             });
 
             port.onMessage.addListener((json) => {
-                console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
+                if (json.msg) {
+                    console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
+                }
                 if (json.scrollToError) {
                     if (json.plugin === this.plugin.getName()) {
                         this.scrollToError(json.errorId);
+                    }
+                }
+                if (json.highlightOn) {
+                    if (json.plugin === this.plugin.getName()) {
+                        this.highlightOn(json.errorId);
+                    }
+                }
+                if (json.highlightOff) {
+                    if (json.plugin === this.plugin.getName()) {
+                        this.highlightOff(json.errorId);
                     }
                 }
             });
@@ -464,6 +476,33 @@ class InfoPanel {
         $('html, body').animate({
             scrollTop: error.$el.offset().top - 80
         }, 300);
+    }
+
+    highlightOn(errorId) {
+        let error = this.errors.get(errorId);
+
+        if (error === undefined) {
+            return;
+        }
+
+        if (error.$highlight) {
+            error.$highlight.remove();
+        }
+
+        error.$highlight = annotate.highlight(error.$el);
+    }
+
+    highlightOff(errorId) {
+        let error = this.errors.get(errorId);
+
+        if (error === undefined) {
+            return;
+        }
+
+        if (error.$highlight) {
+            error.$highlight.remove();
+            error.$hightlight = null;
+        }
     }
 
     elToString($el) {

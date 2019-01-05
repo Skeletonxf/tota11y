@@ -268,12 +268,16 @@ class ActivePanel {
                     $desc.toggleClass(COLLAPSED_CLASS_NAME);
                     $trigger.toggleClass(COLLAPSED_CLASS_NAME);
                 }
-                //
-                // // Highlight the violating element on hover/focus. We do it
-                // // for both $trigger and $scroll to allow users to see the
-                // // highlight when scrolling to the element with the button.
-                // annotate.toggleHighlight(error.$el, $trigger);
-                // annotate.toggleHighlight(error.$el, $scroll);
+
+                /*
+                 * Highlight the violating element on hover/focus. We do it
+                 * for both $trigger and $scroll to allow users to see the
+                 * highlight when scrolling to the element with the button.
+                 */
+                $trigger.on("mouseenter focus", () => this.highlightOn(id));
+                $scroll.on("mouseenter focus", () => this.highlightOn(id));
+                $trigger.on("mouseleave blur", () => this.highlightOff(id));
+                $scroll.on("mouseleave blur", () => this.highlightOff(id));
 
                 // Add code from error.$el to the information panel
                 let errorHTML = error.$el[0].outerHTML;
@@ -349,6 +353,27 @@ class ActivePanel {
             scrollTop: error.$trigger.offset().top - 10
         }, 50);
         console.log("Finished scrolling");
+    }
+
+    /*
+     *
+     * We send the highlight on/off instructions over the Port
+     * to allow the InfoPanel to apply the highlighting to its
+     * annotations on the page.
+     */
+    highlightOn(errorId) {
+        this.port.postMessage({
+            highlightOn: true,
+            errorId: errorId,
+            plugin: this.plugin.getName(),
+        });
+    }
+    highlightOff(errorId) {
+        this.port.postMessage({
+            highlightOff: true,
+            errorId: errorId,
+            plugin: this.plugin.getName(),
+        });
     }
 
     destroy() {
