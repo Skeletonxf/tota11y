@@ -272,12 +272,6 @@ class ActivePanel {
                     });
                 });
 
-                // Expand the first violation
-                if (id === FIRST_ERROR_ID) {
-                    $desc.toggleClass(COLLAPSED_CLASS_NAME);
-                    $trigger.toggleClass(COLLAPSED_CLASS_NAME);
-                }
-
                 /*
                  * Highlight the violating element on hover/focus. We do it
                  * for both $trigger and $scroll to allow users to see the
@@ -328,6 +322,11 @@ class ActivePanel {
         // (a11y) Shift focus to the newly-opened info panel
         this.$el.focus();
 
+        if (this.errors.size > 0) {
+            // Jump to the first violation.
+            this.showError(FIRST_ERROR_ID);
+        }
+
         return this.$el;
     }
 
@@ -361,7 +360,6 @@ class ActivePanel {
         $('html, body').animate({
             scrollTop: error.$trigger.offset().top - 10
         }, 50);
-        console.log("Finished scrolling");
     }
 
     /*
