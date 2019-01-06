@@ -129,6 +129,13 @@ module.exports = (namespace) => {
                     errorEntry.show();
                 });
 
+                if (browser) {
+                    $innerHtml.hover(() => {
+                        errorEntry.highlightOn();
+                    }, () => {
+                        errorEntry.highlightOff();
+                    });
+                }
                 $innerHtml.hover(() => {
                     errorEntry.$trigger.addClass("trigger-highlight");
                 }, () => {

@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-01-05
+ * Date: 2019-01-06
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13593,6 +13593,15 @@ module.exports = namespace => {
           e.stopPropagation();
           errorEntry.show();
         });
+
+        if (browser) {
+          $innerHtml.hover(() => {
+            errorEntry.highlightOn();
+          }, () => {
+            errorEntry.highlightOff();
+          });
+        }
+
         $innerHtml.hover(() => {
           errorEntry.$trigger.addClass("trigger-highlight");
         }, () => {
@@ -13862,7 +13871,9 @@ class InfoPanelController {
 
         this.port = port;
         port.onMessage.addListener(json => {
-          console.log(`InfoPanel controller received msg: ${json.msg}, ${json}`);
+          if (json.msg) {
+            console.log(`InfoPanel controller received msg: ${json.msg}, ${json}`);
+          }
 
           if (json.registerActive) {
             // retrieve the plugin instance from the name
@@ -13913,7 +13924,9 @@ class ActivePanel {
     this.errors = new Map();
     this.$el = null;
     port.onMessage.addListener(json => {
-      console.log(`ActivePanel received msg: ${json.msg}, ${json}`);
+      if (json.msg) {
+        console.log(`ActivePanel received msg: ${json.msg}, ${json}`);
+      }
 
       if (json.setAbout) {
         //console.log(`About ${json.setAbout}`);
@@ -13951,6 +13964,18 @@ class ActivePanel {
       if (json.showError) {
         if (json.plugin === this.plugin.getName()) {
           this.showError(json.errorId);
+        }
+      }
+
+      if (json.highlightOn) {
+        if (json.plugin === this.plugin.getName()) {
+          this.doHighlightOn(json.errorId);
+        }
+      }
+
+      if (json.highlightOff) {
+        if (json.plugin === this.plugin.getName()) {
+          this.doHighlightOff(json.errorId);
         }
       }
     });
@@ -14038,15 +14063,11 @@ class ActivePanel {
           $desc.toggleClass(COLLAPSED_CLASS_NAME);
         }); // Hold references to our $trigger and $desc for this error
         // to access externally when messaged to via the Port.
+        // and to highlight the trigger when hovering over
+        // inline error labels on the page.
 
         error.$trigger = $trigger;
-        error.$desc = $desc; //
-        // // Attach the `$trigger` as well so can access it externally.
-        // // We use this to highlight the trigger when hovering over
-        // // inline error labels.
-        // error.$trigger = $trigger;
-        //
-        // Wire up the scroll-to-error button delegate
+        error.$desc = $desc; // Wire up the scroll-to-error button delegate
 
         let $scroll = $error.find(".tota11y-info-error-scroll");
         $scroll.click(e => {
@@ -14074,10 +14095,10 @@ class ActivePanel {
          */
 
 
-        $trigger.on("mouseenter focus", () => this.highlightOn(id));
-        $scroll.on("mouseenter focus", () => this.highlightOn(id));
-        $trigger.on("mouseleave blur", () => this.highlightOff(id));
-        $scroll.on("mouseleave blur", () => this.highlightOff(id)); // Add code from error.$el to the information panel
+        $trigger.on("mouseenter focus", () => this.sendHighlightOn(id));
+        $scroll.on("mouseenter focus", () => this.sendHighlightOn(id));
+        $trigger.on("mouseleave blur", () => this.sendHighlightOff(id));
+        $scroll.on("mouseleave blur", () => this.sendHighlightOff(id)); // Add code from error.$el to the information panel
 
         let errorHTML = error.$el[0].outerHTML; // Trim the code block if it is over 300 characters
 
@@ -14144,14 +14165,14 @@ class ActivePanel {
     console.log("Finished scrolling");
   }
   /*
-   *
-   * We send the highlight on/off instructions over the Port
+   * Sends the highlight on/off instructions over the Port
    * to allow the InfoPanel to apply the highlighting to its
    * annotations on the page.
    */
 
 
-  highlightOn(errorId) {
+  sendHighlightOn(errorId) {
+    // We provide no message as this will be sent very frequently
     this.port.postMessage({
       highlightOn: true,
       errorId: errorId,
@@ -14159,12 +14180,37 @@ class ActivePanel {
     });
   }
 
-  highlightOff(errorId) {
+  sendHighlightOff(errorId) {
+    // We provide no message as this will be sent very frequently
     this.port.postMessage({
       highlightOff: true,
       errorId: errorId,
       plugin: this.plugin.getName()
     });
+  }
+  /*
+   * Applies highlighting to the error entry's trigger.
+   */
+
+
+  doHighlightOn(errorId) {
+    let error = this.errors.get(errorId);
+
+    if (error === undefined) {
+      return;
+    }
+
+    error.$trigger.addClass("trigger-highlight");
+  }
+
+  doHighlightOff(errorId) {
+    let error = this.errors.get(errorId);
+
+    if (error === undefined) {
+      return;
+    }
+
+    error.$trigger.removeClass("trigger-highlight");
   }
 
   destroy() {
@@ -14505,7 +14551,6 @@ class InfoPanel {
               plugin: this.plugin.getName(),
               errorId: id
             });
-            return;
           } // Make sure info panel is visible
 
 
@@ -14523,7 +14568,16 @@ class InfoPanel {
         // inline error labels.
 
 
-        error.$trigger = $trigger; // Wire up the scroll-to-error button
+        error.$trigger = $trigger;
+
+        if (browser) {
+          // Also attatch functions to trigger a highlight
+          // in the sidebar which we can call externally.
+          error.highlightOn = () => this.sendHighlightOn(id);
+
+          error.highlightOff = () => this.sendHighlightOff(id);
+        } // Wire up the scroll-to-error button
+
 
         let $scroll = $error.find(".tota11y-info-error-scroll");
         $scroll.click(e => {
@@ -14627,18 +14681,22 @@ class InfoPanel {
 
         if (json.highlightOn) {
           if (json.plugin === this.plugin.getName()) {
-            this.highlightOn(json.errorId);
+            this.doHighlightOn(json.errorId);
           }
         }
 
         if (json.highlightOff) {
           if (json.plugin === this.plugin.getName()) {
-            this.highlightOff(json.errorId);
+            this.doHighlightOff(json.errorId);
           }
         }
       }); // TODO: Hide this panel
     }
   }
+  /*
+   * Scrolls the page to an error annotation.
+   */
+
 
   scrollToError(errorId) {
     let error = this.errors.get(errorId);
@@ -14652,8 +14710,35 @@ class InfoPanel {
       scrollTop: error.$el.offset().top - 80
     }, 300);
   }
+  /*
+   * Sends the highlight on/off instructions over the Port
+   * to allow the sidebar to highlight the trigger.
+   */
 
-  highlightOn(errorId) {
+
+  sendHighlightOn(errorId) {
+    // We provide no message as this will be sent very frequently
+    this.port.postMessage({
+      highlightOn: true,
+      errorId: errorId,
+      plugin: this.plugin.getName()
+    });
+  }
+
+  sendHighlightOff(errorId) {
+    // We provide no message as this will be sent very frequently
+    this.port.postMessage({
+      highlightOff: true,
+      errorId: errorId,
+      plugin: this.plugin.getName()
+    });
+  }
+  /*
+   * Applies highlighting to the page's annotations
+   */
+
+
+  doHighlightOn(errorId) {
     let error = this.errors.get(errorId);
 
     if (error === undefined) {
@@ -14666,8 +14751,12 @@ class InfoPanel {
 
     error.$highlight = annotate.highlight(error.$el);
   }
+  /*
+   * Removes highlighting from the page's annotations.
+   */
 
-  highlightOff(errorId) {
+
+  doHighlightOff(errorId) {
     let error = this.errors.get(errorId);
 
     if (error === undefined) {
@@ -14676,7 +14765,7 @@ class InfoPanel {
 
     if (error.$highlight) {
       error.$highlight.remove();
-      error.$hightlight = null;
+      error.$highlight = null;
     }
   }
 

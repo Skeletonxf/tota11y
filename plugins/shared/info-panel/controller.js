@@ -56,7 +56,9 @@ class InfoPanelController {
                 }
                 this.port = port;
                 port.onMessage.addListener((json) => {
-                    console.log(`InfoPanel controller received msg: ${json.msg}, ${json}`);
+                    if (json.msg) {
+                        console.log(`InfoPanel controller received msg: ${json.msg}, ${json}`);
+                    }
                     if (json.registerActive) {
                         // retrieve the plugin instance from the name
                         let index = namedPlugins.findIndex((p) => p === json.plugin);
@@ -106,7 +108,9 @@ class ActivePanel {
         this.$el = null;
 
         port.onMessage.addListener((json) => {
-            console.log(`ActivePanel received msg: ${json.msg}, ${json}`);
+            if (json.msg) {
+                console.log(`ActivePanel received msg: ${json.msg}, ${json}`);
+            }
             if (json.setAbout) {
                 //console.log(`About ${json.setAbout}`);
                 // convert HTML string back to jQuery HTML object
@@ -139,6 +143,16 @@ class ActivePanel {
             if (json.showError) {
                 if (json.plugin === this.plugin.getName()) {
                     this.showError(json.errorId);
+                }
+            }
+            if (json.highlightOn) {
+                if (json.plugin === this.plugin.getName()) {
+                    this.doHighlightOn(json.errorId);
+                }
+            }
+            if (json.highlightOff) {
+                if (json.plugin === this.plugin.getName()) {
+                    this.doHighlightOff(json.errorId);
                 }
             }
         });
@@ -236,15 +250,10 @@ class ActivePanel {
 
                 // Hold references to our $trigger and $desc for this error
                 // to access externally when messaged to via the Port.
+                // and to highlight the trigger when hovering over
+                // inline error labels on the page.
                 error.$trigger = $trigger;
                 error.$desc = $desc;
-
-                //
-                // // Attach the `$trigger` as well so can access it externally.
-                // // We use this to highlight the trigger when hovering over
-                // // inline error labels.
-                // error.$trigger = $trigger;
-                //
 
                 // Wire up the scroll-to-error button delegate
                 let $scroll = $error.find(".tota11y-info-error-scroll");
@@ -274,10 +283,10 @@ class ActivePanel {
                  * for both $trigger and $scroll to allow users to see the
                  * highlight when scrolling to the element with the button.
                  */
-                $trigger.on("mouseenter focus", () => this.highlightOn(id));
-                $scroll.on("mouseenter focus", () => this.highlightOn(id));
-                $trigger.on("mouseleave blur", () => this.highlightOff(id));
-                $scroll.on("mouseleave blur", () => this.highlightOff(id));
+                $trigger.on("mouseenter focus", () => this.sendHighlightOn(id));
+                $scroll.on("mouseenter focus", () => this.sendHighlightOn(id));
+                $trigger.on("mouseleave blur", () => this.sendHighlightOff(id));
+                $scroll.on("mouseleave blur", () => this.sendHighlightOff(id));
 
                 // Add code from error.$el to the information panel
                 let errorHTML = error.$el[0].outerHTML;
@@ -356,24 +365,48 @@ class ActivePanel {
     }
 
     /*
-     *
-     * We send the highlight on/off instructions over the Port
+     * Sends the highlight on/off instructions over the Port
      * to allow the InfoPanel to apply the highlighting to its
      * annotations on the page.
      */
-    highlightOn(errorId) {
+    sendHighlightOn(errorId) {
+        // We provide no message as this will be sent very frequently
         this.port.postMessage({
             highlightOn: true,
             errorId: errorId,
             plugin: this.plugin.getName(),
         });
     }
-    highlightOff(errorId) {
+    sendHighlightOff(errorId) {
+        // We provide no message as this will be sent very frequently
         this.port.postMessage({
             highlightOff: true,
             errorId: errorId,
             plugin: this.plugin.getName(),
         });
+    }
+
+    /*
+     * Applies highlighting to the error entry's trigger.
+     */
+    doHighlightOn(errorId) {
+        let error = this.errors.get(errorId);
+
+        if (error === undefined) {
+            return;
+        }
+
+        error.$trigger.addClass("trigger-highlight");
+    }
+
+    doHighlightOff(errorId) {
+        let error = this.errors.get(errorId);
+
+        if (error === undefined) {
+            return;
+        }
+
+        error.$trigger.removeClass("trigger-highlight");
     }
 
     destroy() {
