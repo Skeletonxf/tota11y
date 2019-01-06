@@ -464,6 +464,16 @@ class InfoPanel {
                         this.doHighlightOff(json.errorId);
                     }
                 }
+                if (json.showAnnotations) {
+                    if (json.plugin === this.plugin.getName()) {
+                        annotate.show();
+                    }
+                }
+                if (json.hideAnnotations) {
+                    if (json.plugin === this.plugin.getName()) {
+                        annotate.hide();
+                    }
+                }
             });
 
             // TODO: Hide this panel

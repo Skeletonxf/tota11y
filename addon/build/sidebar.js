@@ -13825,8 +13825,6 @@ module.exports = audit;
  *           contains the number of errors listed
  */
 let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-
-let annotate = __webpack_require__(/*! ../annotate */ "./plugins/shared/annotate/index.js")("info-panel");
 /*
  * The info panel is depended on by every plugin and therefore cannot
  * require the plugins because it would introduce a circular dependency.
@@ -14033,14 +14031,23 @@ class ActivePanel {
     if (this.summary) {
       console.log("Adding summary tab");
       $activeTab = this._addTab("Summary", this.summary);
-    } // Wire annotation toggling
+    } // Wire annotation toggling to go through Port as the annotate
+    // module is managed by the InfoPanel running in the content script.
 
 
     this.$el.find(".toggle-annotation").click(e => {
       if ($(e.target).prop("checked")) {
-        annotate.show();
+        this.port.postMessage({
+          msg: "Show annotations",
+          showAnnotations: true,
+          plugin: this.plugin.getName()
+        });
       } else {
-        annotate.hide();
+        this.port.postMessage({
+          msg: "Hide annotations",
+          hideAnnotations: true,
+          plugin: this.plugin.getName()
+        });
       }
     });
 
@@ -14223,9 +14230,7 @@ class ActivePanel {
       this.$el = null;
     }
 
-    this.port = null; // Remove the annotations
-
-    annotate.removeAll();
+    this.port = null;
   }
 
 } // copy tab method
@@ -14687,6 +14692,18 @@ class InfoPanel {
         if (json.highlightOff) {
           if (json.plugin === this.plugin.getName()) {
             this.doHighlightOff(json.errorId);
+          }
+        }
+
+        if (json.showAnnotations) {
+          if (json.plugin === this.plugin.getName()) {
+            annotate.show();
+          }
+        }
+
+        if (json.hideAnnotations) {
+          if (json.plugin === this.plugin.getName()) {
+            annotate.hide();
           }
         }
       }); // TODO: Hide this panel

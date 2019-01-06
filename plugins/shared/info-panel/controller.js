@@ -14,7 +14,6 @@
  */
 
 let $ = require("jquery");
-let annotate = require("../annotate")("info-panel");
 
 /*
  * The info panel is depended on by every plugin and therefore cannot
@@ -213,12 +212,21 @@ class ActivePanel {
             $activeTab = this._addTab("Summary", this.summary);
         }
 
-        // Wire annotation toggling
+        // Wire annotation toggling to go through Port as the annotate
+        // module is managed by the InfoPanel running in the content script.
         this.$el.find(".toggle-annotation").click((e) => {
             if ($(e.target).prop("checked")) {
-                annotate.show();
+                this.port.postMessage({
+                    msg: "Show annotations",
+                    showAnnotations: true,
+                    plugin: this.plugin.getName(),
+                })
             } else {
-                annotate.hide();
+                this.port.postMessage({
+                    msg: "Hide annotations",
+                    hideAnnotations: true,
+                    plugin: this.plugin.getName(),
+                })
             }
         });
 
@@ -420,9 +428,6 @@ class ActivePanel {
         }
 
         this.port = null;
-
-        // Remove the annotations
-        annotate.removeAll();
     }
 }
 // copy tab method
