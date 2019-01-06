@@ -14062,7 +14062,29 @@ class ActivePanel {
         $errors.append($error); // Wire up the expand/collapse trigger
 
         let $trigger = $error.find(".tota11y-info-error-trigger");
-        let $desc = $error.find(".tota11y-info-error-description");
+        let $desc = $error.find(".tota11y-info-error-description"); // Sync all checkbox states in the sidebar to the content
+        // script.
+        // We do this to make the text contrast previw work from
+        // the sidebar.
+
+        let $checkboxes = $desc.find('input[type="checkbox"]');
+
+        let _this = this;
+
+        $checkboxes.each(function (index) {
+          $(this).click(e => {
+            let checked = $(e.target).prop("checked");
+
+            _this.port.postMessage({
+              msg: "Checkbox sync",
+              checkboxSync: true,
+              checked: !!checked,
+              errorId: id,
+              plugin: _this.plugin.getName(),
+              checkboxIndex: index
+            });
+          });
+        });
         $trigger.click(e => {
           e.preventDefault();
           e.stopPropagation();
@@ -14579,7 +14601,11 @@ class InfoPanel {
           // in the sidebar which we can call externally.
           error.highlightOn = () => this.sendHighlightOn(id);
 
-          error.highlightOff = () => this.sendHighlightOff(id);
+          error.highlightOff = () => this.sendHighlightOff(id); // And attatch the `$desc` so we can access this when
+          // syncing checkboxes over the Port.
+
+
+          error.$desc = $desc;
         } // Wire up the scroll-to-error button
 
 
@@ -14706,6 +14732,12 @@ class InfoPanel {
             annotate.hide();
           }
         }
+
+        if (json.checkboxSync) {
+          if (json.plugin === this.plugin.getName()) {
+            this.doCheckboxSync(json.errorId, json.checkboxIndex, json.checked);
+          }
+        }
       }); // TODO: Hide this panel
     }
   }
@@ -14782,6 +14814,38 @@ class InfoPanel {
     if (error.$highlight) {
       error.$highlight.remove();
       error.$highlight = null;
+    }
+  }
+  /*
+   * Syncs the state of a checkbox in the InfoPanel's description
+   * in the content script to the state of the checkbox in
+   * the sidebar of the corresponding panel, error and checkbox.
+   *
+   * We use this to make the contrast preview checkbox work from
+   * the sidebar.
+   */
+
+
+  doCheckboxSync(errorId, checkboxIndex, checked) {
+    let error = this.errors.get(errorId);
+
+    if (error === undefined) {
+      return;
+    }
+
+    let $desc = error.$desc;
+    let $checkboxes = $desc.find('input[type="checkbox"]');
+    let checkbox = $checkboxes.get(checkboxIndex);
+
+    if (checkbox === undefined) {
+      return;
+    }
+
+    let $checkbox = $(checkbox);
+
+    if ($checkbox.prop("checked") !== checked) {
+      // Sync the checkbox state
+      $checkbox.click();
     }
   }
 

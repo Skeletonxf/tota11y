@@ -249,6 +249,26 @@ class ActivePanel {
                 let $trigger = $error.find(".tota11y-info-error-trigger");
                 let $desc = $error.find(".tota11y-info-error-description");
 
+                // Sync all checkbox states in the sidebar to the content
+                // script.
+                // We do this to make the text contrast previw work from
+                // the sidebar.
+                let $checkboxes = $desc.find('input[type="checkbox"]');
+                let _this = this;
+                $checkboxes.each(function(index) {
+                    $(this).click((e) => {
+                        let checked = $(e.target).prop("checked")
+                        _this.port.postMessage({
+                            msg: "Checkbox sync",
+                            checkboxSync: true,
+                            checked: !!checked,
+                            errorId: id,
+                            plugin: _this.plugin.getName(),
+                            checkboxIndex: index
+                        })
+                    });
+                });
+
                 $trigger.click((e) => {
                     e.preventDefault();
                     e.stopPropagation();
