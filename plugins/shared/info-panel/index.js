@@ -113,8 +113,6 @@ class InfoPanel {
                 description: this.elToString($description),
                 el: this.elToString($el),
                 id: id,
-                // TODO: Work out how to send highlight on hover
-                // information over JSON
             });
         }
         return error;
@@ -256,7 +254,7 @@ class InfoPanel {
         let hasContent = false;
 
         this.$el = (
-            <div className="tota11y tota11y-info" tabindex="-1">
+            <div className={"tota11y tota11y-info " + this.plugin.getName()} tabindex="-1">
                 <header className="tota11y-info-title">
                     {this.plugin.getTitle()}
                     <span className="tota11y-info-controls">

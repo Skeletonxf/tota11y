@@ -121,8 +121,6 @@ class ActivePanel {
                 this.summary = $(json.setSummary);
             }
             if (json.addError) {
-                console.log("Recieved error");
-                // TODO: Highlight information
                 let error = {
                     title: json.title,
                     // convert HTML strings back to jQuery HTML objects
@@ -181,7 +179,7 @@ class ActivePanel {
         let hasContent = false;
 
         this.$el = (
-            <div className="tota11y tota11y-info tota11y-sidebar" tabindex="-1">
+            <div className={"tota11y tota11y-info tota11y-sidebar " + this.plugin.getName()} tabindex="-1">
                 <header className="tota11y-info-title">
                     {this.plugin.getTitle()}
                     <span className="tota11y-info-controls">

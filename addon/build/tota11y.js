@@ -174,7 +174,7 @@ exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-outlined {\n  outline: 2px solid #7882c8 !important;\n}\n.tota11y-nothingness {\n  color: #888 !important;\n}\n.tota11y-sidebar .tota11y-info-section.active {\n  height: 500px !important;\n  max-height: 50vh !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-outlined {\n  outline: 2px solid #7882c8 !important;\n}\n.tota11y-nothingness {\n  color: #888 !important;\n}\n/* Only style the screen reader wand info panel section */\n.tota11y-sidebar.screen-reader-wand .tota11y-info-section.active {\n  height: 500px !important;\n  max-height: 50vh !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -13830,9 +13830,7 @@ class InfoPanel {
         title: title,
         description: this.elToString($description),
         el: this.elToString($el),
-        id: id // TODO: Work out how to send highlight on hover
-        // information over JSON
-
+        id: id
       });
     }
 
@@ -13947,7 +13945,7 @@ class InfoPanel {
 
     let hasContent = false;
     this.$el = buildElement("div", {
-      className: "tota11y tota11y-info",
+      className: "tota11y tota11y-info " + this.plugin.getName(),
       tabindex: "-1"
     }, buildElement("header", {
       className: "tota11y-info-title"
