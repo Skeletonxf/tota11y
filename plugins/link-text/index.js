@@ -43,6 +43,8 @@ class LinkTextPlugin extends Plugin {
         let stopWordsRE = new RegExp(`\\b(${stopWords.join("|")})\\b`, "ig");
 
         textContent = textContent
+            // FIXME: Strips entirety of non English link text
+            // creating false positive.
             // Strip leading non-alphabetical characters
             .replace(/[^a-zA-Z ]/g, "")
             // Remove the stopWords
