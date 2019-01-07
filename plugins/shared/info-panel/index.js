@@ -65,6 +65,37 @@ class InfoPanel {
         }
     }
 
+    /*
+     * Directly renders HTML/text to the info panel,
+     * replacing the active section.
+     *
+     * This is used for the screen reader tool where
+     * we need to update the info panel cheaply and often
+     * after initially rendering it rather than make
+     * it display error information or a summary.
+     */
+    directRender($html) {
+        if (typeof $html === "string") {
+            this.$el.find(".tota11y-info-section.active").text($html);
+        } else {
+            this.$el.find(".tota11y-info-section.active").html($html);
+        }
+        if (browser && this.port) {
+            // We provide no message as this will be sent very frequently
+            if (typeof $html === "string") {
+                this.port.postMessage({
+                    directRender: true,
+                    text: $html,
+                });
+            } else {
+                this.port.postMessage({
+                    directRender: true,
+                    html: this.elToString($html),
+                });
+            }
+        }
+    }
+
     /**
      * Adds an error to the errors tab. Also receives a jQuery element to
      * highlight on hover.
@@ -592,14 +623,14 @@ class InfoPanel {
     }
 
     elToString($el) {
-        if (typeof $el === 'string') {
+        if (typeof $el === "string") {
             // already a string
             return $el;
         }
         // Convert jQuery HTML object to HTML string
         return $el.map(function() {
-            // `this` refers to the DOM element provided function()
-            // is used and not => syntax
+            // `this` refers to the DOM element when function()
+            // is used but not => syntax
             return this.outerHTML;
         })
         // retrieve the array

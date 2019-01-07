@@ -37,14 +37,13 @@ class A11yTextWand extends Plugin {
             $(element).addClass("tota11y-outlined");
 
             if (!textAlternative) {
-                panel.$el.find(".tota11y-info-section.active").html(
+                panel.directRender(
                     <i className="tota11y-nothingness">
                         No text visible to a screen reader
                     </i>
                 );
             } else {
-                panel.$el.find(".tota11y-info-section.active").text(
-                    textAlternative);
+                panel.directRender(textAlternative);
             }
         });
     }

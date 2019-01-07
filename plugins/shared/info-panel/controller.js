@@ -139,6 +139,13 @@ class ActivePanel {
             if (json.render) {
                 this.render();
             }
+            if (json.directRender) {
+                if (json.text) {
+                    this.$el.find(".tota11y-info-section.active").text(json.text);
+                } else if (json.html) {
+                    this.$el.find(".tota11y-info-section.active").html($(json.html));
+                }
+            }
             if (json.showError) {
                 if (json.plugin === this.plugin.getName()) {
                     this.showError(json.errorId);

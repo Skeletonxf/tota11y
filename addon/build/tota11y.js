@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-01-06
+ * Date: 2019-01-07
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -174,7 +174,7 @@ exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-outlined {\n  outline: 2px solid #7882c8 !important;\n}\n.tota11y-nothingness {\n  color: #888 !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-outlined {\n  outline: 2px solid #7882c8 !important;\n}\n.tota11y-nothingness {\n  color: #888 !important;\n}\n.tota11y-sidebar .tota11y-info-section.active {\n  height: 500px !important;\n  max-height: 50vh !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -12337,11 +12337,11 @@ class A11yTextWand extends Plugin {
       $(element).addClass("tota11y-outlined");
 
       if (!textAlternative) {
-        panel.$el.find(".tota11y-info-section.active").html(buildElement("i", {
+        panel.directRender(buildElement("i", {
           className: "tota11y-nothingness"
         }, "No text visible to a screen reader"));
       } else {
-        panel.$el.find(".tota11y-info-section.active").text(textAlternative);
+        panel.directRender(textAlternative);
       }
     });
   }
@@ -13261,7 +13261,9 @@ class LinkTextPlugin extends Plugin {
     let stopWords = ["click", "tap", "go", "here", "learn", "more", "this", "page", "link", "about"]; // Generate a regex to match each of the stopWords
 
     let stopWordsRE = new RegExp(`\\b(${stopWords.join("|")})\\b`, "ig");
-    textContent = textContent // Strip leading non-alphabetical characters
+    textContent = textContent // FIXME: Strips entirety of non English link text
+    // creating false positive.
+    // Strip leading non-alphabetical characters
     .replace(/[^a-zA-Z ]/g, "") // Remove the stopWords
     .replace(stopWordsRE, ""); // Return whether or not there is any text left
 
@@ -13772,6 +13774,39 @@ class InfoPanel {
       });
     }
   }
+  /*
+   * Directly renders HTML/text to the info panel,
+   * replacing the active section.
+   *
+   * This is used for the screen reader tool where
+   * we need to update the info panel cheaply and often
+   * after initially rendering it rather than make
+   * it display error information or a summary.
+   */
+
+
+  directRender($html) {
+    if (typeof $html === "string") {
+      this.$el.find(".tota11y-info-section.active").text($html);
+    } else {
+      this.$el.find(".tota11y-info-section.active").html($html);
+    }
+
+    if (browser && this.port) {
+      // We provide no message as this will be sent very frequently
+      if (typeof $html === "string") {
+        this.port.postMessage({
+          directRender: true,
+          text: $html
+        });
+      } else {
+        this.port.postMessage({
+          directRender: true,
+          html: this.elToString($html)
+        });
+      }
+    }
+  }
   /**
    * Adds an error to the errors tab. Also receives a jQuery element to
    * highlight on hover.
@@ -14264,15 +14299,15 @@ class InfoPanel {
   }
 
   elToString($el) {
-    if (typeof $el === 'string') {
+    if (typeof $el === "string") {
       // already a string
       return $el;
     } // Convert jQuery HTML object to HTML string
 
 
     return $el.map(function () {
-      // `this` refers to the DOM element provided function()
-      // is used and not => syntax
+      // `this` refers to the DOM element when function()
+      // is used but not => syntax
       return this.outerHTML;
     }) // retrieve the array
     .get() // convert into a single string
