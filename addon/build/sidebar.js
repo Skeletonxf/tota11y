@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-01-07
+ * Date: 2019-01-10
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -14962,24 +14962,28 @@ if(false) {}
 var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
 function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
-    return "    <p>\n        Presentation tables should not have table headers (<code>th</code>)\n    </p>\n\n    <p>\n        If the table is not for presentation you can remove the presentation\n        role like so:\n        <pre><code>&lt;table&gt;<del>role=\"presentation\"</del>&lt;/table&gt;</code></pre>\n    </p>\n";
-},"3":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
-
-  return ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.noHeadings : depth0),{"name":"if","hash":{},"fn":container.program(4, data, 0),"inverse":container.program(6, data, 0),"data":data})) != null ? stack1 : "")
-    + "\n    <pre><code>&lt;table&gt;\n  &lt;tr&gt;\n    &lt;th>Header&lt;/th&gt;\n    &lt;th>Header&lt;/th&gt;\n  &lt;/tr&gt;\n  &lt;tr&gt;\n    &lt;td>Cell&lt;/td&gt;\n    &lt;td>Cell&lt;/td&gt;\n  &lt;/tr&gt;\n&lt;/table&gt;</code></pre>\n\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.noHeadings : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "    <p>\n        If the table is purely presentational you can mark it like so:\n        <pre><code>&lt;table role=\"presentation\"&gt;&lt;/table&gt;</code></pre>\n    </p>\n";
-},"4":function(container,depth0,helpers,partials,data) {
-    return "        <p>\n            You can give this table headings with <code>th</code> like so\n        </p>\n";
-},"6":function(container,depth0,helpers,partials,data) {
-    return "        <p>Headings must be on the entire first column, row, or both</p>\n";
-},"8":function(container,depth0,helpers,partials,data) {
-    return "        <p>Headings can be on the first column, row, or both</p>\n";
-},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.presentation : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "");
+  return "    <p>\n        You can give this table headings with <code>th</code> like so\n    </p>\n"
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.data : depth0)) != null ? stack1.tableBodys : stack1),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.program(4, data, 0),"data":data})) != null ? stack1 : "")
+    + "\n    <p>Headings should be on the entire first column, row, or both</p>\n\n    <p>\n        If the table is purely presentational (not tabulating data) you can mark it like so:\n        <pre><code>&lt;table role=\"presentation\"&gt;&lt;/table&gt;</code></pre>\n    </p>\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    return "        <pre><code>&lt;table&gt;\n  &lt;thead&gt;\n    &lt;tr&gt;\n      &lt;th&gt;Header&lt;/th&gt;\n      &lt;th&gt;Header&lt;/th&gt;\n    &lt;tr/&gt;\n  &lt;/thead&gt;\n  &lt;tbody&gt;\n...\n</code></pre>\n";
+},"4":function(container,depth0,helpers,partials,data) {
+    return "\n    <pre><code>&lt;table&gt;\n  &lt;tr&gt;\n    &lt;th>Header&lt;/th&gt;\n    &lt;th>Header&lt;/th&gt;\n  &lt;/tr&gt;\n  &lt;tr&gt;\n    &lt;td>Cell&lt;/td&gt;\n    &lt;td>Cell&lt;/td&gt;\n...\n</code></pre>\n";
+},"6":function(container,depth0,helpers,partials,data) {
+    return "    <p>\n        The first table body looks like a table head.\n        You can mark it as a head as <code>&lt;thead&gt;</code> instead of <code>&lt;tbody&gt;</code>\n    </p>\n";
+},"8":function(container,depth0,helpers,partials,data) {
+    return "    <p>\n        Tables should have at most one &lt;thead&gt; This table has more than one.\n    </p>\n    <p>\n        You should move all the table rows (&lt;tr&gt;) into a single &lt;thead&gt; like so:\n    </p>\n\n    <pre><code>&lt;table&gt;\n  &lt;thead&gt;\n    &lt;tr&gt;\n      &lt;th&gt;First table header&lt;th/&gt;\n    &lt;tr/&gt;\n    &lt;tr&gt;\n      &lt;th&gt;Second table header&lt;th/&gt;\n...\n</code></pre>\n";
+},"10":function(container,depth0,helpers,partials,data) {
+    return "    <p>\n        Presentational tables should not have table headers (<code>&lt;th&gt;</code>) or heads (<code>&lt;thead&gt;</code>)\n    </p>\n\n    <p>\n        If the table is not for presentation only you can remove the presentation\n        role like so:\n        <pre><code>&lt;table&gt;<del>role=\"presentation\"</del>&lt;/table&gt;</code></pre>\n    </p>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.noHeadings : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.headInData : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.tooManyHeads : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.presentation : depth0),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
 
 /***/ }),
@@ -15014,65 +15018,132 @@ class TablesPlugin extends Plugin {
   }
 
   getDescription() {
-    return "Identifies tables with missing or incomplete headers";
+    return "Identifies tables with markup problems";
   }
 
-  errorMessage($el) {
+  errorMessage($el, presentation, noHeadings, tooManyHeads, headInData, dataInHead, data) {
     return errorTemplate({
       id: $el.attr("id"),
-      presentation: $el.attr("role") === "presentation",
-      noHeadings: $el.find('th').length === 0,
+      presentation: presentation,
+      noHeadings: noHeadings,
+      tooManyHeads: tooManyHeads,
+      headInData: headInData,
+      dataInHead: dataInHead,
+      data: data,
       tagName: $el.prop("tagName").toLowerCase()
     });
   }
 
   run() {
-    /*
-    ariaOnReservedElement,ariaOwnsDescendant,ariaRoleNotScoped,audioWithoutControls,badAriaAttribute,badAriaAttributeValue,badAriaRole,controlsWithoutLabel,duplicateId,focusableElementNotVisibleAndNotAriaHidden,humanLangMissing,imagesWithoutAltText,linkWithUnclearPurpose,lowContrastElements,mainRoleOnInappropriateElement,elementsWithMeaningfulBackgroundImage,multipleAriaOwners,multipleLabelableElementsPerLabel,nonExistentRelatedElement,pageWithoutTitle,requiredAriaAttributeMissing,requiredOwnedAriaRoleMissing,roleTooltipRequiresDescribedby,tabIndexGreaterThanZero,tableHasAppropriateHeaders,uncontrolledTabpanel,unfocusableElementsWithOnClick,unsupportedAriaAttribute,videoWithoutCaptions
-    */
-    let {
-      result,
-      elements
-    } = audit("tableHasAppropriateHeaders"); // Find all presentation tables that also have headers
+    let elements = $("table");
 
-    let presentationElements = $('table[role="presentation"]').filter(function () {
-      return $(this).find("th").length !== 0;
-    }).get();
+    let _this = this;
 
-    if (result === "FAIL") {
-      // Audit misses tables with headings that shouldn't have them
-      elements = [...new Set([...elements, ...presentationElements])];
-    } else {
-      if (presentationElements.length !== 0) {
-        result = "FAIL";
-        elements = presentationElements;
-      }
-    }
+    if (elements.length > 0) {
+      elements.each(function (index) {
+        let $el = $(this);
+        let data = {
+          presentational: $el.attr("role") === "presentation",
+          noHeadings: $el.find("th").length === 0,
+          heads: $el.find("thead").length,
+          tableBodys: $el.children("tbody").length > 0,
+          rootTableRows: $el.children("tr").length > 0
+        };
+        let presentation = data.presentational && !data.noHeadings;
+        let noHeadings = !data.presentational && data.noHeadings;
+        let tooManyHeads = data.heads > 1;
+        let dataInHead = false;
+        let headInData = false;
+        let problems = 0;
+        let title = "Table has problem(s) with its markup";
 
-    if (result === "FAIL") {
-      elements.forEach(element => {
-        let $el = $(element);
-        let presentation = $el.attr("role") === "presentation";
-        let noHeadings = $el.find("th").length === 0;
-        let title = "Table has a problem with its headers";
+        if (tooManyHeads) {
+          title = "Table has too many &lt;thead&gt;s";
+          problems += 1;
+        }
 
-        if (presentation && !noHeadings) {
+        if (presentation) {
           title = "Presentational table should not have headers";
+          problems += 1;
         }
 
-        if (!presentation && noHeadings) {
+        if (noHeadings) {
           title = "Table is missing headers";
+          problems += 1;
         }
 
-        if (presentation && noHeadings) {
-          // false positive from audit
-          return;
-        } // Place an error label on the element and register it as an
-        // error in the info panel
+        if (!noHeadings && !presentation) {
+          let $tableHead = $el.children("thead");
+
+          if ($tableHead.length === 0) {
+            let $rows;
+            let $tableBody = $el.children('tbody');
+
+            if ($tableBody.length === 0) {
+              $rows = $el.children('tr');
+            } else {
+              $rows = $tableBody.children("tr");
+            }
+
+            let $firstRow = $rows.first();
+
+            if ($tableBody.length > 0 && $firstRow.children("th").length > 0 && $firstRow.children("td").length === 0) {
+              title = "First table body is a table head";
+              headInData = true;
+              problems += 1;
+            }
+          } else {
+            if ($tableHead.children("td")) {
+              title = "Table head contains data cells";
+              dataInHead = true;
+              problems += 1;
+            }
+          }
+        }
+
+        if (problems > 1) {
+          title = "Table has problem(s) with its markup";
+        } // if (false) {
+        //     // Retrieve the table rows, which may be
+        //     // inside <tbody> elements or directly
+        //     // inside the <table> element but only
+        //     // one of the two.
+        //     let tableBody = $el.children('tbody');
+        //     let rows;
+        //     if (tableBody.length === 0) {
+        //         rows = $el.children('tr');
+        //     } else {
+        //         rows = tableBody.children("tr");
+        //     }
+        //
+        //     // Determine the table head(s)
+        //     // There can only be at most one thead but there
+        //     // may also be headers in table rows.
+        //     let tableHeads = [ $el.children('thead') ];
+        //     rows.each(function(index) {
+        //         let hasHeaders = $(this).children('th').length > 0;
+        //         let hasData = $(this).children('td').length > 0;
+        //         if ((index === 0)
+        //                 && hasHeaders
+        //                 && !hasData
+        //                 && (tableHeads[0].length === 0)) {
+        //             // assume the first table row is the header
+        //             tableHeads[0] = $(this);
+        //         } else if (hasHeaders) {
+        //             // table has headers on the rows somewhere
+        //             tableHeads.push($(this));
+        //         }
+        //     });
+        // }
 
 
-        let entry = this.error(title, $(this.errorMessage($el)), $el);
-        annotate.errorLabel($el, "", title, entry);
+        if (problems > 0) {
+          // Place an error label on the element and register it as an
+          // error in the info panel
+          let entry = _this.error(title, $(_this.errorMessage($el, presentation, noHeadings, tooManyHeads, headInData, dataInHead, data)), $el);
+
+          annotate.errorLabel($el, "", title, entry);
+        }
       });
     }
   }
