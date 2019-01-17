@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-01-10
+ * Date: 2019-01-17
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13229,6 +13229,24 @@ let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("link-text");
 
+let stopWords = ["click", "tap", "go", "here", "learn", "more", "this", "page", "link", "about"]; // Generate a regex to match each of the stopWords
+
+let stopWordsRE = new RegExp(`\\b(${stopWords.join("|")})\\b`, "ig");
+/*
+ * JavaScript does not yet natively support unicode aware regex
+ * everywhere.
+ *
+ * As all we need to do is strip out any punctuation this
+ * extremely long string contains all punctuation for matching in
+ * a regex.
+ */
+
+let punctuation = `\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_\`{|}~`; // This does not match numbers in the text.
+// Removing numbers creates false positives if a link text really is
+// about 5,789,911 articles.
+
+let matchNonAlphanumericRE = new RegExp(`[${punctuation} ]`, "g");
+
 class LinkTextPlugin extends Plugin {
   getName() {
     return "link-text";
@@ -13245,7 +13263,7 @@ class LinkTextPlugin extends Plugin {
         `;
   }
   /**
-   * Slightly modified unclear text checking that has been refactored into
+   * Modified unclear text checking that has been refactored into
    * a single method to be called with arbitrary strings.
    *
    * Original: https://github.com/GoogleChrome/accessibility-developer-tools/blob/9183b21cb0a02f5f04928f5cb7cb339b6bbc9ff8/src/audits/LinkWithUnclearPurpose.js#L55-67
@@ -13258,13 +13276,8 @@ class LinkTextPlugin extends Plugin {
       return false;
     }
 
-    let stopWords = ["click", "tap", "go", "here", "learn", "more", "this", "page", "link", "about"]; // Generate a regex to match each of the stopWords
-
-    let stopWordsRE = new RegExp(`\\b(${stopWords.join("|")})\\b`, "ig");
-    textContent = textContent // FIXME: Strips entirety of non English link text
-    // creating false positive.
-    // Strip leading non-alphabetical characters
-    .replace(/[^a-zA-Z ]/g, "") // Remove the stopWords
+    textContent = textContent // Strip punctuation and spaces
+    .replace(matchNonAlphanumericRE, "") // Remove the stopWords
     .replace(stopWordsRE, ""); // Return whether or not there is any text left
 
     return textContent.trim() !== "";
@@ -13291,6 +13304,11 @@ class LinkTextPlugin extends Plugin {
 
 
       if (axs.utils.isElementOrAncestorHidden(el)) {
+        return;
+      } // Ignore non links
+
+
+      if (el.href === "") {
         return;
       } // Extract the text alternatives for this element: including
       // its text content, aria-label/labelledby, and alt text for
@@ -14478,7 +14496,10 @@ class TablesPlugin extends Plugin {
         if (noHeadings) {
           title = "Table is missing headers";
           problems += 1;
-        }
+        } // Only scan into table markup for more complex
+        // problems if there are not more simpler ones that
+        // this might be confusing to see listed with.
+
 
         if (!noHeadings && !presentation) {
           let $tableHead = $el.children("thead");

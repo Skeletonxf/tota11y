@@ -7,6 +7,27 @@ let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("link-text");
 
+let stopWords = [
+    "click", "tap", "go", "here", "learn", "more", "this", "page",
+    "link", "about"
+];
+// Generate a regex to match each of the stopWords
+let stopWordsRE = new RegExp(`\\b(${stopWords.join("|")})\\b`, "ig");
+
+/*
+ * JavaScript does not yet natively support unicode aware regex
+ * everywhere.
+ *
+ * As all we need to do is strip out any punctuation this
+ * extremely long string matches all punctuation in a regex.
+ */
+let punctuation = `\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_\`{|}~`;
+
+// This does not match numbers in the text.
+// Removing numbers creates false positives if a link text really is
+// about 5,789,911 articles.
+let matchNonAlphanumericRE = new RegExp(`[${punctuation} ]`, "g");
+
 class LinkTextPlugin extends Plugin {
     getName() {
         return "link-text";
@@ -24,7 +45,7 @@ class LinkTextPlugin extends Plugin {
     }
 
     /**
-     * Slightly modified unclear text checking that has been refactored into
+     * Modified unclear text checking that has been refactored into
      * a single method to be called with arbitrary strings.
      *
      * Original: https://github.com/GoogleChrome/accessibility-developer-tools/blob/9183b21cb0a02f5f04928f5cb7cb339b6bbc9ff8/src/audits/LinkWithUnclearPurpose.js#L55-67
@@ -35,18 +56,9 @@ class LinkTextPlugin extends Plugin {
             return false;
         }
 
-        let stopWords = [
-            "click", "tap", "go", "here", "learn", "more", "this", "page",
-            "link", "about"
-        ];
-        // Generate a regex to match each of the stopWords
-        let stopWordsRE = new RegExp(`\\b(${stopWords.join("|")})\\b`, "ig");
-
         textContent = textContent
-            // FIXME: Strips entirety of non English link text
-            // creating false positive.
-            // Strip leading non-alphabetical characters
-            .replace(/[^a-zA-Z ]/g, "")
+            // Strip punctuation and spaces
+            .replace(matchNonAlphanumericRE, "")
             // Remove the stopWords
             .replace(stopWordsRE, "");
 
@@ -76,6 +88,11 @@ class LinkTextPlugin extends Plugin {
 
             // Ignore hidden links
             if (axs.utils.isElementOrAncestorHidden(el)) {
+                return;
+            }
+
+            // Ignore non links
+            if (el.href === "") {
                 return;
             }
 
