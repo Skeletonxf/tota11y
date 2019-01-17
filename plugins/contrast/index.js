@@ -94,6 +94,29 @@ class ContrastPlugin extends Plugin {
                     return;
             }
 
+            // Ignore elements positioned off screen
+            {
+              let viewportRect = el.getBoundingClientRect();
+
+              // apply the current scrolling to the bounding rectangle
+              // so the values are relative to the document rather
+              // than the viewport
+              let rect = {
+                top: viewportRect.top + window.scrollY,
+                left: viewportRect.left + window.scrollX,
+                right: viewportRect.right + window.scrollX,
+                bottom: viewportRect.bottom + window.scrollY,
+              }
+
+              let documentWidth = $(document).width();
+              let documentHeight = $(document).height();
+
+              if ((rect.left < 0 || rect.right > documentWidth)
+                      && (rect.top < 0 || rect.bottom > documentHeight)) {
+                  return;
+              }
+            }
+
             let style = getComputedStyle(el);
             let bgColor = axs.utils.getBgColor(style, el);
             let fgColor = axs.utils.getFgColor(style, el, bgColor);
@@ -126,7 +149,7 @@ class ContrastPlugin extends Plugin {
                 }
             } else {
                 if (!combinations[key]) {
-                    // We do not show duplicates in the errors panel, however,
+                    // We do not show duplicates in the errors panel
                     // to keep the output from being overwhelming
                     let error = this.addError({
                         style,

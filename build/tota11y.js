@@ -12731,8 +12731,28 @@ class ContrastPlugin extends Plugin {
 
       if (axs.utils.elementIsTransparent(el) || axs.utils.elementHasZeroArea(el)) {
         return;
-      }
+      } // ignore elements positioned off screen
 
+
+      {
+        let viewportRect = el.getBoundingClientRect(); // apply the current scrolling to the bounding rectangle
+        // so the values are relative to the document rather
+        // than the viewport
+
+        let rect = {
+          top: viewportRect.top + window.scrollY,
+          left: viewportRect.left + window.scrollX,
+          right: viewportRect.right + window.scrollX,
+          bottom: viewportRect.bottom + window.scrollY
+        };
+        let documentWidth = $(document).width();
+        let documentHeight = $(document).height();
+
+        if ((rect.left < 0 || rect.right > documentWidth) && (rect.top < 0 || rect.bottom > documentHeight)) {
+          console.log(el);
+          return;
+        }
+      }
       let style = getComputedStyle(el);
       let bgColor = axs.utils.getBgColor(style, el);
       let fgColor = axs.utils.getFgColor(style, el, bgColor);
@@ -13237,8 +13257,7 @@ let stopWordsRE = new RegExp(`\\b(${stopWords.join("|")})\\b`, "ig");
  * everywhere.
  *
  * As all we need to do is strip out any punctuation this
- * extremely long string contains all punctuation for matching in
- * a regex.
+ * extremely long string matches all punctuation in a regex.
  */
 
 let punctuation = `\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_\`{|}~`; // This does not match numbers in the text.
