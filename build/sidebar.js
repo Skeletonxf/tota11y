@@ -353,7 +353,7 @@ exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-swatches {\n  margin-left: 5px !important;\n  margin-right: 5px !important;\n  position: relative !important;\n  top: 1px !important;\n}\n.tota11y-swatch {\n  border: 1px solid #000 !important;\n  display: inline-block !important;\n  height: 12px !important;\n  width: 12px !important;\n}\n.tota11y-contrast-suggestion {\n  margin: 0 0 15px 15px !important;\n}\n.tota11y-color-hexes {\n  font-family: monospace !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-swatches {\n  margin-left: 5px !important;\n  margin-right: 5px !important;\n  position: relative !important;\n  top: 1px !important;\n}\n.tota11y-swatch {\n  border: 1px solid #000 !important;\n  display: inline-block !important;\n  height: 12px !important;\n  width: 12px !important;\n}\n.tota11y-contrast-suggestion {\n  margin: 0 0 15px 15px !important;\n}\n.tota11y-color-hexes {\n  font-family: monospace !important;\n}\n.tota11y-info-about-title {\n  padding-bottom: 10px !important;\n  display: block !important;\n}\n.tota11y-info-about-title-link {\n  text-decoration: underline !important;\n  font-weight: bold !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -12697,6 +12697,21 @@ module.exports = Plugin;
 
 /***/ }),
 
+/***/ "./plugins/contrast/about.handlebars":
+/*!*******************************************!*\
+  !*** ./plugins/contrast/about.handlebars ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div>\n<div class=\"tota11y-info-about-title\">\n    <a href=\"https://www.w3.org/TR/WCAG21/#contrast-minimum\" target=\"_blank\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.4.3\n        </span>\n    </a>\n</div>\n<p>\n    Text with low contract can be hard to read for some users, particularly\n    when the text is small or in direct sunlight.\n</p>\n<p>\n    The Web Content Accessibility Guidelines give criteria for minimum text\n    contrast standards, which depend on the size of the text.\n</p>\n<p>\n    This tool cannot identify text contrast against background images or\n    in images of text but these should also meet the minimum text contrast\n    guidelines to ensure that your website is accessible to people with\n    visual impairments.\n</p>\n</div>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/contrast/error-description.handlebars":
 /*!*******************************************************!*\
   !*** ./plugins/contrast/error-description.handlebars ***!
@@ -12777,6 +12792,8 @@ let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/a
 let titleTemplate = __webpack_require__(/*! ./error-title.handlebars */ "./plugins/contrast/error-title.handlebars");
 
 let descriptionTemplate = __webpack_require__(/*! ./error-description.handlebars */ "./plugins/contrast/error-description.handlebars");
+
+let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/contrast/about.handlebars");
 
 __webpack_require__(/*! ./style.less */ "./plugins/contrast/style.less");
 
@@ -12927,6 +12944,7 @@ class ContrastPlugin extends Plugin {
         annotate.errorLabel($(el), contrastRatio, "This contrast is insufficient at this size.", combinations[key]);
       }
     });
+    this.about($(aboutTemplate()));
   }
 
   cleanup() {
@@ -14361,7 +14379,10 @@ const INITIAL_PANEL_MARGIN_PX = 10;
 const COLLAPSED_CLASS_NAME = "tota11y-collapsed";
 const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
 const PORT_NAME = "info-panel";
-const FIRST_ERROR_ID = 0;
+const FIRST_ERROR_ID = 0; // Automatically hide this InfoPanel if there is a browser
+// object (running as a WebExtension) and this is toggled on
+// We will want to toggle this auto hiding off for debugging.
+
 const WEBEXT_HIDE_IN_PAGE = true && !!browser;
 
 class InfoPanel {

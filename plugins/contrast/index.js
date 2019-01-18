@@ -9,6 +9,7 @@ let annotate = require("../shared/annotate")("contrast");
 
 let titleTemplate = require("./error-title.handlebars");
 let descriptionTemplate = require("./error-description.handlebars");
+let aboutTemplate = require("./about.handlebars");
 
 require("./style.less");
 
@@ -182,6 +183,8 @@ class ContrastPlugin extends Plugin {
                     combinations[key]);
             }
         });
+
+        this.about($(aboutTemplate()));
     }
 
     cleanup() {
