@@ -345,6 +345,18 @@ exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/index.js!./node_modules/postcss-loader/src/index.js?!./node_modules/less-loader/dist/cjs.js!./plugins/alt-text/style.less":
+/*!*************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader!./node_modules/postcss-loader/src??postcss!./node_modules/less-loader/dist/cjs.js!./plugins/alt-text/style.less ***!
+  \*************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
+exports.push([module.i, ".tota11y-info-resources {\n  font-weight: bold !important;\n}\n.tota11y-info-resources li {\n  margin-left: 10px !important;\n}\n.tota11y-info-resources a {\n  text-decoration: underline !important;\n}\n", ""]);
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/index.js!./node_modules/postcss-loader/src/index.js?!./node_modules/less-loader/dist/cjs.js!./plugins/contrast/style.less":
 /*!*************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader!./node_modules/postcss-loader/src??postcss!./node_modules/less-loader/dist/cjs.js!./plugins/contrast/style.less ***!
@@ -12520,24 +12532,48 @@ let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/a
 
 let audit = __webpack_require__(/*! ../shared/audit */ "./plugins/shared/audit.js");
 
+__webpack_require__(/*! ./style.less */ "./plugins/alt-text/style.less");
+
 class AltTextPlugin extends Plugin {
   getName() {
     return "alt-text";
   }
 
   getTitle() {
-    return "Image alt-text";
+    return "Alternative text";
   }
 
   getDescription() {
-    return "Annotates images without alt text";
+    return "Annotates elements without text alternatives";
   }
 
-  reportError(el) {
+  reportImageError(el) {
     let $el = $(el);
     let src = $el.attr("src") || "..";
     let title = "Image is missing alt text";
-    let $error = buildElement("div", null, buildElement("p", null, "This image does not have an associated \"alt\" attribute. Please specify the alt text for this image like so:"), buildElement("pre", null, buildElement("code", null, `&lt;img src="${src}" alt="Image description"&gt`)), buildElement("p", null, "If the image is decorative and does not convey any information to the surrounding content, however, you may leave this \"alt\" attribute empty, or specify a \"role\" attribute with a value of \"presentation.\""), buildElement("pre", null, buildElement("code", null, `&lt;img src="${src}" alt=""&gt;`, buildElement("br", null), `&lt;img src="${src}" role="presentation"&gt;`))); // Place an error label on the element and register it as an
+    let $error = buildElement("div", null, buildElement("p", null, "This image does not have an associated \"alt\" attribute. Please specify a short alt text for this image like so to convey the same information textually:"), buildElement("pre", null, buildElement("code", null, `&lt;img src="${src}" alt="Image description"&gt`)), buildElement("p", null, "If the image is decorative and does not convey any information to the surrounding content then you should leave this \"alt\" attribute empty, or specify a \"role\" attribute with a value of \"presentation\" so assistive technologies can ignore the image."), buildElement("pre", null, buildElement("code", null, `&lt;img src="${src}" alt=""&gt;`, buildElement("br", null), `&lt;img src="${src}" role="presentation"&gt;`)), buildElement("p", null, "Extended text descriptions can be provided using ", buildElement("a", {
+      href: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-describedby_attribute",
+      target: "_blank"
+    }, buildElement("code", null, "aria-describedby")))); // Place an error label on the element and register it as an
+    // error in the info panel
+
+    let entry = this.error(title, $error, $el);
+    annotate.errorLabel($el, "", title, entry);
+  }
+
+  reportAudiovisualError(el, elementName) {
+    let $el = $(el);
+    let elementCapitalised = elementName.charAt(0).toUpperCase() + elementName.slice(1);
+    let title = `${elementCapitalised} is missing text alternatives`;
+    let $error = buildElement("div", null, buildElement("p", null, "This ", buildElement("code", null, elementName), " element does not have any text alternatives. Please provide some text alternatives to convey as much of the same information textually as possible."), buildElement("p", null, "Breif fallback text may be given with the enclosed text like so, which will be displayed if the browser cannot play the file types:"), buildElement("pre", null, buildElement("code", null, `&lt;${elementName}&gt;Description&lt;/${elementName}&gt;`)), buildElement("p", null, "Further text alternatives can be given with ARIA and the ", buildElement("code", null, "track"), " element. For instance if your webpage contains the transcript of the ", elementName, " then you could use ARIA like so:"), buildElement("pre", null, buildElement("code", null, `&lt;${elementName} aria-describedby="transcriptId"&gt;`)), buildElement("p", null, "If you can provide a ", buildElement("code", null, "track"), " element users will be able to access timed text data such as captions."), buildElement("p", null, "If this element is purely decorative such as a background video then you should specify a \"role\" attribute with a value of \"presentation\" so assistive technologies can ignore the element."), buildElement("pre", null, buildElement("code", null, `&lt;${elementName} role="presentation"&gt;`)), buildElement("div", {
+      class: "tota11y-info-resources"
+    }, buildElement("p", null, "Resources"), buildElement("ul", null, buildElement("li", null, buildElement("a", {
+      href: "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track",
+      target: "_blank"
+    }, "The track element")), buildElement("li", null, buildElement("a", {
+      href: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA",
+      target: "_blank"
+    }, "ARIA"))))); // Place an error label on the element and register it as an
     // error in the info panel
 
     let entry = this.error(title, $error, $el);
@@ -12553,7 +12589,7 @@ class AltTextPlugin extends Plugin {
     } = audit("imagesWithoutAltText");
 
     if (result === "FAIL") {
-      elements.forEach(this.reportError.bind(this));
+      elements.forEach(this.reportImageError.bind(this));
     } // Additionally, label presentational images
 
 
@@ -12561,6 +12597,24 @@ class AltTextPlugin extends Plugin {
       // "Error" labels have a warning icon and expanded text on hover,
       // but we add a special `warning` class to color it differently.
       annotate.errorLabel($(el), "", "This image is decorative").addClass("tota11y-label-warning");
+    }); // Also check audio and video elements for captions and text
+    // alternatives of any kind
+
+    $(`audio, video`).each((i, el) => {
+      if (axs.utils.isElementOrAncestorHidden(el)) {
+        // skip hidden elements
+        return;
+      }
+
+      let $el = $(el);
+      let textAlternatives = {};
+      axs.properties.findTextAlternatives(el, textAlternatives);
+      let noTextAlternatives = Object.keys(textAlternatives).length === 0;
+      let hasCaptions = $el.find("track[kind=captions]").length > 0;
+
+      if (noTextAlternatives && !hasCaptions) {
+        this.reportAudiovisualError(el, $el.prop("tagName").toLowerCase());
+      }
     });
   }
 
@@ -12572,6 +12626,25 @@ class AltTextPlugin extends Plugin {
 
 module.exports = AltTextPlugin;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./utils/element */ "./utils/element.js")))
+
+/***/ }),
+
+/***/ "./plugins/alt-text/style.less":
+/*!*************************************!*\
+  !*** ./plugins/alt-text/style.less ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(/*! !../../node_modules/css-loader!../../node_modules/postcss-loader/src??postcss!../../node_modules/less-loader/dist/cjs.js!./style.less */ "./node_modules/css-loader/index.js!./node_modules/postcss-loader/src/index.js?!./node_modules/less-loader/dist/cjs.js!./plugins/alt-text/style.less");
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(/*! ../../node_modules/style-loader/addStyles.js */ "./node_modules/style-loader/addStyles.js")(content, {});
+// Hot Module Replacement
+if(false) {}
 
 /***/ }),
 
