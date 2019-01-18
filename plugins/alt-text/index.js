@@ -152,24 +152,36 @@ class AltTextPlugin extends Plugin {
             elements.forEach(this.reportImageError.bind(this));
         }
 
-        // Additionally, label presentational images
-        $(`img[role="presentation"], img[alt=""]`).each((i, el) => {
+        // Additionally, label presentational elements
+        $(`img[role="presentation"],
+                img[alt=""],
+                video[role="presentation"],
+                audio[role="presentation"]`).each((i, el) => {
             // "Error" labels have a warning icon and expanded text on hover,
             // but we add a special `warning` class to color it differently.
+            let $el = $(el);
             annotate
-                .errorLabel($(el), "", "This image is decorative")
+                .errorLabel(
+                    $el,
+                    "",
+                    `This ${$el.prop("tagName").toLowerCase()} is decorative`)
                 .addClass("tota11y-label-warning");
         });
 
         // Also check audio and video elements for captions and text
         // alternatives of any kind
         $(`audio, video`).each((i, el) => {
+            let $el = $(el);
+
             if (axs.utils.isElementOrAncestorHidden(el)) {
                 // skip hidden elements
                 return;
             }
 
-            let $el = $(el);
+            if ($el.attr("role") === "presentation") {
+                // ignore presentational elements
+                return;
+            }
 
             let textAlternatives = {};
             axs.properties.findTextAlternatives(el, textAlternatives);
