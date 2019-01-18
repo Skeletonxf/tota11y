@@ -26,6 +26,11 @@ const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
 const PORT_NAME = "info-panel";
 const FIRST_ERROR_ID = 0;
 
+// Automatically hide this InfoPanel if there is a browser
+// object (running as a WebExtension) and this is toggled on
+// We will want to toggle this auto hiding off for debugging.
+const WEBEXT_HIDE_IN_PAGE = true && !!browser;
+
 class InfoPanel {
     constructor(plugin) {
         this.plugin = plugin;
@@ -174,8 +179,10 @@ class InfoPanel {
             e.stopPropagation();
             this.$el.addClass(HIDDEN_CLASS_NAME);
 
-            // (a11y) Bring the focus back to the plugin's checkbox
-            this.plugin.$checkbox.focus();
+            if (!browser) {
+                // (a11y) Bring the focus back to the plugin's checkbox
+                this.plugin.$checkbox.focus();
+            }
         });
 
         // Append the info panel to the body. In reality we'll likely want
@@ -345,8 +352,10 @@ class InfoPanel {
                         })
                     }
 
-                    // Make sure info panel is visible
-                    this.$el.removeClass(HIDDEN_CLASS_NAME);
+                    if (!WEBEXT_HIDE_IN_PAGE) {
+                        // Make sure info panel is visible
+                        this.$el.removeClass(HIDDEN_CLASS_NAME);
+                    }
 
                     // Open the error entry
                     $trigger.removeClass(COLLAPSED_CLASS_NAME);
@@ -432,8 +441,12 @@ class InfoPanel {
             this.initAndPosition();
         }
 
-        // (a11y) Shift focus to the newly-opened info panel
-        this.$el.focus();
+        if (WEBEXT_HIDE_IN_PAGE) {
+            this.$el.addClass(HIDDEN_CLASS_NAME);
+        } else {
+            // (a11y) Shift focus to the newly-opened info panel
+            this.$el.focus();
+        }
 
         return this.$el;
     }
@@ -456,7 +469,7 @@ class InfoPanel {
 
         if (browser && this.port) {
             this.port.disconnect();
-            this.port = undefined;
+            this.port = null;
         }
     }
 
@@ -514,8 +527,6 @@ class InfoPanel {
                     }
                 }
             });
-
-            // TODO: Hide this panel
         }
     }
 

@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-01-17
+ * Date: 2019-01-18
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -329,7 +329,7 @@ if(false) {}
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n/**\n * Base styles for tota11y to make sure things look consistent under\n * reasonable circumstances.\n */\n.tota11y,\n.tota11y * {\n  border: none !important;\n  background-color: inherit !important;\n  box-sizing: border-box !important;\n  color: #f2f2f2 !important;\n  font-family: Arial !important;\n  font-size: 14px !important;\n  font-style: normal !important;\n  font-weight: 400 !important;\n  line-height: 1.35 !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  text-align: left !important;\n  text-shadow: none !important;\n}\n.tota11y * {\n  height: auto !important;\n  width: auto !important;\n}\n.tota11y strong {\n  font-weight: bold !important;\n}\n.tota11y pre,\n.tota11y code {\n  background-color: #ddd !important;\n  border: none !important;\n  border-radius: 0 !important;\n  color: inherit !important;\n  font-family: monospace !important;\n  font-size: inherit !important;\n  line-height: inherit !important;\n}\n.tota11y pre {\n  padding: 5px 10px !important;\n  margin: 0 0 10px !important;\n  overflow-x: scroll !important;\n}\n.tota11y code {\n  border-radius: 2px !important;\n  display: inline !important;\n  padding: 1px !important;\n}\n.tota11y i,\n.tota11y em {\n  font-style: italic !important;\n}\n.tota11y p {\n  margin: 0 0 10px !important;\n}\n.tota11y a,\n.tota11y a:hover,\n.tota11y a:focus {\n  background-color: inherit !important;\n  color: inherit !important;\n  text-decoration: none !important;\n}\n.tota11y-toolbar {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  position: fixed !important;\n  top: auto !important;\n  right: auto !important;\n  bottom: 0 !important;\n  left: 10px !important;\n  border-top-left-radius: 5px !important;\n  border-top-right-radius: 5px !important;\n  overflow: hidden !important;\n  z-index: 9998 !important;\n}\n.tota11y-toolbar-toggle {\n  background-color: #333 !important;\n  display: block !important;\n  padding: 7px !important;\n  width: 100% !important;\n}\n.tota11y-toolbar-logo {\n  height: 25px !important;\n  margin: 0 auto !important;\n  text-align: center !important;\n  width: 35px !important;\n}\n.tota11y-toolbar-logo svg {\n  height: 25px !important;\n}\n.tota11y-toolbar-body {\n  display: none !important;\n}\n.tota11y-toolbar.tota11y-expanded .tota11y-toolbar-body {\n  display: block !important;\n}\n.tota11y-sr-only {\n  border: 0 !important;\n  clip: rect(0, 0, 0, 0) !important;\n  height: 1px !important;\n  margin: -1px !important;\n  overflow: hidden !important;\n  padding: 0 !important;\n  position: absolute !important;\n  width: 1px !important;\n}\n.tota11y-sidebar {\n  position: static !important;\n}\n.tota11y-sidebar .tota11y-plugin-description {\n  width: auto !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n/**\n * Base styles for tota11y to make sure things look consistent under\n * reasonable circumstances.\n */\n.tota11y,\n.tota11y * {\n  border: none !important;\n  background-color: inherit !important;\n  box-sizing: border-box !important;\n  color: #f2f2f2 !important;\n  font-family: Arial !important;\n  font-size: 14px !important;\n  font-style: normal !important;\n  font-weight: 400 !important;\n  line-height: 1.35 !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  text-align: left !important;\n  text-shadow: none !important;\n}\n.tota11y * {\n  height: auto !important;\n  width: auto !important;\n}\n.tota11y strong {\n  font-weight: bold !important;\n}\n.tota11y pre,\n.tota11y code {\n  background-color: #ddd !important;\n  border: none !important;\n  border-radius: 0 !important;\n  color: inherit !important;\n  font-family: monospace !important;\n  font-size: inherit !important;\n  line-height: inherit !important;\n}\n.tota11y pre {\n  padding: 5px 10px !important;\n  margin: 0 0 10px !important;\n  overflow-x: scroll !important;\n}\n.tota11y code {\n  border-radius: 2px !important;\n  display: inline !important;\n  padding: 1px !important;\n}\n.tota11y i,\n.tota11y em {\n  font-style: italic !important;\n}\n.tota11y p {\n  margin: 0 0 10px !important;\n}\n.tota11y a,\n.tota11y a:hover,\n.tota11y a:focus {\n  background-color: inherit !important;\n  color: inherit !important;\n  text-decoration: none !important;\n}\n.tota11y-toolbar {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  position: fixed !important;\n  top: auto !important;\n  right: auto !important;\n  bottom: 0 !important;\n  left: 10px !important;\n  border-top-left-radius: 5px !important;\n  border-top-right-radius: 5px !important;\n  overflow: hidden !important;\n  z-index: 9998 !important;\n}\n.tota11y-toolbar-toggle {\n  background-color: #333 !important;\n  display: block !important;\n  padding: 7px !important;\n  width: 100% !important;\n}\n.tota11y-toolbar-logo {\n  height: 25px !important;\n  margin: 0 auto !important;\n  text-align: center !important;\n  width: 35px !important;\n}\n.tota11y-toolbar-logo svg {\n  height: 25px !important;\n}\n.tota11y-toolbar-body {\n  display: none !important;\n}\n.tota11y-toolbar.tota11y-expanded .tota11y-toolbar-body {\n  display: block !important;\n}\n.tota11y-sr-only {\n  border: 0 !important;\n  clip: rect(0, 0, 0, 0) !important;\n  height: 1px !important;\n  margin: -1px !important;\n  overflow: hidden !important;\n  padding: 0 !important;\n  position: absolute !important;\n  width: 1px !important;\n}\n.tota11y-sidebar {\n  position: static !important;\n}\n.tota11y-sidebar .tota11y-plugin-description {\n  width: auto !important;\n}\n.tota11y-sidebar .tota11y-plugin-indicator {\n  margin: 0 10px !important;\n}\n.tota11y-sidebar .tota11y-plugin-switch {\n  padding: 9px 9px 9px 0 !important;\n}\n.tota11y-sidebar.tota11y-toolbar {\n  border-top-left-radius: 0 !important;\n  border-top-right-radius: 0 !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -12856,7 +12856,7 @@ class ContrastPlugin extends Plugin {
 
       if (axs.utils.elementIsTransparent(el) || axs.utils.elementHasZeroArea(el)) {
         return;
-      } // ignore elements positioned off screen
+      } // Ignore elements positioned off screen
 
 
       {
@@ -12874,7 +12874,6 @@ class ContrastPlugin extends Plugin {
         let documentHeight = $(document).height();
 
         if ((rect.left < 0 || rect.right > documentWidth) && (rect.top < 0 || rect.bottom > documentHeight)) {
-          console.log(el);
           return;
         }
       }
@@ -12901,7 +12900,7 @@ class ContrastPlugin extends Plugin {
         }
       } else {
         if (!combinations[key]) {
-          // We do not show duplicates in the errors panel, however,
+          // We do not show duplicates in the errors panel
           // to keep the output from being overwhelming
           let error = this.addError({
             style,
@@ -14363,6 +14362,7 @@ const COLLAPSED_CLASS_NAME = "tota11y-collapsed";
 const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
 const PORT_NAME = "info-panel";
 const FIRST_ERROR_ID = 0;
+const WEBEXT_HIDE_IN_PAGE = true && !!browser;
 
 class InfoPanel {
   constructor(plugin) {
@@ -14509,9 +14509,12 @@ class InfoPanel {
     this.$el.find(".tota11y-info-dismiss-trigger").click(e => {
       e.preventDefault();
       e.stopPropagation();
-      this.$el.addClass(HIDDEN_CLASS_NAME); // (a11y) Bring the focus back to the plugin's checkbox
+      this.$el.addClass(HIDDEN_CLASS_NAME);
 
-      this.plugin.$checkbox.focus();
+      if (!browser) {
+        // (a11y) Bring the focus back to the plugin's checkbox
+        this.plugin.$checkbox.focus();
+      }
     }); // Append the info panel to the body. In reality we'll likely want
     // it directly adjacent to the toolbar.
 
@@ -14653,10 +14656,13 @@ class InfoPanel {
               plugin: this.plugin.getName(),
               errorId: id
             });
-          } // Make sure info panel is visible
+          }
 
+          if (!WEBEXT_HIDE_IN_PAGE) {
+            // Make sure info panel is visible
+            this.$el.removeClass(HIDDEN_CLASS_NAME);
+          } // Open the error entry
 
-          this.$el.removeClass(HIDDEN_CLASS_NAME); // Open the error entry
 
           $trigger.removeClass(COLLAPSED_CLASS_NAME);
           $desc.removeClass(COLLAPSED_CLASS_NAME); // Switch to the "Errors" tab
@@ -14729,10 +14735,15 @@ class InfoPanel {
 
     if (hasContent) {
       this.initAndPosition();
-    } // (a11y) Shift focus to the newly-opened info panel
+    }
 
+    if (WEBEXT_HIDE_IN_PAGE) {
+      this.$el.addClass(HIDDEN_CLASS_NAME);
+    } else {
+      // (a11y) Shift focus to the newly-opened info panel
+      this.$el.focus();
+    }
 
-    this.$el.focus();
     return this.$el;
   }
 
@@ -14753,7 +14764,7 @@ class InfoPanel {
 
     if (browser && this.port) {
       this.port.disconnect();
-      this.port = undefined;
+      this.port = null;
     }
   }
   /**
@@ -14814,7 +14825,7 @@ class InfoPanel {
             this.doCheckboxSync(json.errorId, json.checkboxIndex, json.checked);
           }
         }
-      }); // TODO: Hide this panel
+      });
     }
   }
   /*
