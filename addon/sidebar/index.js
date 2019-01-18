@@ -40,6 +40,12 @@ let infoPanelController = new InfoPanelController();
 let activeTabId = -1;
 let insertingLock = new Lock();
 
+// Style the body so the sidebar is always filled
+$("body").css({
+    "height": "auto",
+    "background-color": "#333",
+});
+
 async function updateSidebar(data, updateType) {
     if (insertingLock.locked()) {
         console.log("Already inserting tota11y");
