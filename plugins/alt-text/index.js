@@ -6,6 +6,7 @@ let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("alt-text");
 let audit = require("../shared/audit");
+let aboutTemplate = require("./about.handlebars");
 
 require("./style.less");
 
@@ -195,6 +196,8 @@ class AltTextPlugin extends Plugin {
                 );
             }
         });
+
+        this.about($(aboutTemplate()));
     }
 
     cleanup() {
