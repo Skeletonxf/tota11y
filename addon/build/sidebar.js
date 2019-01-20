@@ -358,7 +358,7 @@ exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-info-resources {\n  font-weight: bold !important;\n}\n.tota11y-info-resources li {\n  margin-left: 10px !important;\n}\n.tota11y-info-resources a {\n  text-decoration: underline !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-info-resources {\n  font-weight: bold !important;\n}\n.tota11y-info-resources li {\n  margin-left: 10px !important;\n}\na.tota11y-info-link {\n  text-decoration: underline !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -12529,7 +12529,59 @@ if(false) {}
 var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
 function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div>\n<div class=\"tota11y-info-about-title\">\n    <a href=\"https://www.w3.org/TR/WCAG21/#text-alternatives\" target=\"_blank\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.1.1\n        </span>\n    </a>\n</div>\n<p>\n    Visual and audio information is not accessible to all users. Text\n    alternatives to audiovisual information can provide blind, deaf, hard of\n    hearing, and other users with access to the same information.\n</p>\n<p>\n    The Web Content Accessibility Guidelines list this criteria at the lowest\n    level of conformance and as first in the guidelines.\n    Providing alt text on all images is a good starting place.\n</p>\n</div>\n";
+    return "<div>\n<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#text-alternatives\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.1.1\n        </span>\n    </a>\n</div>\n<p>\n    Visual and audio information is not accessible to all users. Text\n    alternatives to audiovisual information can provide blind, deaf, hard of\n    hearing, and other users with access to the same information.\n</p>\n<p>\n    The Web Content Accessibility Guidelines list this criteria at the lowest\n    level of conformance and as first in the guidelines.\n    Providing alt text on all images is a good starting place.\n</p>\n</div>\n";
+},"useData":true});
+
+/***/ }),
+
+/***/ "./plugins/alt-text/audiovisual-error-template.handlebars":
+/*!****************************************************************!*\
+  !*** ./plugins/alt-text/audiovisual-error-template.handlebars ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<p>\n    This <code>"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "</code> element does not have any\n    text alternatives. Please provide some text\n    alternatives to convey as much of the same information\n    textually as possible.\n</p>\n\n<p>\n    Breif fallback text may be given with the enclosed text\n    like so, which will be displayed if the browser cannot\n    play the file types:\n</p>\n\n<pre><code>&lt;"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "&gt;Description&lt;/"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "&gt;</code></pre>\n\n<p>\n    Further text alternatives can be given\n    with ARIA and the <code>track</code> element.\n    For instance if your webpage contains the transcript of\n    the "
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + " then you could use ARIA like so:\n</p>\n\n<pre><code>&lt;"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + " aria-describedby=\"transcriptId\"&gt;</code></pre>\n\n<p>\n    If you can provide a <code>track</code> element users will\n    be able to access timed text data such as captions.\n</p>\n\n<p>\n    If this element is purely decorative such as a background\n    video then you should specify a \"role\"  attribute with a value of\n    \"presentation\" so assistive technologies can ignore the element.\n</p>\n\n<pre><code>&lt;"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + " role=\"presentation\"&gt;</code></pre>\n\n<div class=\"tota11y-info-resources\">\n    <p>\n        Resources\n    </p>\n    <ul>\n        <li>\n            <a\n                    href=\"https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                The track element\n            </a>\n        </li>\n        <li>\n            <a\n                    href=\"https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                ARIA\n            </a>\n        </li>\n    </ul>\n</div>\n";
+},"useData":true});
+
+/***/ }),
+
+/***/ "./plugins/alt-text/image-error-template.handlebars":
+/*!**********************************************************!*\
+  !*** ./plugins/alt-text/image-error-template.handlebars ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<p>\n    This image does not have an associated \"alt\" attribute.\n    Please specify a short alt text for this image like so\n    to convey the same information textually:\n</p>\n\n<pre><code>&lt;img src="
+    + alias4(((helper = (helper = helpers.src || (depth0 != null ? depth0.src : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"src","hash":{},"data":data}) : helper)))
+    + " alt=\"Image description\"&gt</code></pre>\n\n<p>\n    If the image is decorative and does not convey any\n    information to the surrounding content then you should\n    leave this \"alt\" attribute empty, or specify a \"role\"\n    attribute with a value of \"presentation\" so assistive\n    technologies can ignore the image.\n</p>\n\n<pre><code>&lt;img src="
+    + alias4(((helper = (helper = helpers.src || (depth0 != null ? depth0.src : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"src","hash":{},"data":data}) : helper)))
+    + " alt=\"\"&gt;\n&lt;img src="
+    + alias4(((helper = (helper = helpers.src || (depth0 != null ? depth0.src : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"src","hash":{},"data":data}) : helper)))
+    + " role=\"presentation\"&gt;</code></pre>\n\n<p>\n    Extended text descriptions can be provided using <a\n            href=\"https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-describedby_attribute\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        aria-describedby\n    </a>\n</p>\n";
 },"useData":true});
 
 /***/ }),
@@ -12541,7 +12593,7 @@ module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,"
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(buildElement) {/**
+/**
  * A plugin to check for valid alternative representations for images
  */
 let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
@@ -12551,6 +12603,10 @@ let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("alt-text");
 
 let audit = __webpack_require__(/*! ../shared/audit */ "./plugins/shared/audit.js");
+
+let imageErrorTemplate = __webpack_require__(/*! ./image-error-template.handlebars */ "./plugins/alt-text/image-error-template.handlebars");
+
+let audiovisualErrorTemplate = __webpack_require__(/*! ./audiovisual-error-template.handlebars */ "./plugins/alt-text/audiovisual-error-template.handlebars");
 
 let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/alt-text/about.handlebars");
 
@@ -12577,10 +12633,9 @@ class AltTextPlugin extends Plugin {
     let $el = $(el);
     let src = $el.attr("src") || "..";
     let title = "Image is missing alt text";
-    let $error = buildElement("div", null, buildElement("p", null, "This image does not have an associated \"alt\" attribute. Please specify a short alt text for this image like so to convey the same information textually:"), buildElement("pre", null, buildElement("code", null, `&lt;img src="${src}" alt="Image description"&gt`)), buildElement("p", null, "If the image is decorative and does not convey any information to the surrounding content then you should leave this \"alt\" attribute empty, or specify a \"role\" attribute with a value of \"presentation\" so assistive technologies can ignore the image."), buildElement("pre", null, buildElement("code", null, `&lt;img src="${src}" alt=""&gt;`, buildElement("br", null), `&lt;img src="${src}" role="presentation"&gt;`)), buildElement("p", null, "Extended text descriptions can be provided using ", buildElement("a", {
-      href: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-describedby_attribute",
-      target: "_blank"
-    }, buildElement("code", null, "aria-describedby")))); // Place an error label on the element and register it as an
+    let $error = imageErrorTemplate({
+      src: src
+    }); // Place an error label on the element and register it as an
     // error in the info panel
 
     let entry = this.error(title, $error, $el);
@@ -12591,15 +12646,9 @@ class AltTextPlugin extends Plugin {
     let $el = $(el);
     let elementCapitalised = elementName.charAt(0).toUpperCase() + elementName.slice(1);
     let title = `${elementCapitalised} is missing text alternatives`;
-    let $error = buildElement("div", null, buildElement("p", null, "This ", buildElement("code", null, elementName), " element does not have any text alternatives. Please provide some text alternatives to convey as much of the same information textually as possible."), buildElement("p", null, "Breif fallback text may be given with the enclosed text like so, which will be displayed if the browser cannot play the file types:"), buildElement("pre", null, buildElement("code", null, `&lt;${elementName}&gt;Description&lt;/${elementName}&gt;`)), buildElement("p", null, "Further text alternatives can be given with ARIA and the ", buildElement("code", null, "track"), " element. For instance if your webpage contains the transcript of the ", elementName, " then you could use ARIA like so:"), buildElement("pre", null, buildElement("code", null, `&lt;${elementName} aria-describedby="transcriptId"&gt;`)), buildElement("p", null, "If you can provide a ", buildElement("code", null, "track"), " element users will be able to access timed text data such as captions."), buildElement("p", null, "If this element is purely decorative such as a background video then you should specify a \"role\" attribute with a value of \"presentation\" so assistive technologies can ignore the element."), buildElement("pre", null, buildElement("code", null, `&lt;${elementName} role="presentation"&gt;`)), buildElement("div", {
-      class: "tota11y-info-resources"
-    }, buildElement("p", null, "Resources"), buildElement("ul", null, buildElement("li", null, buildElement("a", {
-      href: "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track",
-      target: "_blank"
-    }, "The track element")), buildElement("li", null, buildElement("a", {
-      href: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA",
-      target: "_blank"
-    }, "ARIA"))))); // Place an error label on the element and register it as an
+    let $error = audiovisualErrorTemplate({
+      elementName: elementName
+    }); // Place an error label on the element and register it as an
     // error in the info panel
 
     let entry = this.error(title, $error, $el);
@@ -12662,7 +12711,6 @@ class AltTextPlugin extends Plugin {
 }
 
 module.exports = AltTextPlugin;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./utils/element */ "./utils/element.js")))
 
 /***/ }),
 
@@ -13508,6 +13556,25 @@ module.exports = LandmarksPlugin;
 
 /***/ }),
 
+/***/ "./plugins/link-text/error-template.handlebars":
+/*!*****************************************************!*\
+  !*** ./plugins/link-text/error-template.handlebars ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "<p>\n    The text <i>"
+    + container.escapeExpression(((helper = (helper = helpers.extractedText || (depth0 != null ? depth0.extractedText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"extractedText","hash":{},"data":data}) : helper)))
+    + "</i> is unclear without context and may be\n    confusing to screen readers. Consider rearranging the <code>\n    &lt;a&gt;&lt;/a&gt;</code> tags or including special screen reader text\n    such as <code>aria-label=\"detailed description\"</code> or <code>\n    aria-labelledby=\"labeling element id\"</code> in the <code>\n    &lt;a&gt;</code> element to provide more context.\n</p>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/link-text/index.js":
 /*!************************************!*\
   !*** ./plugins/link-text/index.js ***!
@@ -13515,7 +13582,7 @@ module.exports = LandmarksPlugin;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(buildElement) {/**
+/**
  * A plugin to identify unclear link text such as "more" and "click here,"
  * which can make for a bad experience when using a screen reader
  */
@@ -13524,6 +13591,8 @@ let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"
 let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("link-text");
+
+let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/link-text/error-template.handlebars");
 
 let stopWords = ["click", "tap", "go", "here", "learn", "more", "this", "page", "link", "about"]; // Generate a regex to match each of the stopWords
 
@@ -13621,7 +13690,9 @@ class LinkTextPlugin extends Plugin {
       let extractedText = axs.properties.findTextAlternatives(el, alts);
 
       if (!this.isDescriptiveText(extractedText)) {
-        let $description = buildElement("div", null, "The text", " ", buildElement("i", null, "\"", extractedText, "\""), " ", "is unclear without context and may be confusing to screen readers. Consider rearranging the", " ", buildElement("code", null, "&lt;a&gt;&lt;/a&gt;"), " ", "tags or including special screen reader text such as", " ", buildElement("code", null, "aria-label=\"detailed description\""), " ", "or", " ", buildElement("code", null, "aria-labelledby=\"labeling element id\""), " ", "in the", " ", buildElement("code", null, "&lt;a&gt;"), " ", "element to provide more context.");
+        let $description = errorTemplate({
+          extractedText: extractedText
+        });
         this.reportError($el, $description, extractedText);
       }
     });
@@ -13634,7 +13705,6 @@ class LinkTextPlugin extends Plugin {
 }
 
 module.exports = LinkTextPlugin;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./utils/element */ "./utils/element.js")))
 
 /***/ }),
 

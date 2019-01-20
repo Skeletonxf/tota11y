@@ -7,6 +7,8 @@ let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("link-text");
 
+let errorTemplate = require("./error-template.handlebars");
+
 let stopWords = [
     "click", "tap", "go", "here", "learn", "more", "this", "page",
     "link", "about"
@@ -25,7 +27,7 @@ let punctuation = `\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_\`{
 
 // This does not match numbers in the text.
 // Removing numbers creates false positives if a link text really is
-// about 5,789,911 articles.
+// about 5,789,911 things or a page number.
 let matchNonAlphanumericRE = new RegExp(`[${punctuation} ]`, "g");
 
 class LinkTextPlugin extends Plugin {
@@ -111,32 +113,9 @@ class LinkTextPlugin extends Plugin {
                 el, alts);
 
             if (!this.isDescriptiveText(extractedText)) {
-                let $description = (
-                    <div>
-                        The text
-                        {" "}
-                        <i>"{extractedText}"</i>
-                        {" "}
-                        is unclear without context and may be confusing to
-                        screen readers. Consider rearranging the
-                        {" "}
-                        <code>{"&lt;a&gt;&lt;/a&gt;"}</code>
-                        {" "}
-                        tags or including special screen reader text such as
-                        {" "}
-                        <code>aria-label="detailed description"</code>
-                        {" "}
-                        or
-                        {" "}
-                        <code>aria-labelledby="labeling element id"</code>
-                        {" "}
-                        in the
-                        {" "}
-                        <code>{"&lt;a&gt;"}</code>
-                        {" "}
-                        element to provide more context.
-                    </div>
-                );
+                let $description = errorTemplate({
+                    extractedText: extractedText,
+                });
 
                 this.reportError($el, $description, extractedText);
             }

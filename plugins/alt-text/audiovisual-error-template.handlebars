@@ -1,0 +1,58 @@
+<p>
+    This <code>{{elementName}}</code> element does not have any
+    text alternatives. Please provide some text
+    alternatives to convey as much of the same information
+    textually as possible.
+</p>
+
+<p>
+    Breif fallback text may be given with the enclosed text
+    like so, which will be displayed if the browser cannot
+    play the file types:
+</p>
+
+<pre><code>&lt;{{elementName}}&gt;Description&lt;/{{elementName}}&gt;</code></pre>
+
+<p>
+    Further text alternatives can be given
+    with ARIA and the <code>track</code> element.
+    For instance if your webpage contains the transcript of
+    the {{elementName}} then you could use ARIA like so:
+</p>
+
+<pre><code>&lt;{{elementName}} aria-describedby="transcriptId"&gt;</code></pre>
+
+<p>
+    If you can provide a <code>track</code> element users will
+    be able to access timed text data such as captions.
+</p>
+
+<p>
+    If this element is purely decorative such as a background
+    video then you should specify a "role"  attribute with a value of
+    "presentation" so assistive technologies can ignore the element.
+</p>
+
+<pre><code>&lt;{{elementName}} role="presentation"&gt;</code></pre>
+
+<div class="tota11y-info-resources">
+    <p>
+        Resources
+    </p>
+    <ul>
+        <li>
+            <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track"
+                    target="_blank" class="tota11y-info-link">
+                The track element
+            </a>
+        </li>
+        <li>
+            <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA"
+                    target="_blank" class="tota11y-info-link">
+                ARIA
+            </a>
+        </li>
+    </ul>
+</div>
