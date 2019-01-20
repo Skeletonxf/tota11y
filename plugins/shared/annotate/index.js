@@ -181,11 +181,11 @@ module.exports = (namespace) => {
         },
 
         hide() {
-            $(".tota11y.tota11y-label").hide();
+            $(`.tota11y.tota11y-label.${ANNOTATION_CLASS}`).hide();
         },
 
         show() {
-            $(".tota11y.tota11y-label").show();
+            $(`.tota11y.tota11y-label.${ANNOTATION_CLASS}`).show();
         },
 
         removeAll() {

@@ -84,6 +84,10 @@ class HeadingsPlugin extends Plugin {
         `;
     }
 
+    getAnnotate() {
+        return annotate;
+    }
+
     /**
      * Computes an outline of the page and reports any violations.
      */

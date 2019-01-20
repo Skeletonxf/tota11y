@@ -300,10 +300,15 @@ class InfoPanel {
 
         // Wire annotation toggling
         this.$el.find(".toggle-annotation").click((e) => {
-            if ($(e.target).prop("checked")) {
-                annotate.show();
-            } else {
-                annotate.hide();
+            // We must use the plugin's annotate instead of
+            // the InfoPanel's as only the plugin's annotate
+            // is namespaced for its annotations.
+            if (this.plugin.getAnnotate()) {
+                if ($(e.target).prop("checked")) {
+                    this.plugin.getAnnotate().show();
+                } else {
+                    this.plugin.getAnnotate().hide();
+                }
             }
         });
 
@@ -494,37 +499,34 @@ class InfoPanel {
                 if (json.msg) {
                     console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
                 }
+``
+                // Now handle plugin specific responses
+                if (json.plugin !== this.plugin.getName()) {
+                    return;
+                }
                 if (json.scrollToError) {
-                    if (json.plugin === this.plugin.getName()) {
-                        this.scrollToError(json.errorId);
-                    }
+                    this.scrollToError(json.errorId);
                 }
                 if (json.highlightOn) {
-                    if (json.plugin === this.plugin.getName()) {
-                        this.doHighlightOn(json.errorId);
-                    }
+                    this.doHighlightOn(json.errorId);
                 }
                 if (json.highlightOff) {
-                    if (json.plugin === this.plugin.getName()) {
-                        this.doHighlightOff(json.errorId);
-                    }
+                    this.doHighlightOff(json.errorId);
                 }
                 if (json.showAnnotations) {
-                    if (json.plugin === this.plugin.getName()) {
-                        annotate.show();
+                    if (this.plugin.getAnnotate()) {
+                        this.plugin.getAnnotate().show();
                     }
                 }
                 if (json.hideAnnotations) {
-                    if (json.plugin === this.plugin.getName()) {
-                        annotate.hide();
+                    if (this.plugin.getAnnotate()) {
+                        this.plugin.getAnnotate().hide();
                     }
                 }
                 if (json.checkboxSync) {
-                    if (json.plugin === this.plugin.getName()) {
-                        this.doCheckboxSync(
-                            json.errorId, json.checkboxIndex, json.checked
-                        );
-                    }
+                    this.doCheckboxSync(
+                        json.errorId, json.checkboxIndex, json.checked
+                    );
                 }
             });
         }

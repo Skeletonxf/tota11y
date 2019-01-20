@@ -23,6 +23,10 @@ class AltTextPlugin extends Plugin {
         return "Annotates elements without text alternatives";
     }
 
+    getAnnotate() {
+        return annotate;
+    }
+
     reportImageError(el) {
         let $el = $(el);
         let src = $el.attr("src") || "..";

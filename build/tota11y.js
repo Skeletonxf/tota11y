@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-01-18
+ * Date: 2019-01-20
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -12439,6 +12439,10 @@ class AltTextPlugin extends Plugin {
     return "Annotates elements without text alternatives";
   }
 
+  getAnnotate() {
+    return annotate;
+  }
+
   reportImageError(el) {
     let $el = $(el);
     let src = $el.attr("src") || "..";
@@ -12591,6 +12595,11 @@ class Plugin {
 
   getDescription() {
     return "";
+  } // returns this plugin's namespaced annotate module, if any
+
+
+  getAnnotate() {
+    return null;
   }
   /**
    * Methods that communicate directly with the info panel
@@ -12791,6 +12800,10 @@ class ContrastPlugin extends Plugin {
 
   getDescription() {
     return "Labels elements with insufficient contrast";
+  }
+
+  getAnnotate() {
+    return annotate;
   }
 
   addError({
@@ -13051,6 +13064,10 @@ class HeadingsPlugin extends Plugin {
             order violations
         `;
   }
+
+  getAnnotate() {
+    return annotate;
+  }
   /**
    * Computes an outline of the page and reports any violations.
    */
@@ -13269,6 +13286,10 @@ class LabelsPlugin extends Plugin {
     return "Identifies inputs with missing labels";
   }
 
+  getAnnotate() {
+    return annotate;
+  }
+
   errorMessage($el) {
     return errorTemplate({
       placeholder: $el.attr("placeholder"),
@@ -13332,6 +13353,10 @@ class LandmarksPlugin extends Plugin {
 
   getDescription() {
     return "Labels all ARIA landmarks";
+  }
+
+  getAnnotate() {
+    return annotate;
   }
 
   run() {
@@ -13398,6 +13423,10 @@ class LinkTextPlugin extends Plugin {
             Identifies links that may be confusing when read by a screen
             reader
         `;
+  }
+
+  getAnnotate() {
+    return annotate;
   }
   /**
    * Modified unclear text checking that has been refactored into
@@ -13675,11 +13704,11 @@ module.exports = namespace => {
     },
 
     hide() {
-      $(".tota11y.tota11y-label").hide();
+      $(`.tota11y.tota11y-label.${ANNOTATION_CLASS}`).hide();
     },
 
     show() {
-      $(".tota11y.tota11y-label").show();
+      $(`.tota11y.tota11y-label.${ANNOTATION_CLASS}`).show();
     },
 
     removeAll() {
@@ -14145,10 +14174,15 @@ class InfoPanel {
 
 
     this.$el.find(".toggle-annotation").click(e => {
-      if ($(e.target).prop("checked")) {
-        annotate.show();
-      } else {
-        annotate.hide();
+      // We must use the plugin's annotate instead of
+      // the InfoPanel's as only the plugin's annotate
+      // is namespaced for its annotations.
+      if (this.plugin.getAnnotate()) {
+        if ($(e.target).prop("checked")) {
+          this.plugin.getAnnotate().show();
+        } else {
+          this.plugin.getAnnotate().hide();
+        }
       }
     });
 
@@ -14320,40 +14354,38 @@ class InfoPanel {
           console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
         }
 
+        ``; // Now handle plugin specific responses
+
+        if (json.plugin !== this.plugin.getName()) {
+          return;
+        }
+
         if (json.scrollToError) {
-          if (json.plugin === this.plugin.getName()) {
-            this.scrollToError(json.errorId);
-          }
+          this.scrollToError(json.errorId);
         }
 
         if (json.highlightOn) {
-          if (json.plugin === this.plugin.getName()) {
-            this.doHighlightOn(json.errorId);
-          }
+          this.doHighlightOn(json.errorId);
         }
 
         if (json.highlightOff) {
-          if (json.plugin === this.plugin.getName()) {
-            this.doHighlightOff(json.errorId);
-          }
+          this.doHighlightOff(json.errorId);
         }
 
         if (json.showAnnotations) {
-          if (json.plugin === this.plugin.getName()) {
-            annotate.show();
+          if (this.plugin.getAnnotate()) {
+            this.plugin.getAnnotate().show();
           }
         }
 
         if (json.hideAnnotations) {
-          if (json.plugin === this.plugin.getName()) {
-            annotate.hide();
+          if (this.plugin.getAnnotate()) {
+            this.plugin.getAnnotate().hide();
           }
         }
 
         if (json.checkboxSync) {
-          if (json.plugin === this.plugin.getName()) {
-            this.doCheckboxSync(json.errorId, json.checkboxIndex, json.checked);
-          }
+          this.doCheckboxSync(json.errorId, json.checkboxIndex, json.checked);
         }
       });
     }
@@ -14597,6 +14629,10 @@ class TablesPlugin extends Plugin {
 
   getDescription() {
     return "Identifies tables with markup problems";
+  }
+
+  getAnnotate() {
+    return annotate;
   }
 
   errorMessage($el, presentation, noHeadings, tooManyHeads, headInData, dataInHead, data) {

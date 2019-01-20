@@ -22,6 +22,10 @@ class TablesPlugin extends Plugin {
         return "Identifies tables with markup problems";
     }
 
+    getAnnotate() {
+        return annotate;
+    }
+
     errorMessage($el, presentation, noHeadings, tooManyHeads,
             headInData, dataInHead, data) {
         return errorTemplate({

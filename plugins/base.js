@@ -33,6 +33,11 @@ class Plugin {
         return "";
     }
 
+    // returns this plugin's namespaced annotate module, if any
+    getAnnotate() {
+        return null;
+    }
+
     /**
      * Methods that communicate directly with the info panel
      * TODO: Consider names like `setSummary` and `addError`

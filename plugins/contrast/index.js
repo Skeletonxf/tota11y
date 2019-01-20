@@ -33,6 +33,10 @@ class ContrastPlugin extends Plugin {
         return "Labels elements with insufficient contrast";
     }
 
+    getAnnotate() {
+        return annotate;
+    }
+
     addError({style, fgColor, bgColor, contrastRatio, requiredRatio}, el) {
         // Suggest colors at an "AA" level
         let suggestedColors = axs.color.suggestColors(

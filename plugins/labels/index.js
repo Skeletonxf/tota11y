@@ -22,6 +22,10 @@ class LabelsPlugin extends Plugin {
         return "Identifies inputs with missing labels";
     }
 
+    getAnnotate() {
+        return annotate;
+    }
+
     errorMessage($el) {
         return errorTemplate({
             placeholder: $el.attr("placeholder"),

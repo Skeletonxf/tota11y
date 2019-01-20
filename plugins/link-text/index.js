@@ -44,6 +44,10 @@ class LinkTextPlugin extends Plugin {
         `;
     }
 
+    getAnnotate() {
+        return annotate;
+    }
+
     /**
      * Modified unclear text checking that has been refactored into
      * a single method to be called with arbitrary strings.
