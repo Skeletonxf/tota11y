@@ -8,6 +8,8 @@ const PORT_NAME = "toolbar";
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map((p) => p.getName());
 
+const DISABLE_CSS = "tota11y-disabled-toolbar";
+
 /**
  * In a standalone script the toolbar is responsible for switching
  * active plugins and drawing its UI.
@@ -109,6 +111,12 @@ class Toolbar {
 
         $el.append($toolbar);
         this.$el = $toolbar;
+
+        if (browser) {
+            // Disable this toolbar as the sidebar will be controlling
+            // the active plugins
+            this.$el.addClass(DISABLE_CSS);
+        }
     }
 
     /**
@@ -174,7 +182,6 @@ class Toolbar {
                     this.$el = null;
                 }
             });
-            // TODO: Hide this toolbar
         }
     }
 }

@@ -334,7 +334,7 @@ if(false) {}
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n/**\n * Base styles for tota11y to make sure things look consistent under\n * reasonable circumstances.\n */\n.tota11y,\n.tota11y * {\n  border: none !important;\n  background-color: inherit !important;\n  box-sizing: border-box !important;\n  color: #f2f2f2 !important;\n  font-family: Arial !important;\n  font-size: 14px !important;\n  font-style: normal !important;\n  font-weight: 400 !important;\n  line-height: 1.35 !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  text-align: left !important;\n  text-shadow: none !important;\n}\n.tota11y * {\n  height: auto !important;\n  width: auto !important;\n}\n.tota11y strong {\n  font-weight: bold !important;\n}\n.tota11y pre,\n.tota11y code {\n  background-color: #ddd !important;\n  border: none !important;\n  border-radius: 0 !important;\n  color: inherit !important;\n  font-family: monospace !important;\n  font-size: inherit !important;\n  line-height: inherit !important;\n}\n.tota11y pre {\n  padding: 5px 10px !important;\n  margin: 0 0 10px !important;\n  overflow-x: scroll !important;\n}\n.tota11y code {\n  border-radius: 2px !important;\n  display: inline !important;\n  padding: 1px !important;\n}\n.tota11y i,\n.tota11y em {\n  font-style: italic !important;\n}\n.tota11y p {\n  margin: 0 0 10px !important;\n}\n.tota11y a,\n.tota11y a:hover,\n.tota11y a:focus {\n  background-color: inherit !important;\n  color: inherit !important;\n  text-decoration: none !important;\n}\n.tota11y-toolbar {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  position: fixed !important;\n  top: auto !important;\n  right: auto !important;\n  bottom: 0 !important;\n  left: 10px !important;\n  border-top-left-radius: 5px !important;\n  border-top-right-radius: 5px !important;\n  overflow: hidden !important;\n  z-index: 9998 !important;\n}\n.tota11y-toolbar-toggle {\n  background-color: #333 !important;\n  display: block !important;\n  padding: 7px !important;\n  width: 100% !important;\n}\n.tota11y-toolbar-logo {\n  height: 25px !important;\n  margin: 0 auto !important;\n  text-align: center !important;\n  width: 35px !important;\n}\n.tota11y-toolbar-logo svg {\n  height: 25px !important;\n}\n.tota11y-toolbar-body {\n  display: none !important;\n}\n.tota11y-toolbar.tota11y-expanded .tota11y-toolbar-body {\n  display: block !important;\n}\n.tota11y-sr-only {\n  border: 0 !important;\n  clip: rect(0, 0, 0, 0) !important;\n  height: 1px !important;\n  margin: -1px !important;\n  overflow: hidden !important;\n  padding: 0 !important;\n  position: absolute !important;\n  width: 1px !important;\n}\n.tota11y-sidebar {\n  position: static !important;\n}\n.tota11y-sidebar .tota11y-plugin-description {\n  width: auto !important;\n}\n.tota11y-sidebar .tota11y-plugin-indicator {\n  margin: 0 10px !important;\n}\n.tota11y-sidebar .tota11y-plugin-switch {\n  padding: 9px 9px 9px 0 !important;\n}\n.tota11y-sidebar.tota11y-toolbar {\n  border-top-left-radius: 0 !important;\n  border-top-right-radius: 0 !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n/**\n * Base styles for tota11y to make sure things look consistent under\n * reasonable circumstances.\n */\n.tota11y,\n.tota11y * {\n  border: none !important;\n  background-color: inherit !important;\n  box-sizing: border-box !important;\n  color: #f2f2f2 !important;\n  font-family: Arial !important;\n  font-size: 14px !important;\n  font-style: normal !important;\n  font-weight: 400 !important;\n  line-height: 1.35 !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  text-align: left !important;\n  text-shadow: none !important;\n}\n.tota11y * {\n  height: auto !important;\n  width: auto !important;\n}\n.tota11y strong {\n  font-weight: bold !important;\n}\n.tota11y pre,\n.tota11y code {\n  background-color: #ddd !important;\n  border: none !important;\n  border-radius: 0 !important;\n  color: inherit !important;\n  font-family: monospace !important;\n  font-size: inherit !important;\n  line-height: inherit !important;\n}\n.tota11y pre {\n  padding: 5px 10px !important;\n  margin: 0 0 10px !important;\n  overflow-x: scroll !important;\n}\n.tota11y code {\n  border-radius: 2px !important;\n  display: inline !important;\n  padding: 1px !important;\n}\n.tota11y i,\n.tota11y em {\n  font-style: italic !important;\n}\n.tota11y p {\n  margin: 0 0 10px !important;\n}\n.tota11y a,\n.tota11y a:hover,\n.tota11y a:focus {\n  background-color: inherit !important;\n  color: inherit !important;\n  text-decoration: none !important;\n}\n.tota11y-toolbar {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  position: fixed !important;\n  top: auto !important;\n  right: auto !important;\n  bottom: 0 !important;\n  left: 10px !important;\n  border-top-left-radius: 5px !important;\n  border-top-right-radius: 5px !important;\n  overflow: hidden !important;\n  z-index: 9998 !important;\n}\n.tota11y-toolbar-toggle {\n  background-color: #333 !important;\n  display: block !important;\n  padding: 7px !important;\n  width: 100% !important;\n}\n.tota11y-toolbar-logo {\n  height: 25px !important;\n  margin: 0 auto !important;\n  text-align: center !important;\n  width: 35px !important;\n}\n.tota11y-toolbar-logo svg {\n  height: 25px !important;\n}\n.tota11y-toolbar-body {\n  display: none !important;\n}\n.tota11y-toolbar.tota11y-expanded .tota11y-toolbar-body {\n  display: block !important;\n}\n.tota11y-sr-only {\n  border: 0 !important;\n  clip: rect(0, 0, 0, 0) !important;\n  height: 1px !important;\n  margin: -1px !important;\n  overflow: hidden !important;\n  padding: 0 !important;\n  position: absolute !important;\n  width: 1px !important;\n}\n.tota11y-sidebar {\n  position: static !important;\n}\n.tota11y-sidebar .tota11y-plugin-description {\n  width: auto !important;\n}\n.tota11y-sidebar .tota11y-plugin-indicator {\n  margin: 0 10px !important;\n}\n.tota11y-sidebar .tota11y-plugin-switch {\n  padding: 9px 9px 9px 0 !important;\n}\n.tota11y-sidebar.tota11y-toolbar {\n  border-top-left-radius: 0 !important;\n  border-top-right-radius: 0 !important;\n}\n.tota11y-disabled-toolbar {\n  pointer-events: none !important;\n  opacity: 0.5 !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -13607,7 +13607,7 @@ let stopWordsRE = new RegExp(`\\b(${stopWords.join("|")})\\b`, "ig");
 
 let punctuation = `\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_\`{|}~`; // This does not match numbers in the text.
 // Removing numbers creates false positives if a link text really is
-// about 5,789,911 articles.
+// about 5,789,911 things or a page number.
 
 let matchNonAlphanumericRE = new RegExp(`[${punctuation} ]`, "g");
 
@@ -15476,6 +15476,7 @@ let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./tem
 const PORT_NAME = "toolbar";
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map(p => p.getName());
+const DISABLE_CSS = "tota11y-disabled-toolbar";
 /**
  * In a standalone script the toolbar is responsible for switching
  * active plugins and drawing its UI.
@@ -15566,6 +15567,12 @@ class Toolbar {
     }, $plugins), $toggle);
     $el.append($toolbar);
     this.$el = $toolbar;
+
+    if (browser) {
+      // Disable this toolbar as the sidebar will be controlling
+      // the active plugins
+      this.$el.addClass(DISABLE_CSS);
+    }
   }
   /**
    * Opens a port to communicate to a ToolbarController
@@ -15636,7 +15643,7 @@ class Toolbar {
           this.$el.remove();
           this.$el = null;
         }
-      }); // TODO: Hide this toolbar
+      });
     }
   }
 
