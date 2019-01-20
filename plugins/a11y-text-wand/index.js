@@ -9,7 +9,7 @@ require("./style.less");
 
 class A11yTextWand extends Plugin {
     getName() {
-        return "screen-reader-wand";
+        return "a11y-text-wand";
     }
 
     getTitle() {

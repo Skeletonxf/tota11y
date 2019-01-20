@@ -21,8 +21,11 @@ class Plugin {
         this.$checkbox = null;
     }
 
+    // returns a unique identifier for this plugin with no spaces
+    // or any other invalid CSS identifier characters,
+    // ideally the directory name
     getName() {
-        return "plugin";
+        return getTitle().replace(" ", "-").toLowerCase();
     }
 
     getTitle() {

@@ -11,7 +11,7 @@ let errorTemplate = require("./error-template.handlebars");
 
 class TablesPlugin extends Plugin {
     getName() {
-        return "table-headers";
+        return "tables";
     }
 
     getTitle() {

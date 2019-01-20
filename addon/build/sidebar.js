@@ -346,7 +346,7 @@ exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-outlined {\n  outline: 2px solid #7882c8 !important;\n}\n.tota11y-nothingness {\n  color: #888 !important;\n}\n/* Only style the screen reader wand info panel section */\n.tota11y-sidebar.screen-reader-wand .tota11y-info-section.active {\n  height: 500px !important;\n  max-height: 50vh !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-outlined {\n  outline: 2px solid #7882c8 !important;\n}\n.tota11y-nothingness {\n  color: #888 !important;\n}\n/* Only style the screen reader wand info panel section */\n.tota11y-sidebar.a11y-text-wand .tota11y-info-section.active {\n  height: 500px !important;\n  max-height: 50vh !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -12455,7 +12455,7 @@ __webpack_require__(/*! ./style.less */ "./plugins/a11y-text-wand/style.less");
 
 class A11yTextWand extends Plugin {
   getName() {
-    return "screen-reader-wand";
+    return "a11y-text-wand";
   }
 
   getTitle() {
@@ -12713,10 +12713,13 @@ class Plugin {
   constructor() {
     this.panel = new InfoPanel(this);
     this.$checkbox = null;
-  }
+  } // returns a unique identifier for this plugin with no spaces
+  // or any other invalid CSS identifier characters,
+  // ideally the directory name
+
 
   getName() {
-    return "plugin";
+    return getTitle().replace(" ", "-").toLowerCase();
   }
 
   getTitle() {
@@ -15217,7 +15220,7 @@ let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./pl
 
 class TablesPlugin extends Plugin {
   getName() {
-    return "table-headers";
+    return "tables";
   }
 
   getTitle() {
