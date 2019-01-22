@@ -77,6 +77,16 @@ class ContrastPlugin extends Plugin {
             $(el));
     }
 
+    ptSize(style) {
+        // Get the resolved value of the font size which lets
+        // the browser do the work of converting em, rem, %, ect into px
+        // values for us. We need the pt size as this is specified by
+        // the WCAG so we use their recommended conversion factor of 1.333
+        // https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle
+        // https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html
+        return 1.333 * parseFloat(style.getPropertyValue('font-size'));
+    }
+
     run() {
         // A map of fg/bg color pairs that we have already seen to the error
         // entry currently present in the info panel
@@ -130,16 +140,18 @@ class ContrastPlugin extends Plugin {
                 return;
             }
 
-            let style = getComputedStyle(el);
+            let style = window.getComputedStyle(el);
             let bgColor = axs.utils.getBgColor(style, el);
             let fgColor = axs.utils.getFgColor(style, el, bgColor);
             let contrastRatio = axs.color.calculateContrastRatio(
                 fgColor, bgColor).toFixed(2);
 
-            // Calculate required ratio based on size
-            // Using strings to prevent rounding
-            let requiredRatio = axs.utils.isLargeFont(style) ?
-                3.0 : 4.5;
+            // Calculate required ratio based on size according to WCAG
+            // guidelines, bold lowers pt size needed to count as large text
+            // https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html
+            let largeFont = (this.ptSize(style) >= 18) ||
+                    (style.fontWeight === "bold" && this.ptSize(style) >= 14);
+            let requiredRatio = largeFont ? 3.0 : 4.5;
 
             // Build a key for our `combinations` map and report the color
             // if we have not seen it yet
@@ -147,7 +159,7 @@ class ContrastPlugin extends Plugin {
                         axs.color.colorToString(bgColor) + "/" +
                         requiredRatio;
 
-            if (!axs.utils.isLowContrast(contrastRatio, style)) {
+            if (contrastRatio >= requiredRatio) {
                 // For acceptable contrast values, we don't show ratios if
                 // they have been presented already
                 if (!combinations[key]) {
