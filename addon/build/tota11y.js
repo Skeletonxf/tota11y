@@ -12999,7 +12999,14 @@ class ContrastPlugin extends Plugin {
         // the first element with that color combination
 
 
-        annotate.errorLabel($el, contrastRatio, "This contrast is insufficient at this size.", combinations[key]);
+        annotate.errorLabel($el, `
+                    ${contrastRatio}
+                    <span class="tota11y-swatches">
+                        <span class="tota11y-swatch" style="background-color: ${axs.color.colorToString(fgColor)} !important"></span>
+                        /
+                        <span class="tota11y-swatch" style="background-color: ${axs.color.colorToString(bgColor)} !important"></span>
+                    </span>
+                    `, "This contrast is insufficient at this size.", combinations[key]);
       }
     });
     this.about($(aboutTemplate()));
