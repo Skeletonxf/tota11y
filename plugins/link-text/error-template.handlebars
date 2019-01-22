@@ -1,8 +1,11 @@
 <p>
-    The text <i>{{extractedText}}</i> is unclear without context and may be
+    The text "<i>{{extractedText}}</i>" is unclear without context and may be
     confusing to screen readers. Consider rearranging the <code>
     &lt;a&gt;&lt;/a&gt;</code> tags or including special screen reader text
     such as <code>aria-label="detailed description"</code> or <code>
     aria-labelledby="labeling element id"</code> in the <code>
     &lt;a&gt;</code> element to provide more context.
+    {{#if linkedImage}}
+    You can also provide link text via the image element's alt text
+    {{/if}}
 </p>

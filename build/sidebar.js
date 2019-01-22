@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-01-20
+ * Date: 2019-01-22
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13565,12 +13565,16 @@ module.exports = LandmarksPlugin;
 
 var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
 function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
-module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var helper;
+module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+    return "    You can also provide link text via the image element's alt text\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "<p>\n    The text <i>"
-    + container.escapeExpression(((helper = (helper = helpers.extractedText || (depth0 != null ? depth0.extractedText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"extractedText","hash":{},"data":data}) : helper)))
-    + "</i> is unclear without context and may be\n    confusing to screen readers. Consider rearranging the <code>\n    &lt;a&gt;&lt;/a&gt;</code> tags or including special screen reader text\n    such as <code>aria-label=\"detailed description\"</code> or <code>\n    aria-labelledby=\"labeling element id\"</code> in the <code>\n    &lt;a&gt;</code> element to provide more context.\n</p>\n";
+  return "<p>\n    The text \"<i>"
+    + container.escapeExpression(((helper = (helper = helpers.extractedText || (depth0 != null ? depth0.extractedText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"extractedText","hash":{},"data":data}) : helper)))
+    + "</i>\" is unclear without context and may be\n    confusing to screen readers. Consider rearranging the <code>\n    &lt;a&gt;&lt;/a&gt;</code> tags or including special screen reader text\n    such as <code>aria-label=\"detailed description\"</code> or <code>\n    aria-labelledby=\"labeling element id\"</code> in the <code>\n    &lt;a&gt;</code> element to provide more context.\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.linkedImage : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</p>\n";
 },"useData":true});
 
 /***/ }),
@@ -13652,8 +13656,13 @@ class LinkTextPlugin extends Plugin {
   }
 
   reportError($el, $description, content) {
-    let entry = this.error("Link text is unclear", $description, $el);
-    annotate.errorLabel($el, "", `Link text "${content}" is unclear`, entry);
+    if (content === null) {
+      let entry = this.error("No link text present", $description, $el);
+      annotate.errorLabel($el, "", "No link text", entry);
+    } else {
+      let entry = this.error("Link text is unclear", $description, $el);
+      annotate.errorLabel($el, "", `Link text "${content}" is unclear`, entry);
+    }
   }
   /**
    * We can call linkWithUnclearPurpose from ADT directly once the following
@@ -13691,7 +13700,8 @@ class LinkTextPlugin extends Plugin {
 
       if (!this.isDescriptiveText(extractedText)) {
         let $description = errorTemplate({
-          extractedText: extractedText
+          extractedText: extractedText,
+          linkedImage: $el.find("img").length > 0
         });
         this.reportError($el, $description, extractedText);
       }

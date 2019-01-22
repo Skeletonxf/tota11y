@@ -73,9 +73,15 @@ class LinkTextPlugin extends Plugin {
     }
 
     reportError($el, $description, content) {
-        let entry = this.error("Link text is unclear", $description, $el);
-        annotate.errorLabel($el, "",
-            `Link text "${content}" is unclear`, entry);
+        if (content === null) {
+            let entry = this.error("No link text present", $description, $el);
+            annotate.errorLabel($el, "",
+                "No link text", entry);
+        } else {
+            let entry = this.error("Link text is unclear", $description, $el);
+            annotate.errorLabel($el, "",
+                `Link text "${content}" is unclear`, entry);
+        }
     }
 
     /**
@@ -115,6 +121,7 @@ class LinkTextPlugin extends Plugin {
             if (!this.isDescriptiveText(extractedText)) {
                 let $description = errorTemplate({
                     extractedText: extractedText,
+                    linkedImage: $el.find("img").length > 0,
                 });
 
                 this.reportError($el, $description, extractedText);
