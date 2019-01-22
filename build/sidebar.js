@@ -370,7 +370,7 @@ exports.push([module.i, ".tota11y-info-resources {\n  font-weight: bold !importa
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-swatches {\n  margin-left: 5px !important;\n  margin-right: 5px !important;\n  position: relative !important;\n  top: 1px !important;\n}\n.tota11y-swatch {\n  border: 1px solid #000 !important;\n  display: inline-block !important;\n  height: 12px !important;\n  width: 12px !important;\n}\n.tota11y-contrast-suggestion {\n  margin: 0 0 15px 15px !important;\n}\n.tota11y-color-hexes {\n  font-family: monospace !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-swatches {\n  margin-left: 5px !important;\n  margin-right: 5px !important;\n  position: relative !important;\n  top: 1px !important;\n}\n.tota11y-swatch {\n  border: 1px solid #000 !important;\n  display: inline-block !important;\n  height: 12px !important;\n  width: 12px !important;\n}\n.tota11y-contrast-suggestion {\n  margin: 0 0 15px 15px !important;\n}\n.tota11y-color-hexes {\n  font-family: monospace !important;\n}\na.tota11y-info-link {\n  text-decoration: underline !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -12873,7 +12873,7 @@ module.exports = Plugin;
 var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
 function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div>\n<div class=\"tota11y-info-about-title\">\n    <a href=\"https://www.w3.org/TR/WCAG21/#contrast-minimum\" target=\"_blank\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.4.3\n        </span>\n    </a>\n</div>\n<p>\n    Text with low contract can be hard to read for some users, particularly\n    when the text is small or in direct sunlight.\n</p>\n<p>\n    The Web Content Accessibility Guidelines give criteria for minimum text\n    contrast standards, which depend on the size of the text.\n</p>\n<p>\n    This tool cannot identify text contrast against background images or\n    in images of text but these should also meet the minimum text contrast\n    guidelines to ensure that your website is accessible to people with\n    visual impairments.\n</p>\n</div>\n";
+    return "<div>\n<div class=\"tota11y-info-about-title\">\n    <a href=\"https://www.w3.org/TR/WCAG21/#contrast-minimum\" target=\"_blank\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.4.3\n        </span>\n    </a>\n</div>\n<p>\n    Text with low contract can be hard to read for some users, particularly\n    when the text is small or in direct sunlight.\n</p>\n<p>\n    The Web Content Accessibility Guidelines give criteria for minimum text\n    contrast standards, which depend on the size of the text.\n</p>\n<p>\n    This tool cannot identify text contrast against background images or\n    in images of text but these should also meet the minimum text contrast\n    guidelines to ensure that your website is accessible to people with\n    visual impairments.\n</p>\n<p>\n    <a\n            href=\"https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html\"\n            class=\"tota11y-info-link\">\n        Learn more\n    </a>\n</p>\n</div>\n";
 },"useData":true});
 
 /***/ }),
@@ -13033,10 +13033,11 @@ class ContrastPlugin extends Plugin {
       // Only check elements with a direct text descendant
       if (!axs.properties.hasDirectTextDescendant(el)) {
         return;
-      } // Ignore elements that are part of the tota11y UI
+      }
 
+      let $el = $(el); // Ignore elements that are part of the tota11y UI
 
-      if ($(el).parents(".tota11y").length > 0) {
+      if ($el.parents(".tota11y").length > 0) {
         return;
       } // Ignore invisible elements
 
@@ -13063,7 +13064,12 @@ class ContrastPlugin extends Plugin {
         if ((rect.left < 0 || rect.right > documentWidth) && (rect.top < 0 || rect.bottom > documentHeight)) {
           return;
         }
+      } // Ignore elements that have been hidden by CSS
+
+      if ($el.css("overflow") === "hidden" && $el.width() <= 1 && $el.height() <= 1) {
+        return;
       }
+
       let style = getComputedStyle(el);
       let bgColor = axs.utils.getBgColor(style, el);
       let fgColor = axs.utils.getFgColor(style, el, bgColor);
@@ -13098,7 +13104,7 @@ class ContrastPlugin extends Plugin {
           }, el); // Save original color so it can be restored on cleanup.
 
           this.preservedColors.push({
-            $el: $(el),
+            $el: $el,
             fg: style.color,
             bg: style.backgroundColor
           });
@@ -13111,7 +13117,7 @@ class ContrastPlugin extends Plugin {
         // the first element with that color combination
 
 
-        annotate.errorLabel($(el), contrastRatio, "This contrast is insufficient at this size.", combinations[key]);
+        annotate.errorLabel($el, contrastRatio, "This contrast is insufficient at this size.", combinations[key]);
       }
     });
     this.about($(aboutTemplate()));

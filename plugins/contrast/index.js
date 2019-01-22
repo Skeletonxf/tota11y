@@ -88,8 +88,10 @@ class ContrastPlugin extends Plugin {
                 return;
             }
 
+            let $el = $(el);
+
             // Ignore elements that are part of the tota11y UI
-            if ($(el).parents(".tota11y").length > 0) {
+            if ($el.parents(".tota11y").length > 0) {
                 return;
             }
 
@@ -120,6 +122,12 @@ class ContrastPlugin extends Plugin {
                       && (rect.top < 0 || rect.bottom > documentHeight)) {
                   return;
               }
+            }
+
+            // Ignore elements that have been hidden by CSS
+            if (($el.css("overflow") === "hidden")
+                    && ($el.width() <= 1 && $el.height() <= 1)) {
+                return;
             }
 
             let style = getComputedStyle(el);
@@ -166,7 +174,7 @@ class ContrastPlugin extends Plugin {
 
                     // Save original color so it can be restored on cleanup.
                     this.preservedColors.push({
-                        $el: $(el),
+                        $el: $el,
                         fg: style.color,
                         bg: style.backgroundColor,
                     });
@@ -181,7 +189,7 @@ class ContrastPlugin extends Plugin {
                 // TODO: The error entry in the info panel will only highlight
                 // the first element with that color combination
                 annotate.errorLabel(
-                    $(el),
+                    $el,
                     contrastRatio,
                     "This contrast is insufficient at this size.",
                     combinations[key]);
