@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-01-22
+ * Date: 2019-01-23
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -178,18 +178,6 @@ exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js!./node_modules/postcss-loader/src/index.js?!./node_modules/less-loader/dist/cjs.js!./plugins/alt-text/style.less":
-/*!*************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader!./node_modules/postcss-loader/src??postcss!./node_modules/less-loader/dist/cjs.js!./plugins/alt-text/style.less ***!
-  \*************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-info-resources {\n  font-weight: bold !important;\n}\n.tota11y-info-resources li {\n  margin-left: 10px !important;\n}\na.tota11y-info-link {\n  text-decoration: underline !important;\n}\n", ""]);
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/index.js!./node_modules/postcss-loader/src/index.js?!./node_modules/less-loader/dist/cjs.js!./plugins/contrast/style.less":
 /*!*************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader!./node_modules/postcss-loader/src??postcss!./node_modules/less-loader/dist/cjs.js!./plugins/contrast/style.less ***!
@@ -198,7 +186,7 @@ exports.push([module.i, ".tota11y-info-resources {\n  font-weight: bold !importa
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-swatches {\n  margin-left: 5px !important;\n  margin-right: 5px !important;\n  position: relative !important;\n  top: 1px !important;\n}\n.tota11y-swatch {\n  border: 1px solid #000 !important;\n  display: inline-block !important;\n  height: 12px !important;\n  width: 12px !important;\n}\n.tota11y-contrast-suggestion {\n  margin: 0 0 15px 15px !important;\n}\n.tota11y-color-hexes {\n  font-family: monospace !important;\n}\na.tota11y-info-link {\n  text-decoration: underline !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-swatches {\n  margin-left: 5px !important;\n  margin-right: 5px !important;\n  position: relative !important;\n  top: 1px !important;\n}\n.tota11y-swatch {\n  border: 1px solid #000 !important;\n  display: inline-block !important;\n  height: 12px !important;\n  width: 12px !important;\n}\n.tota11y-contrast-suggestion {\n  margin: 0 0 15px 15px !important;\n}\n.tota11y-color-hexes {\n  font-family: monospace !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -234,7 +222,7 @@ exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-controls {\n  float: right !important;\n}\n.tota11y-info-annotation-toggle {\n  float: left !important;\n  margin-right: 10px !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n  position: relative !important;\n  top: -2px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n  flex-grow: 1 !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section,\n.tota11y-info-section * {\n  color: #333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  transform: rotateZ(90deg) !important;\n  transform-origin: 3px 8px !important;\n  transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description-code-container {\n  margin-top: 10px !important;\n}\n.tota11y-info-error-description-code-container code {\n  display: block !important;\n  margin-top: 10px !important;\n  padding: 5px 10px !important;\n  word-wrap: break-word !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n.tota11y-info .tota11y-info-about-title {\n  padding-bottom: 10px !important;\n  display: block !important;\n}\n.tota11y-info .tota11y-info-about-title-link {\n  text-decoration: underline !important;\n  font-weight: bold !important;\n}\n.tota11y-sidebar {\n  position: static !important;\n}\n.tota11y-sidebar .tota11y-info-sections {\n  width: auto !important;\n  height: auto !important;\n}\n.tota11y-sidebar .tota11y-info-section {\n  position: static !important;\n}\n.tota11y-sidebar .tota11y-info-body {\n  padding: 10px 0px 0 !important;\n}\n.tota11y-sidebar .tota11y-info-title {\n  padding: 10px 10px 0 !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-controls {\n  float: right !important;\n}\n.tota11y-info-annotation-toggle {\n  float: left !important;\n  margin-right: 10px !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n  position: relative !important;\n  top: -2px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n  flex-grow: 1 !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section,\n.tota11y-info-section * {\n  color: #333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  transform: rotateZ(90deg) !important;\n  transform-origin: 3px 8px !important;\n  transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description-code-container {\n  margin-top: 10px !important;\n}\n.tota11y-info-error-description-code-container code {\n  display: block !important;\n  margin-top: 10px !important;\n  padding: 5px 10px !important;\n  word-wrap: break-word !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n.tota11y-info .tota11y-info-about-title {\n  padding-bottom: 10px !important;\n  display: block !important;\n}\n.tota11y-info .tota11y-info-about-title-link {\n  text-decoration: underline !important;\n  font-weight: bold !important;\n}\n.tota11y-info .tota11y-info-resources {\n  font-weight: bold !important;\n}\n.tota11y-info .tota11y-info-resources li {\n  margin-left: 10px !important;\n}\n.tota11y-info a.tota11y-info-link {\n  text-decoration: underline !important;\n}\n.tota11y-info blockquote {\n  font-size: 11px !important;\n}\n.tota11y-info blockquote cite {\n  float: right !important;\n  margin: 11px 0 !important;\n  font-style: italic !important;\n}\n.tota11y-info blockquote:before {\n  content: open-quote !important;\n  font-size: 44px !important;\n  vertical-align: -20px !important;\n  line-height: 1px !important;\n}\n.tota11y-info blockquote:after {\n  content: close-quote !important;\n  font-size: 44px !important;\n  vertical-align: -10px !important;\n  line-height: 1px !important;\n  margin-left: calc(100% - 15px) !important;\n}\n.tota11y-sidebar {\n  position: static !important;\n}\n.tota11y-sidebar .tota11y-info-sections {\n  width: auto !important;\n  height: auto !important;\n}\n.tota11y-sidebar .tota11y-info-section {\n  position: static !important;\n}\n.tota11y-sidebar .tota11y-info-body {\n  padding: 10px 0px 0 !important;\n}\n.tota11y-sidebar .tota11y-info-title {\n  padding: 10px 10px 0 !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -12307,6 +12295,44 @@ module.exports = g;
 
 /***/ }),
 
+/***/ "./plugins/a11y-name/about.handlebars":
+/*!********************************************!*\
+  !*** ./plugins/a11y-name/about.handlebars ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#label-in-name\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 2.5.3\n        </span>\n    </a>\n</div>\n<p>\n    Users that navigate by speech commands and / or text to speech will\n    have a better experience if the visual text that labels an element (not\n    just the <code>&lt;label&gt;</code> element) is the same as, or contained\n    in the programmatic label of the element. This programmatic label (also\n    known as the accessible name) includes text that is not presented visually\n    such as ARIA. Preferably the programmatic label should be the same as the\n    visual label or should start with the visual label.\n</p>\n<blockquote><p>\n    Speech input users can navigate by speaking the visible text labels of\n    menus, links and buttons that appear on the screen. It’s confusing to\n    speech input users when they say a visible text label they see, but the\n    speech input does not work because the accessible name that is enabled as\n    a speech input command does not match the visible label.\n\n    In addition, when the accessible name is different from the visible label,\n    it essentially becomes an unknown hidden command for speech input users\n    that can be accidentally activated without the user knowing what has\n    happened.\n\n    Text-to-speech users will also have a better experience if the text they\n    hear matches the text they see on the screen.\n\n    This issue is even more important for speech input and text-to-speech users\n    who also have cognitive challenges. It’s an extra cognitive load for a\n    speech input user to remember and say a speech command that is different\n    from the visible label they see on a control. It’s also an extra cognitive\n    load for a text-to-speech user to absorb and understand speech output that\n    does not match the visible label.\n    <cite>\n        W3C\n    </cite>\n</p></blockquote>\n<p>\n    <a href=\"https://www.w3.org/WAI/WCAG21/Understanding/label-in-name.html\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        Further information from the Web Content Accessibility Guidelines\n    </a>\n</p>\n";
+},"useData":true});
+
+/***/ }),
+
+/***/ "./plugins/a11y-name/error-template.handlebars":
+/*!*****************************************************!*\
+  !*** ./plugins/a11y-name/error-template.handlebars ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<p>\n    This <code>&lt;"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "&gt;</code> element has different visual text\n    from its programmaticly determined text. As speech input users navigate\n    by speaking the visual text of elements on the screen it is confusing\n    if the programmaticly determined text is different from the text shown\n    visually.\n</p>\n<p>\n    The programmaticly determined labelling text (accessible name) we found\n    for this element is: \"<i>"
+    + alias4(((helper = (helper = helpers.extractedText || (depth0 != null ? depth0.extractedText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"extractedText","hash":{},"data":data}) : helper)))
+    + "</i>\"\n</p>\n<p>\n    The visual labelling text we found for this element\n    is: \"<i>"
+    + alias4(((helper = (helper = helpers.visibleText || (depth0 != null ? depth0.visibleText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"visibleText","hash":{},"data":data}) : helper)))
+    + "</i>\"\n</p>\n<p>\n    <a\n            href=\"https://www.w3.org/TR/accname-1.1/#mapping_additional_nd_te\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        The accessible name is computed according to the steps by the W3C.\n    </a>\n</p>\n<p>\n    In short the name is recursively built up with the element's <code>\n    aria-labelledby</code> taking priority, followed by <code>aria-label</code>\n    then other labelling from the markup such as a <code>title</code> attribute\n    or an HTML <code>&lt;label&gt;</code> element.\n</p>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/a11y-name/index.js":
 /*!************************************!*\
   !*** ./plugins/a11y-name/index.js ***!
@@ -12321,6 +12347,10 @@ let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("a11y-name");
 
 let audit = __webpack_require__(/*! ../shared/audit */ "./plugins/shared/audit.js");
+
+let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/a11y-name/error-template.handlebars");
+
+let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/a11y-name/about.handlebars");
 
 class A11yName extends Plugin {
   getName() {
@@ -12392,15 +12422,16 @@ class A11yName extends Plugin {
         visibleText.push($(`label[for=${el.id}]`).text());
       }
 
-      if (el.nodeName === "A") {
+      if ($el.prop("tagName").toLowerCase() === "a") {
         // Need to use #text() on a elements
         visibleText.push($el.text());
       } else {
         // Need to use #val() instead of #text() on
         // inputs, textarea and select elements
         visibleText.push($el.val());
-      } // strip all punctuation and casing from both texts
+      }
 
+      const unmodfiedVisibleText = visibleText.reduce((a, t) => a + t + " & ", "").slice(0, -3); // strip all punctuation and casing from both texts
 
       visibleText = visibleText.map(t => t.replace(/[\s'!#$%&()*+,\-.\/:;<=>?@\[\]^_\`{|}~]/g, "").toLowerCase());
       extractedText = extractedText.replace(/[\s'!#$%&()*+,\-.\/:;<=>?@\[\]^_\`{|}~]/g, "").toLowerCase();
@@ -12432,11 +12463,18 @@ class A11yName extends Plugin {
 
       if (labelInName) {
         annotate.label($el, unmodifiedExtractedText).addClass("tota11y-label-success");
-        console.log(`${JSON.stringify(visibleText)}, ${extractedText}`);
       } else {
-        annotate.errorLabel($el, "", "Visual & programmatic labels do not match");
+        let title = "Visual & programmatic labels do not match";
+        console.log(`${JSON.stringify(visibleText)} : ${JSON.stringify(unmodfiedVisibleText)}`);
+        let entry = this.error(title, $(errorTemplate({
+          extractedText: unmodifiedExtractedText,
+          visibleText: unmodfiedVisibleText,
+          elementName: $el.prop("tagName").toLowerCase()
+        })), $el);
+        annotate.errorLabel($el, "", title, entry);
       }
     });
+    this.about($(aboutTemplate()));
   }
 
   cleanup() {
@@ -12558,9 +12596,9 @@ function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj);
 module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "<p>\n    This <code>"
+  return "<p>\n    This <code>&lt;"
     + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
-    + "</code> element does not have any\n    text alternatives. Please provide some text\n    alternatives to convey as much of the same information\n    textually as possible.\n</p>\n\n<p>\n    Breif fallback text may be given with the enclosed text\n    like so, which will be displayed if the browser cannot\n    play the file types:\n</p>\n\n<pre><code>&lt;"
+    + "&gt;</code> element does not have any\n    text alternatives. Please provide some text\n    alternatives to convey as much of the same information\n    textually as possible.\n</p>\n\n<p>\n    Breif fallback text may be given with the enclosed text\n    like so, which will be displayed if the browser cannot\n    play the file types:\n</p>\n\n<pre><code>&lt;"
     + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
     + "&gt;Description&lt;/"
     + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
@@ -12621,8 +12659,6 @@ let imageErrorTemplate = __webpack_require__(/*! ./image-error-template.handleba
 let audiovisualErrorTemplate = __webpack_require__(/*! ./audiovisual-error-template.handlebars */ "./plugins/alt-text/audiovisual-error-template.handlebars");
 
 let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/alt-text/about.handlebars");
-
-__webpack_require__(/*! ./style.less */ "./plugins/alt-text/style.less");
 
 class AltTextPlugin extends Plugin {
   getName() {
@@ -12723,25 +12759,6 @@ class AltTextPlugin extends Plugin {
 }
 
 module.exports = AltTextPlugin;
-
-/***/ }),
-
-/***/ "./plugins/alt-text/style.less":
-/*!*************************************!*\
-  !*** ./plugins/alt-text/style.less ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(/*! !../../node_modules/css-loader!../../node_modules/postcss-loader/src??postcss!../../node_modules/less-loader/dist/cjs.js!./style.less */ "./node_modules/css-loader/index.js!./node_modules/postcss-loader/src/index.js?!./node_modules/less-loader/dist/cjs.js!./plugins/alt-text/style.less");
-if(typeof content === 'string') content = [[module.i, content, '']];
-// add the styles to the DOM
-var update = __webpack_require__(/*! ../../node_modules/style-loader/addStyles.js */ "./node_modules/style-loader/addStyles.js")(content, {});
-// Hot Module Replacement
-if(false) {}
 
 /***/ }),
 
@@ -13434,8 +13451,8 @@ let LinkTextPlugin = __webpack_require__(/*! ./link-text */ "./plugins/link-text
 let TablesPlugin = __webpack_require__(/*! ./tables */ "./plugins/tables/index.js");
 
 module.exports = {
-  default: [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new LandmarksPlugin(), new TablesPlugin()],
-  experimental: [new A11yTextWand(), new A11yName()]
+  default: [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new LandmarksPlugin(), new TablesPlugin(), new A11yName()],
+  experimental: [new A11yTextWand()]
 };
 
 /***/ }),
@@ -14173,7 +14190,7 @@ const FIRST_ERROR_ID = 0; // Automatically hide this InfoPanel if there is a bro
 // object (running as a WebExtension) and this is toggled on
 // We will want to toggle this auto hiding off for debugging.
 
-const WEBEXT_HIDE_IN_PAGE = true && !!browser;
+const WEBEXT_HIDE_IN_PAGE = false && !!browser;
 
 class InfoPanel {
   constructor(plugin) {

@@ -3,6 +3,9 @@ let Plugin = require("../base");
 let annotate = require("../shared/annotate")("a11y-name");
 let audit = require("../shared/audit");
 
+let errorTemplate = require("./error-template.handlebars");
+let aboutTemplate = require("./about.handlebars");
+
 class A11yName extends Plugin {
     getName() {
         return "a11y-name";
@@ -84,7 +87,7 @@ class A11yName extends Plugin {
                 visibleText.push($(`label[for=${el.id}]`).text());
             }
 
-            if (el.nodeName === "A") {
+            if ($el.prop("tagName").toLowerCase() === "a") {
                 // Need to use #text() on a elements
                 visibleText.push($el.text());
             } else {
@@ -92,6 +95,10 @@ class A11yName extends Plugin {
                 // inputs, textarea and select elements
                 visibleText.push($el.val());
             }
+
+            const unmodfiedVisibleText = visibleText
+                .reduce((a, t) => a + t + " & ", "")
+                .slice(0, -3);
 
             // strip all punctuation and casing from both texts
             visibleText = visibleText.map(
@@ -136,13 +143,24 @@ class A11yName extends Plugin {
                     .label($el, unmodifiedExtractedText)
                     .addClass("tota11y-label-success");
             } else {
-                // TODO add error to info panel
-                annotate.errorLabel(
-                    $el,
-                    "",
-                    "Visual & programmatic labels do not match");
+                let title = "Visual & programmatic labels do not match";
+
+                console.log(`${JSON.stringify(visibleText)} : ${JSON.stringify(unmodfiedVisibleText)}`);
+
+                let entry = this.error(
+                    title,
+                    $(errorTemplate({
+                        extractedText: unmodifiedExtractedText,
+                        visibleText: unmodfiedVisibleText,
+                        elementName: $el.prop("tagName").toLowerCase(),
+                    })),
+                    $el);
+
+                annotate.errorLabel($el, "", title, entry);
             }
         });
+
+        this.about($(aboutTemplate()));
     }
 
     cleanup() {

@@ -29,7 +29,7 @@ const FIRST_ERROR_ID = 0;
 // Automatically hide this InfoPanel if there is a browser
 // object (running as a WebExtension) and this is toggled on
 // We will want to toggle this auto hiding off for debugging.
-const WEBEXT_HIDE_IN_PAGE = true && !!browser;
+const WEBEXT_HIDE_IN_PAGE = false && !!browser;
 
 class InfoPanel {
     constructor(plugin) {

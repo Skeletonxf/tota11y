@@ -12,6 +12,7 @@
 @dismissFontSize: 25px;
 @chevornFontSize: 20px;
 @descriptionFontSize: 13px;
+@quoteFontSize: 11px;
 
 .tota11y-info {
     .tota11y-dark-color-scheme;
@@ -218,6 +219,42 @@
     .tota11y-info-about-title-link {
         text-decoration: underline;
         font-weight: bold;
+    }
+
+    .tota11y-info-resources {
+        font-weight: bold;
+
+        li {
+            margin-left: 10px;
+        }
+    }
+
+    a.tota11y-info-link {
+        text-decoration: underline;
+    }
+
+    blockquote {
+        font-size: @quoteFontSize;
+        cite {
+            float: right;
+            margin: @quoteFontSize 0;
+            font-style: italic;
+        }
+    }
+
+    blockquote:before {
+        content: open-quote;
+        font-size: @quoteFontSize * 4;
+        vertical-align: -20px;
+        line-height: 1px;
+    }
+
+    blockquote:after {
+        content: close-quote;
+        font-size: @quoteFontSize * 4;
+        vertical-align: -10px;
+        line-height: 1px;
+        margin-left: calc(100% - 15px);
     }
 }
 

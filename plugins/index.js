@@ -23,10 +23,10 @@ module.exports = {
         new AltTextPlugin(),
         new LandmarksPlugin(),
         new TablesPlugin(),
+        new A11yName(),
     ],
 
     experimental: [
         new A11yTextWand(),
-        new A11yName(),
     ],
 };

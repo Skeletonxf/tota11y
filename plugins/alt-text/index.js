@@ -11,8 +11,6 @@ let imageErrorTemplate = require("./image-error-template.handlebars");
 let audiovisualErrorTemplate = require("./audiovisual-error-template.handlebars");
 let aboutTemplate = require("./about.handlebars");
 
-require("./style.less");
-
 class AltTextPlugin extends Plugin {
     getName() {
         return "alt-text";
