@@ -29,7 +29,7 @@ const FIRST_ERROR_ID = 0;
 // Automatically hide this InfoPanel if there is a browser
 // object (running as a WebExtension) and this is toggled on
 // We will want to toggle this auto hiding off for debugging.
-const WEBEXT_HIDE_IN_PAGE = false && !!browser;
+const WEBEXT_HIDE_IN_PAGE = true && !!browser;
 
 class InfoPanel {
     constructor(plugin) {
@@ -310,6 +310,15 @@ class InfoPanel {
                     this.plugin.getAnnotate().hide();
                 }
             }
+        });
+
+        // Wire click to expand text
+        this.$el.find(".tota11y-click-to-expand").click((e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            let $text = $(e.currentTarget);
+            $text.toggleClass("tota11y-expanded");
+            $text.attr("aria-expanded", $text.is(".tota11y-expanded"));
         });
 
         if (this.errors.size > 0) {

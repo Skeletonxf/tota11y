@@ -235,6 +235,15 @@ class ActivePanel {
             }
         });
 
+        // Wire click to expand text
+        this.$el.find(".tota11y-click-to-expand").click((e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            let $text = $(e.currentTarget);
+            $text.toggleClass("tota11y-expanded");
+            $text.attr("aria-expanded", $text.is(".tota11y-expanded"));
+        });
+
         if (this.errors.size > 0) {
             let $errors = $("<ul>").addClass("tota11y-info-errors");
 

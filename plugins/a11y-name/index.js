@@ -6,6 +6,8 @@ let audit = require("../shared/audit");
 let errorTemplate = require("./error-template.handlebars");
 let aboutTemplate = require("./about.handlebars");
 
+require("./style.less");
+
 class A11yName extends Plugin {
     getName() {
         return "a11y-name";

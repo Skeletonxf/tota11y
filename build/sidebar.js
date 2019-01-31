@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-01-23
+ * Date: 2019-01-31
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -335,6 +335,18 @@ if(false) {}
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
 exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n/**\n * Base styles for tota11y to make sure things look consistent under\n * reasonable circumstances.\n */\n.tota11y,\n.tota11y * {\n  border: none !important;\n  background-color: inherit !important;\n  box-sizing: border-box !important;\n  color: #f2f2f2 !important;\n  font-family: Arial !important;\n  font-size: 14px !important;\n  font-style: normal !important;\n  font-weight: 400 !important;\n  line-height: 1.35 !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  text-align: left !important;\n  text-shadow: none !important;\n}\n.tota11y * {\n  height: auto !important;\n  width: auto !important;\n}\n.tota11y strong {\n  font-weight: bold !important;\n}\n.tota11y pre,\n.tota11y code {\n  background-color: #ddd !important;\n  border: none !important;\n  border-radius: 0 !important;\n  color: inherit !important;\n  font-family: monospace !important;\n  font-size: inherit !important;\n  line-height: inherit !important;\n}\n.tota11y pre {\n  padding: 5px 10px !important;\n  margin: 0 0 10px !important;\n  overflow-x: scroll !important;\n}\n.tota11y code {\n  border-radius: 2px !important;\n  display: inline !important;\n  padding: 1px !important;\n}\n.tota11y i,\n.tota11y em {\n  font-style: italic !important;\n}\n.tota11y p {\n  margin: 0 0 10px !important;\n}\n.tota11y a,\n.tota11y a:hover,\n.tota11y a:focus {\n  background-color: inherit !important;\n  color: inherit !important;\n  text-decoration: none !important;\n}\n.tota11y-toolbar {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  position: fixed !important;\n  top: auto !important;\n  right: auto !important;\n  bottom: 0 !important;\n  left: 10px !important;\n  border-top-left-radius: 5px !important;\n  border-top-right-radius: 5px !important;\n  overflow: hidden !important;\n  z-index: 9998 !important;\n}\n.tota11y-toolbar-toggle {\n  background-color: #333 !important;\n  display: block !important;\n  padding: 7px !important;\n  width: 100% !important;\n}\n.tota11y-toolbar-logo {\n  height: 25px !important;\n  margin: 0 auto !important;\n  text-align: center !important;\n  width: 35px !important;\n}\n.tota11y-toolbar-logo svg {\n  height: 25px !important;\n}\n.tota11y-toolbar-body {\n  display: none !important;\n}\n.tota11y-toolbar.tota11y-expanded .tota11y-toolbar-body {\n  display: block !important;\n}\n.tota11y-sr-only {\n  border: 0 !important;\n  clip: rect(0, 0, 0, 0) !important;\n  height: 1px !important;\n  margin: -1px !important;\n  overflow: hidden !important;\n  padding: 0 !important;\n  position: absolute !important;\n  width: 1px !important;\n}\n.tota11y-sidebar {\n  position: static !important;\n}\n.tota11y-sidebar .tota11y-plugin-description {\n  width: auto !important;\n}\n.tota11y-sidebar .tota11y-plugin-indicator {\n  margin: 0 10px !important;\n}\n.tota11y-sidebar .tota11y-plugin-switch {\n  padding: 9px 9px 9px 0 !important;\n}\n.tota11y-sidebar.tota11y-toolbar {\n  border-top-left-radius: 0 !important;\n  border-top-right-radius: 0 !important;\n}\n.tota11y-disabled-toolbar {\n  pointer-events: none !important;\n  opacity: 0.5 !important;\n}\n", ""]);
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js!./node_modules/postcss-loader/src/index.js?!./node_modules/less-loader/dist/cjs.js!./plugins/a11y-name/style.less":
+/*!**************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader!./node_modules/postcss-loader/src??postcss!./node_modules/less-loader/dist/cjs.js!./plugins/a11y-name/style.less ***!
+  \**************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
+exports.push([module.i, ".tota11y-click-to-expand p {\n  white-space: nowrap !important;\n  max-width: 100% !important;\n  overflow: hidden !important;\n  text-overflow: ellipsis !important;\n  cursor: pointer !important;\n}\n.tota11y-click-to-expand.tota11y-expanded p {\n  white-space: normal !important;\n  overflow: auto !important;\n  text-overflow: clip !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -12435,7 +12447,7 @@ module.exports = g;
 var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
 function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#label-in-name\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 2.5.3\n        </span>\n    </a>\n</div>\n<p>\n    Users that navigate by speech commands and / or text to speech will\n    have a better experience if the visual text that labels an element (not\n    just the <code>&lt;label&gt;</code> element) is the same as, or contained\n    in the programmatic label of the element. This programmatic label (also\n    known as the accessible name) includes text that is not presented visually\n    such as ARIA. Preferably the programmatic label should be the same as the\n    visual label or should start with the visual label.\n</p>\n<blockquote><p>\n    Speech input users can navigate by speaking the visible text labels of\n    menus, links and buttons that appear on the screen. It’s confusing to\n    speech input users when they say a visible text label they see, but the\n    speech input does not work because the accessible name that is enabled as\n    a speech input command does not match the visible label.\n\n    In addition, when the accessible name is different from the visible label,\n    it essentially becomes an unknown hidden command for speech input users\n    that can be accidentally activated without the user knowing what has\n    happened.\n\n    Text-to-speech users will also have a better experience if the text they\n    hear matches the text they see on the screen.\n\n    This issue is even more important for speech input and text-to-speech users\n    who also have cognitive challenges. It’s an extra cognitive load for a\n    speech input user to remember and say a speech command that is different\n    from the visible label they see on a control. It’s also an extra cognitive\n    load for a text-to-speech user to absorb and understand speech output that\n    does not match the visible label.\n    <cite>\n        W3C\n    </cite>\n</p></blockquote>\n<p>\n    <a href=\"https://www.w3.org/WAI/WCAG21/Understanding/label-in-name.html\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        Further information from the Web Content Accessibility Guidelines\n    </a>\n</p>\n";
+    return "<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#label-in-name\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 2.5.3\n        </span>\n    </a>\n</div>\n<p>\n    Users that navigate by speech commands and / or text to speech will\n    have a better experience if the visual text that labels an element (not\n    just the <code>&lt;label&gt;</code> element) is the same as, or contained\n    in the programmatic label of the element. This programmatic label (also\n    known as the accessible name) includes text that is not presented visually\n    such as ARIA. Preferably the programmatic label should be the same as the\n    visual label or should start with the visual label.\n</p>\n<blockquote>\n    <a class=\"tota11y-click-to-expand\" aria-expanded=\"false\" href=\"javascript:void(0)\">\n        <p>\n    Speech input users can navigate by speaking the visible text labels of\n    menus, links and buttons that appear on the screen. It’s confusing to\n    speech input users when they say a visible text label they see, but the\n    speech input does not work because the accessible name that is enabled as\n    a speech input command does not match the visible label.\n\n    In addition, when the accessible name is different from the visible label,\n    it essentially becomes an unknown hidden command for speech input users\n    that can be accidentally activated without the user knowing what has\n    happened.\n\n    Text-to-speech users will also have a better experience if the text they\n    hear matches the text they see on the screen.\n\n    This issue is even more important for speech input and text-to-speech users\n    who also have cognitive challenges. It’s an extra cognitive load for a\n    speech input user to remember and say a speech command that is different\n    from the visible label they see on a control. It’s also an extra cognitive\n    load for a text-to-speech user to absorb and understand speech output that\n    does not match the visible label.\n        <cite>\n            W3C\n        </cite>\n        </p>\n    </a>\n</blockquote>\n<p>\n    <a href=\"https://www.w3.org/WAI/WCAG21/Understanding/label-in-name.html\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        Further information from the Web Content Accessibility Guidelines\n    </a>\n</p>\n";
 },"useData":true});
 
 /***/ }),
@@ -12481,6 +12493,8 @@ let audit = __webpack_require__(/*! ../shared/audit */ "./plugins/shared/audit.j
 let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/a11y-name/error-template.handlebars");
 
 let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/a11y-name/about.handlebars");
+
+__webpack_require__(/*! ./style.less */ "./plugins/a11y-name/style.less");
 
 class A11yName extends Plugin {
   getName() {
@@ -12614,6 +12628,25 @@ class A11yName extends Plugin {
 }
 
 module.exports = A11yName;
+
+/***/ }),
+
+/***/ "./plugins/a11y-name/style.less":
+/*!**************************************!*\
+  !*** ./plugins/a11y-name/style.less ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(/*! !../../node_modules/css-loader!../../node_modules/postcss-loader/src??postcss!../../node_modules/less-loader/dist/cjs.js!./style.less */ "./node_modules/css-loader/index.js!./node_modules/postcss-loader/src/index.js?!./node_modules/less-loader/dist/cjs.js!./plugins/a11y-name/style.less");
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(/*! ../../node_modules/style-loader/addStyles.js */ "./node_modules/style-loader/addStyles.js")(content, {});
+// Hot Module Replacement
+if(false) {}
 
 /***/ }),
 
@@ -14515,6 +14548,14 @@ class ActivePanel {
           plugin: this.plugin.getName()
         });
       }
+    }); // Wire click to expand text
+
+    this.$el.find(".tota11y-click-to-expand").click(e => {
+      e.preventDefault();
+      e.stopPropagation();
+      let $text = $(e.currentTarget);
+      $text.toggleClass("tota11y-expanded");
+      $text.attr("aria-expanded", $text.is(".tota11y-expanded"));
     });
 
     if (this.errors.size > 0) {
@@ -14787,7 +14828,7 @@ const FIRST_ERROR_ID = 0; // Automatically hide this InfoPanel if there is a bro
 // object (running as a WebExtension) and this is toggled on
 // We will want to toggle this auto hiding off for debugging.
 
-const WEBEXT_HIDE_IN_PAGE = false && !!browser;
+const WEBEXT_HIDE_IN_PAGE = true && !!browser;
 
 class InfoPanel {
   constructor(plugin) {
@@ -15050,6 +15091,14 @@ class InfoPanel {
           this.plugin.getAnnotate().hide();
         }
       }
+    }); // Wire click to expand text
+
+    this.$el.find(".tota11y-click-to-expand").click(e => {
+      e.preventDefault();
+      e.stopPropagation();
+      let $text = $(e.currentTarget);
+      $text.toggleClass("tota11y-expanded");
+      $text.attr("aria-expanded", $text.is(".tota11y-expanded"));
     });
 
     if (this.errors.size > 0) {
