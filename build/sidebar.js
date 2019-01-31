@@ -12607,11 +12607,9 @@ class A11yName extends Plugin {
       }
 
       if (labelInName) {
-        console.log(`${JSON.stringify(visibleText)} <-> ${JSON.stringify(extractedText)}`);
         annotate.label($el, unmodifiedExtractedText).addClass("tota11y-label-success");
       } else {
         let title = "Visual & programmatic labels do not match";
-        console.log(`${JSON.stringify(visibleText)} : ${JSON.stringify(unmodfiedVisibleText)}`);
         let entry = this.error(title, $(errorTemplate({
           extractedText: unmodifiedExtractedText,
           visibleText: unmodfiedVisibleText,
@@ -13226,7 +13224,7 @@ class ContrastPlugin extends Plugin {
     // the WCAG so we use their recommended conversion factor of 1.333
     // https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle
     // https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html
-    return 1.333 * parseFloat(style.getPropertyValue('font-size'));
+    return parseFloat(style.getPropertyValue('font-size')) / 1.333;
   }
 
   run() {
