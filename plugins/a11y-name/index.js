@@ -133,7 +133,9 @@ class A11yName extends Plugin {
                             ((i < text.length * 0.25) && !labelInName);
                             i++) {
                         let j = i + text.length * 0.75 - 1;
-                        if (extractedText.includes(text.substring(i, j))) {
+                        let partialVisibleText = text.substring(i, j);
+                        if (partialVisibleText.length > 0 &&
+                                extractedText.includes(partialVisibleText)) {
                             labelInName = true;
                         }
                     }
@@ -146,8 +148,6 @@ class A11yName extends Plugin {
                     .addClass("tota11y-label-success");
             } else {
                 let title = "Visual & programmatic labels do not match";
-
-                console.log(`${JSON.stringify(visibleText)} : ${JSON.stringify(unmodfiedVisibleText)}`);
 
                 let entry = this.error(
                     title,
