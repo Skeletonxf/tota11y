@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-01-31
+ * Date: 2019-02-01
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13238,6 +13238,113 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./plugins/document/index.js":
+/*!***********************************!*\
+  !*** ./plugins/document/index.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+ * A plugin to check the document metadata for the presence of important data
+ */
+let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
+let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
+
+let summaryTemplate = __webpack_require__(/*! ./summary-template.handlebars */ "./plugins/document/summary-template.handlebars");
+
+let noLangErrorTemplate = __webpack_require__(/*! ./no-lang-error-template.handlebars */ "./plugins/document/no-lang-error-template.handlebars");
+
+let noPageTitleErrorTemplate = __webpack_require__(/*! ./no-page-title-error-template.handlebars */ "./plugins/document/no-page-title-error-template.handlebars");
+
+class DocumentPlugin extends Plugin {
+  getName() {
+    return "document";
+  }
+
+  getTitle() {
+    return "Document";
+  }
+
+  getDescription() {
+    return "Checks the document for the presence of important meta data";
+  }
+
+  run() {
+    if (!$("html").attr("lang")) {
+      this.error("No language declared", noLangErrorTemplate(), $("html"));
+    }
+
+    if (!document.title || document.title === "") {
+      this.error("No page title", noPageTitleErrorTemplate(), $("head"));
+    }
+
+    this.summary(summaryTemplate({
+      language: $("html").attr("lang"),
+      title: document.title
+    }));
+  }
+
+  cleanup() {}
+
+}
+
+module.exports = DocumentPlugin;
+
+/***/ }),
+
+/***/ "./plugins/document/no-lang-error-template.handlebars":
+/*!************************************************************!*\
+  !*** ./plugins/document/no-lang-error-template.handlebars ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<p>\n    This document does not have a language specified on\n    its <code>&lt;html&gt;</code> element. You can specify the language like so:\n</p>\n<pre><code>&lt;html lang=\"en\"&gt;</code></pre>\n<p>\n    It is important to specify the language of the HTML document (and around\n    any text that changes language) so that assistive tools like screen readers\n    know what language to read text in.\n</p>\n<p>\n    The text for the language attribute must be a valid language code such\n    as \"<i>en</i>\" for English, \"<i>en-GB</i>\" for British English, or\n    \"<i>fr</i>\" for French.\n</p>\n<div class=\"tota11y-info-resources\">\n    <p>\n        Learn more\n    </p>\n    <ul>\n        <li>\n            <a\n                    href=\"https://www.w3.org/International/questions/qa-html-language-declarations\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                Declaring the language of the page\n            </a>\n        </li>\n        <li>\n            <a\n                    href=\"https://www.w3.org/TR/WCAG21/#language-of-page\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                WCAG &sect; 3.1.1\n            </a>\n        </li>\n    </ul>\n</div>\n";
+},"useData":true});
+
+/***/ }),
+
+/***/ "./plugins/document/no-page-title-error-template.handlebars":
+/*!******************************************************************!*\
+  !*** ./plugins/document/no-page-title-error-template.handlebars ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<p>\n    This document does not have a page title. You can provide a title like so:\n</p>\n<pre><code>&lt;head&gt;\n    &lt;title&gt;Descriptive title&lt;/title&gt;\n&lt;/head&gt;</code></pre>\n<p>\n    It is important to specify a descriptive title for every Web page for Search\n    Engine Optimisation and to help users navigate between pages.\n</p>\n<p><a\n        href=\"https://www.w3.org/TR/WCAG21/#page-titled\"\n        target=\"_blank\" class=\"tota11y-info-link\">\n    WCAG &sect; 2.4.2\n</a></p>\n";
+},"useData":true});
+
+/***/ }),
+
+/***/ "./plugins/document/summary-template.handlebars":
+/*!******************************************************!*\
+  !*** ./plugins/document/summary-template.handlebars ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<p>Document language: <i>"
+    + alias4(((helper = (helper = helpers.language || (depth0 != null ? depth0.language : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"language","hash":{},"data":data}) : helper)))
+    + "</i></p>\n<p>Page title: \"<i>"
+    + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
+    + "</i>\"</p>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/headings/index.js":
 /*!***********************************!*\
   !*** ./plugins/headings/index.js ***!
@@ -13473,6 +13580,8 @@ let AltTextPlugin = __webpack_require__(/*! ./alt-text */ "./plugins/alt-text/in
 
 let ContrastPlugin = __webpack_require__(/*! ./contrast */ "./plugins/contrast/index.js");
 
+let DocumentPlugin = __webpack_require__(/*! ./document */ "./plugins/document/index.js");
+
 let HeadingsPlugin = __webpack_require__(/*! ./headings */ "./plugins/headings/index.js");
 
 let LabelsPlugin = __webpack_require__(/*! ./labels */ "./plugins/labels/index.js");
@@ -13484,7 +13593,7 @@ let LinkTextPlugin = __webpack_require__(/*! ./link-text */ "./plugins/link-text
 let TablesPlugin = __webpack_require__(/*! ./tables */ "./plugins/tables/index.js");
 
 module.exports = {
-  default: [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new LandmarksPlugin(), new TablesPlugin(), new A11yName()],
+  default: [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new LandmarksPlugin(), new TablesPlugin(), new A11yName(), new DocumentPlugin()],
   experimental: [new A11yTextWand()]
 };
 
@@ -14590,6 +14699,7 @@ class InfoPanel {
           errorHTML = errorHTML.substring(0, 300) + "...";
         }
 
+        console.log(`Trimmed errorHTML element: ${errorHTML}`);
         let $relevantCode = $error.find(".tota11y-info-error-description-code-container code");
         $relevantCode.text(errorHTML);
       });
@@ -15030,39 +15140,7 @@ class TablesPlugin extends Plugin {
 
         if (problems > 1) {
           title = "Table has problem(s) with its markup";
-        } // if (false) {
-        //     // Retrieve the table rows, which may be
-        //     // inside <tbody> elements or directly
-        //     // inside the <table> element but only
-        //     // one of the two.
-        //     let tableBody = $el.children('tbody');
-        //     let rows;
-        //     if (tableBody.length === 0) {
-        //         rows = $el.children('tr');
-        //     } else {
-        //         rows = tableBody.children("tr");
-        //     }
-        //
-        //     // Determine the table head(s)
-        //     // There can only be at most one thead but there
-        //     // may also be headers in table rows.
-        //     let tableHeads = [ $el.children('thead') ];
-        //     rows.each(function(index) {
-        //         let hasHeaders = $(this).children('th').length > 0;
-        //         let hasData = $(this).children('td').length > 0;
-        //         if ((index === 0)
-        //                 && hasHeaders
-        //                 && !hasData
-        //                 && (tableHeads[0].length === 0)) {
-        //             // assume the first table row is the header
-        //             tableHeads[0] = $(this);
-        //         } else if (hasHeaders) {
-        //             // table has headers on the rows somewhere
-        //             tableHeads.push($(this));
-        //         }
-        //     });
-        // }
-
+        }
 
         if (problems > 0) {
           // Place an error label on the element and register it as an

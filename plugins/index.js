@@ -8,6 +8,7 @@ let A11yTextWand = require("./a11y-text-wand");
 let A11yName = require("./a11y-name");
 let AltTextPlugin = require("./alt-text");
 let ContrastPlugin = require("./contrast");
+let DocumentPlugin = require("./document");
 let HeadingsPlugin = require("./headings");
 let LabelsPlugin = require("./labels");
 let LandmarksPlugin = require("./landmarks");
@@ -24,6 +25,7 @@ module.exports = {
         new LandmarksPlugin(),
         new TablesPlugin(),
         new A11yName(),
+        new DocumentPlugin(),
     ],
 
     experimental: [

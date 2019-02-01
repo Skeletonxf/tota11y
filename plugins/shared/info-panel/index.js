@@ -427,6 +427,7 @@ class InfoPanel {
                 if (errorHTML.length > 300) {
                     errorHTML = errorHTML.substring(0, 300) + "...";
                 }
+                console.log(`Trimmed errorHTML element: ${errorHTML}`);
 
                 let $relevantCode = $error.find(
                     ".tota11y-info-error-description-code-container code");

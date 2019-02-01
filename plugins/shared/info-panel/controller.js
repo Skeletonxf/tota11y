@@ -126,7 +126,10 @@ class ActivePanel {
                     // convert HTML strings back to jQuery HTML objects
                     $description: $(json.description),
                     $el: $(json.el),
-                    id: json.id
+                    id: json.id,
+                    // Hold reference to the HTML string because some
+                    // objects like <html> can't be recreated by jQuery
+                    elHTMLString: json.el,
                 };
                 // We use the same ids as the InfoPanel in the content
                 // script generates so we can map between our error
@@ -325,7 +328,8 @@ class ActivePanel {
                 $scroll.on("mouseleave blur", () => this.sendHighlightOff(id));
 
                 // Add code from error.$el to the information panel
-                let errorHTML = error.$el[0].outerHTML;
+                // Use the saved html string as a fallback
+                let errorHTML = error.$el[0].outerHTML || error.elHTMLString;
 
                 // Trim the code block if it is over 300 characters
                 if (errorHTML.length > 300) {

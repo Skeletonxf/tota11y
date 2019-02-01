@@ -113,39 +113,6 @@ class TablesPlugin extends Plugin {
                     title = "Table has problem(s) with its markup";
                 }
 
-                // if (false) {
-                //     // Retrieve the table rows, which may be
-                //     // inside <tbody> elements or directly
-                //     // inside the <table> element but only
-                //     // one of the two.
-                //     let tableBody = $el.children('tbody');
-                //     let rows;
-                //     if (tableBody.length === 0) {
-                //         rows = $el.children('tr');
-                //     } else {
-                //         rows = tableBody.children("tr");
-                //     }
-                //
-                //     // Determine the table head(s)
-                //     // There can only be at most one thead but there
-                //     // may also be headers in table rows.
-                //     let tableHeads = [ $el.children('thead') ];
-                //     rows.each(function(index) {
-                //         let hasHeaders = $(this).children('th').length > 0;
-                //         let hasData = $(this).children('td').length > 0;
-                //         if ((index === 0)
-                //                 && hasHeaders
-                //                 && !hasData
-                //                 && (tableHeads[0].length === 0)) {
-                //             // assume the first table row is the header
-                //             tableHeads[0] = $(this);
-                //         } else if (hasHeaders) {
-                //             // table has headers on the rows somewhere
-                //             tableHeads.push($(this));
-                //         }
-                //     });
-                // }
-
                 if (problems > 0) {
                     // Place an error label on the element and register it as an
                     // error in the info panel
