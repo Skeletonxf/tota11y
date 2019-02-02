@@ -69,6 +69,9 @@ class InfoPanelController {
                         console.log('registering active panel');
                         this.activePanels.add(new ActivePanel(port, plugin));
                     }
+                    if (json.elementMarked) {
+                        this.sendInspectElement();
+                    }
                 });
                 port.onDisconnect.addListener((port) => {
                     let activePanels = new Set();
@@ -87,6 +90,31 @@ class InfoPanelController {
                 });
             })
         }
+    }
+
+    sendInspectElement() {
+        // When called we will have marked an HTML element from an error with
+        // a class to inspect it in the developer tools.
+        // Create a Port for communicating with the devtools
+        // panel so it can inspect the element on the page
+        console.log("Creating devtools Port");
+        let devtoolsPort = browser.runtime.connect({
+            name: "devtools"
+        });
+        devtoolsPort.onMessage.addListener((json) => {
+            if (json.msg) {
+                console.log(`Info panel controller received msg: ${json.msg}, ${json}`);
+            }
+            if (json.inspectedElement) {
+                // Success! now close the port
+                devtoolsPort.disconnect();
+            }
+        });
+        console.log("Posting message");
+        devtoolsPort.postMessage({
+            msg: "Inspect marked element",
+            inspectMarkedElement: true,
+        });
     }
 }
 
@@ -339,6 +367,24 @@ class ActivePanel {
                 let $relevantCode = $error.find(
                     ".tota11y-info-error-description-code-container code");
                 $relevantCode.text(errorHTML);
+
+                // Add a button to inspect the element
+                let $inspectElement = $(
+                    `<button class="tota11y-info-error-inspect-element">
+                        Inspect element
+                    </button>`);
+                $inspectElement.appendTo(
+                    $error.find(".tota11y-info-error-description"));
+                // Start the communications over the Port to
+                // inspect the element from the devtools
+                $inspectElement.click(() => {
+                    this.port.postMessage({
+                        msg: "Inspect element",
+                        inspectElement: true,
+                        errorId: id,
+                        plugin: this.plugin.getName(),
+                    });
+                });
             });
 
             // Store a reference to the "Errors" tab so we can switch to it

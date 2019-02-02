@@ -482,6 +482,9 @@ class InfoPanel {
         // Remove the annotations
         annotate.removeAll();
 
+        // Remove inspection marks
+        $(".tota11y-inspected-element").removeClass("tota11y-inspected-element");
+
         if (browser && this.port) {
             this.port.disconnect();
             this.port = null;
@@ -537,6 +540,13 @@ class InfoPanel {
                     this.doCheckboxSync(
                         json.errorId, json.checkboxIndex, json.checked
                     );
+                }
+                if (json.inspectElement) {
+                    this.markElementForInspection(json.errorId);
+                    this.port.postMessage({
+                        msg: "Marked element for inspection",
+                        elementMarked: true,
+                    });
                 }
             });
         }
@@ -641,6 +651,18 @@ class InfoPanel {
             // Sync the checkbox state
             $checkbox.click();
         }
+    }
+
+    markElementForInspection(errorId) {
+        let error = this.errors.get(errorId);
+
+        if (error === undefined) {
+            return;
+        }
+
+        $(".tota11y-inspected-element")
+            .removeClass("tota11y-inspected-element");
+        error.$el.addClass("tota11y-inspected-element");
     }
 
     elToString($el) {
