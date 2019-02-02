@@ -14774,9 +14774,8 @@ class InfoPanel {
       port.onMessage.addListener(json => {
         if (json.msg) {
           console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
-        }
+        } // Now handle plugin specific responses
 
-        ``; // Now handle plugin specific responses
 
         if (json.plugin !== this.plugin.getName()) {
           return;
@@ -14814,8 +14813,14 @@ class InfoPanel {
           this.markElementForInspection(json.errorId);
           this.port.postMessage({
             msg: "Marked element for inspection",
-            elementMarked: true
+            elementMarked: true,
+            plugin: this.plugin.getName()
           });
+        }
+
+        if (json.unmarkInspectedElement) {
+          console.log("Unmarked element for inspection");
+          $(".tota11y-inspected-element").removeClass("tota11y-inspected-element");
         }
       });
     }

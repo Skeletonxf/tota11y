@@ -14453,11 +14453,16 @@ const PORT_NAME = infoPanel.port;
 const InfoPanel = infoPanel.panel;
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map(p => p.getName());
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 /*
  * The controller of all n info panels, delegating each
  * to an ActivePanel to mirror the InfoPanel instance on
  * the content script.
  */
+
 
 class InfoPanelController {
   constructor() {
@@ -14490,7 +14495,7 @@ class InfoPanelController {
           }
 
           if (json.elementMarked) {
-            this.sendInspectElement();
+            this.sendInspectElement(json.plugin);
           }
         });
         port.onDisconnect.addListener(port => {
@@ -14512,7 +14517,7 @@ class InfoPanelController {
     }
   }
 
-  sendInspectElement() {
+  sendInspectElement(plugin) {
     // When called we will have marked an HTML element from an error with
     // a class to inspect it in the developer tools.
     // Create a Port for communicating with the devtools
@@ -14527,8 +14532,18 @@ class InfoPanelController {
       }
 
       if (json.inspectedElement) {
-        // Success! now close the port
-        devtoolsPort.disconnect();
+        // Success! now close the devtools port
+        devtoolsPort.disconnect(); // then remove the class added to the element
+        // after a short delay to ensure the element is
+        // inspected by the dev tools
+
+        sleep(1000).then(() => {
+          this.port.postMessage({
+            msg: "Unmark element for inspection",
+            unmarkInspectedElement: true,
+            plugin: plugin
+          });
+        });
       }
     });
     console.log("Posting message");
@@ -15428,9 +15443,8 @@ class InfoPanel {
       port.onMessage.addListener(json => {
         if (json.msg) {
           console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
-        }
+        } // Now handle plugin specific responses
 
-        ``; // Now handle plugin specific responses
 
         if (json.plugin !== this.plugin.getName()) {
           return;
@@ -15468,8 +15482,14 @@ class InfoPanel {
           this.markElementForInspection(json.errorId);
           this.port.postMessage({
             msg: "Marked element for inspection",
-            elementMarked: true
+            elementMarked: true,
+            plugin: this.plugin.getName()
           });
+        }
+
+        if (json.unmarkInspectedElement) {
+          console.log("Unmarked element for inspection");
+          $(".tota11y-inspected-element").removeClass("tota11y-inspected-element");
         }
       });
     }

@@ -40,6 +40,10 @@ const InfoPanel = infoPanel.panel;
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map((p) => p.getName());
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 /*
  * The controller of all n info panels, delegating each
  * to an ActivePanel to mirror the InfoPanel instance on
@@ -70,7 +74,7 @@ class InfoPanelController {
                         this.activePanels.add(new ActivePanel(port, plugin));
                     }
                     if (json.elementMarked) {
-                        this.sendInspectElement();
+                        this.sendInspectElement(json.plugin);
                     }
                 });
                 port.onDisconnect.addListener((port) => {
@@ -92,7 +96,7 @@ class InfoPanelController {
         }
     }
 
-    sendInspectElement() {
+    sendInspectElement(plugin) {
         // When called we will have marked an HTML element from an error with
         // a class to inspect it in the developer tools.
         // Create a Port for communicating with the devtools
@@ -106,8 +110,18 @@ class InfoPanelController {
                 console.log(`Info panel controller received msg: ${json.msg}, ${json}`);
             }
             if (json.inspectedElement) {
-                // Success! now close the port
+                // Success! now close the devtools port
                 devtoolsPort.disconnect();
+                // then remove the class added to the element
+                // after a short delay to ensure the element is
+                // inspected by the dev tools
+                sleep(1000).then(() => {
+                    this.port.postMessage({
+                        msg: "Unmark element for inspection",
+                        unmarkInspectedElement: true,
+                        plugin: plugin,
+                    });
+                })
             }
         });
         console.log("Posting message");
