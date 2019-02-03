@@ -418,7 +418,7 @@ exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-plugin {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-bottom: 1px solid #555 !important;\n  list-style: none !important;\n}\n.tota11y-plugin-switch {\n  align-items: center !important;\n  cursor: pointer !important;\n  display: flex !important;\n  padding: 12px 12px 12px 0 !important;\n  margin: 0 !important;\n}\n.tota11y-plugin-indicator {\n  margin: 0 15px !important;\n}\n.tota11y-plugin-indicator {\n  border-radius: 16px !important;\n  border: 1px solid #999 !important;\n  color: transparent !important;\n  font-size: 13px !important;\n  height: 16px !important;\n  line-height: 16px !important;\n  padding: 0 0 0 1px !important;\n  width: 16px !important;\n}\n.tota11y-plugin-checkbox:focus + .tota11y-plugin-indicator {\n  border-color: #639b24 !important;\n  background-color: #49721a !important;\n  color: #49721a !important;\n}\n.tota11y-plugin-checkbox:checked + .tota11y-plugin-indicator {\n  background-color: #639b24 !important;\n  border-color: #639b24 !important;\n  color: white !important;\n}\n.tota11y-plugin-title {\n  font-weight: bold !important;\n}\n.tota11y-plugin-description {\n  font-size: 11px !important;\n  font-style: italic !important;\n  width: 200px !important;\n  margin-right: 3px !important;\n}\n.tota11y-plugins-separator {\n  font-size: 12px !important;\n  margin: 7px 15px 0 !important;\n  text-transform: uppercase !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-plugin {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-bottom: 1px solid #555 !important;\n  list-style: none !important;\n}\n.tota11y-plugin-switch {\n  align-items: center !important;\n  cursor: pointer !important;\n  display: flex !important;\n  padding: 12px 12px 12px 0 !important;\n  margin: 0 !important;\n}\n.tota11y-plugin-indicator {\n  margin: 0 15px !important;\n}\n.tota11y-plugin-indicator {\n  border-radius: 16px !important;\n  border: 1px solid #999 !important;\n  color: transparent !important;\n  font-size: 13px !important;\n  height: 16px !important;\n  line-height: 16px !important;\n  padding: 0 0 0 1px !important;\n  width: 16px !important;\n}\n.tota11y-plugin-checkbox:focus + .tota11y-plugin-indicator {\n  border-color: #639b24 !important;\n  background-color: #49721a !important;\n  color: #49721a !important;\n}\n.tota11y-plugin-checkbox:checked + .tota11y-plugin-indicator {\n  background-color: #639b24 !important;\n  border-color: #639b24 !important;\n  color: white !important;\n}\n.tota11y-plugin-title {\n  font-weight: bold !important;\n}\n.tota11y-plugin-description {\n  font-size: 11px !important;\n  font-style: italic !important;\n  width: 200px !important;\n  margin-right: 3px !important;\n}\n.tota11y-plugin-info-setting {\n  font-size: 11px !important;\n}\n.tota11y-plugins-separator {\n  font-size: 12px !important;\n  margin: 7px 15px 0 !important;\n  text-transform: uppercase !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -15899,6 +15899,7 @@ let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./tem
 const PORT_NAME = "toolbar";
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map(p => p.getName());
+let allSettings = ["translucentAnnotations"];
 const DISABLE_CSS = "tota11y-disabled-toolbar";
 /**
  * In a standalone script the toolbar is responsible for switching
@@ -15908,12 +15909,13 @@ const DISABLE_CSS = "tota11y-disabled-toolbar";
  * WebExtension APIs and the sidebar UI JS can use WebExtension APIs
  * but not eval(). Therefore the toolbar becomes responsible for
  * everything but the UI, and the UI is synced to the rest of
- * the WebExtension over a Port.
+ * the WebExtension over a Port to the ToolbarController.
  */
 
 class Toolbar {
   constructor() {
     this.activePlugins = new Set();
+    this.activeSettings = new Set();
   }
   /**
    * Manages the state of the toolbar when a plugin is clicked, and toggles
@@ -15931,6 +15933,22 @@ class Toolbar {
       // Activate the selected plugin
       plugin.activate();
       this.activePlugins.add(plugin);
+    }
+  }
+  /*
+   * Manages the active setting strings in a similar way to plugins.
+   */
+
+
+  handleSettingClick(setting) {
+    console.log(`Handling setting click ${setting}`);
+
+    if (this.activeSettings.has(setting)) {
+      this.applySetting(setting, false);
+      this.activeSettings.delete(setting);
+    } else {
+      this.applySetting(setting, true);
+      this.activeSettings.add(setting);
     }
   }
   /**
@@ -16024,9 +16042,9 @@ class Toolbar {
       port.onMessage.addListener(json => {
         console.log(`Toolbar received msg: ${json.msg}, ${json}`);
 
-        if (json.click) {
+        if (json.pluginClick) {
           // retrieve the plugin instance from the name
-          let index = namedPlugins.findIndex(p => p === json.click);
+          let index = namedPlugins.findIndex(p => p === json.pluginClick);
 
           if (index !== -1) {
             let plugin = allPlugins[index];
@@ -16045,8 +16063,18 @@ class Toolbar {
           }
         }
 
+        if (json.settingClick) {
+          let active = this.activeSettings.has(json.settingClick);
+
+          if (active != json.active) {
+            this.handleSettingClick(json.settingClick);
+          } else {
+            console.log("Skipped, setting already synced state");
+          }
+        }
+
         if (json.sync) {
-          console.log("Syncing active plugins to controller");
+          console.log("Syncing active plugins and settings");
           let activePlugins = new Set(json.activePlugins);
 
           for (let plugin of allPlugins) {
@@ -16057,6 +16085,19 @@ class Toolbar {
               // toggle all plugins that aren't
               // in sync with the controller
               this.handlePluginClick(plugin);
+            }
+          }
+
+          let activeSettings = new Set(json.activeSettings);
+
+          for (let setting of allSettings) {
+            let activate = activeSettings.has(setting);
+            let active = this.activeSettings.has(setting);
+
+            if (activate != active) {
+              // toggle all settings that aren't
+              // in sync with the controller
+              this.handleSettingClick(setting);
             }
           }
         }
@@ -16078,6 +16119,25 @@ class Toolbar {
     }
   }
 
+  applySetting(setting, enable) {
+    if (setting === "translucentAnnotations") {
+      if (enable) {
+        let $style = $(`<style id="tota11y-setting-translucentAnnotations"
+                            type="text/css">
+                        .tota11y-label {
+                            opacity: 0.7;
+                        }
+                        .tota11y-label:hover {
+                            opacity: 0.9;
+                        }
+                    </style>`);
+        $style.appendTo($("head"));
+      } else {
+        $("#tota11y-setting-translucentAnnotations").remove();
+      }
+    }
+  }
+
 }
 /**
  * Responsible for the other side of the port to communicate to
@@ -16089,6 +16149,7 @@ class ToolbarController {
   constructor() {
     if (browser) {
       this.activePlugins = new Set();
+      this.activeSettings = new Set();
       browser.runtime.onConnect.addListener(port => {
         if (port.name !== PORT_NAME) {
           return;
@@ -16103,42 +16164,52 @@ class ToolbarController {
         this.port.onMessage.addListener(json => {
           console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
         });
-        this.syncActivePlugins();
+        this.syncActive();
       });
     }
   }
 
-  syncActivePlugins() {
+  syncActive() {
     if (!this.port) {
       return;
     }
 
     this.port.postMessage({
-      msg: "Sync active plugins",
+      msg: "Sync active plugins and settings",
       sync: true,
-      activePlugins: [...this.activePlugins].map(p => p.getName())
+      activePlugins: [...this.activePlugins].map(p => p.getName()),
+      activeSettings: this.activeSettings
     });
   }
 
   handlePluginClick(plugin) {
     if (this.activePlugins.has(plugin)) {
-      this.activePlugins.delete(plugin); // use function scoping so we can access this
-      // outside the if statement
-
-      var active = false;
+      this.activePlugins.delete(plugin);
     } else {
-      this.activePlugins.add(plugin); // use function scoping so we can access this
-      // outside the if statement
-
-      var active = true;
+      this.activePlugins.add(plugin);
     }
 
     this.port.postMessage({
       msg: "Plugin click",
       // Plugin instance will be different and not go
       // through JSON so pass the name instead.
-      click: plugin.getName(),
-      active: active
+      pluginClick: plugin.getName(),
+      active: this.activePlugins.has(plugin)
+    });
+  }
+
+  handleSettingClick(setting) {
+    if (this.activeSettings.has(setting)) {
+      this.activeSettings.delete(setting);
+    } else {
+      this.activeSettings.add(setting);
+    }
+
+    this.port.postMessage({
+      msg: "Setting click",
+      // Settings are just identified by strings
+      settingClick: setting,
+      active: this.activeSettings.has(setting)
     });
   }
   /**
@@ -16149,12 +16220,14 @@ class ToolbarController {
   appendTo($el) {
     let $logo = $(logoTemplate());
     let $toolbar;
-    let $defaultPlugins = plugins.default.map(Plugin => {
+    let $defaultPlugins = buildElement("li", null, buildElement("div", {
+      className: "tota11y-plugins-separator"
+    }, "Plugins"), buildElement("ul", null, plugins.default.map(Plugin => {
       // eslint-disable-line no-unused-vars
       return buildElement(Plugin, {
         onClick: this.handlePluginClick.bind(this)
       });
-    });
+    })));
     let $experimentalPlugins = null;
 
     if (plugins.experimental.length) {
@@ -16168,9 +16241,26 @@ class ToolbarController {
       })));
     }
 
+    let $settings = buildElement("li", null, buildElement("div", {
+      className: "tota11y-plugins-separator"
+    }, "Settings"), buildElement("ul", null, buildElement("li", {
+      role: "menuitem",
+      className: "tota11y-plugin"
+    }, buildElement("label", {
+      className: "tota11y-plugin-switch"
+    }, buildElement("input", {
+      className: "tota11y-plugin-checkbox tota11y-sr-only",
+      type: "checkbox",
+      onClick: () => this.handleSettingClick("translucentAnnotations")
+    }), buildElement("div", {
+      "aria-hidden": "true",
+      className: "tota11y-plugin-indicator"
+    }, "\u2713"), buildElement("div", {
+      className: "tota11y-plugin-info-setting"
+    }, "Translucent annotations")))));
     let $plugins = buildElement("ul", {
       className: "tota11y-plugins"
-    }, $defaultPlugins, $experimentalPlugins);
+    }, $settings, $defaultPlugins, $experimentalPlugins);
     $toolbar = buildElement("div", {
       id: "tota11y-toolbar",
       className: "tota11y tota11y-toolbar tota11y-expanded tota11y-sidebar",

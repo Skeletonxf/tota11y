@@ -8,6 +8,10 @@ const PORT_NAME = "toolbar";
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map((p) => p.getName());
 
+let allSettings = [
+    "translucentAnnotations", // make the annotations translucent
+];
+
 const DISABLE_CSS = "tota11y-disabled-toolbar";
 
 /**
@@ -18,11 +22,12 @@ const DISABLE_CSS = "tota11y-disabled-toolbar";
  * WebExtension APIs and the sidebar UI JS can use WebExtension APIs
  * but not eval(). Therefore the toolbar becomes responsible for
  * everything but the UI, and the UI is synced to the rest of
- * the WebExtension over a Port.
+ * the WebExtension over a Port to the ToolbarController.
  */
 class Toolbar {
     constructor() {
         this.activePlugins = new Set();
+        this.activeSettings = new Set();
     }
 
     /**
@@ -39,6 +44,20 @@ class Toolbar {
             // Activate the selected plugin
             plugin.activate();
             this.activePlugins.add(plugin);
+        }
+    }
+
+    /*
+     * Manages the active setting strings in a similar way to plugins.
+     */
+    handleSettingClick(setting) {
+        console.log(`Handling setting click ${setting}`);
+        if (this.activeSettings.has(setting)) {
+            this.applySetting(setting, false);
+            this.activeSettings.delete(setting);
+        } else {
+            this.applySetting(setting, true);
+            this.activeSettings.add(setting);
         }
     }
 
@@ -145,9 +164,9 @@ class Toolbar {
 
             port.onMessage.addListener((json) => {
                 console.log(`Toolbar received msg: ${json.msg}, ${json}`);
-                if (json.click) {
+                if (json.pluginClick) {
                     // retrieve the plugin instance from the name
-                    let index = namedPlugins.findIndex(p => p === json.click);
+                    let index = namedPlugins.findIndex(p => p === json.pluginClick);
                     if (index !== -1) {
                         let plugin = allPlugins[index];
                         console.log(`Plugin click sent through port ${plugin.getName()}`);
@@ -166,8 +185,16 @@ class Toolbar {
                         port.postMessage("Unrecognised plugin");
                     }
                 }
+                if (json.settingClick) {
+                    let active = this.activeSettings.has(json.settingClick);
+                    if (active != json.active) {
+                        this.handleSettingClick(json.settingClick);
+                    } else {
+                        console.log("Skipped, setting already synced state");
+                    }
+                }
                 if (json.sync) {
-                    console.log("Syncing active plugins to controller");
+                    console.log("Syncing active plugins and settings");
                     let activePlugins = new Set(json.activePlugins);
                     for (let plugin of allPlugins) {
                         let activate = activePlugins.has(plugin.getName());
@@ -176,6 +203,16 @@ class Toolbar {
                             // toggle all plugins that aren't
                             // in sync with the controller
                             this.handlePluginClick(plugin);
+                        }
+                    }
+                    let activeSettings = new Set(json.activeSettings);
+                    for (let setting of allSettings) {
+                        let activate = activeSettings.has(setting);
+                        let active = this.activeSettings.has(setting);
+                        if (activate != active) {
+                            // toggle all settings that aren't
+                            // in sync with the controller
+                            this.handleSettingClick(setting);
                         }
                     }
                 }
@@ -195,6 +232,27 @@ class Toolbar {
             });
         }
     }
+
+    applySetting(setting, enable) {
+        if (setting === "translucentAnnotations") {
+            if (enable) {
+                let $style = $(
+                    `<style id="tota11y-setting-translucentAnnotations"
+                            type="text/css">
+                        .tota11y-label {
+                            opacity: 0.6;
+                        }
+                        .tota11y-label:hover {
+                            opacity: 0.9;
+                        }
+                    </style>`
+                );
+                $style.appendTo($("head"));
+            } else {
+                $("#tota11y-setting-translucentAnnotations").remove();
+            }
+        }
+    }
 }
 
 /**
@@ -205,6 +263,8 @@ class ToolbarController {
     constructor() {
         if (browser) {
             this.activePlugins = new Set();
+            this.activeSettings = new Set();
+
             browser.runtime.onConnect.addListener((port) => {
                 if (port.name !== PORT_NAME) {
                     return;
@@ -217,40 +277,49 @@ class ToolbarController {
                 this.port.onMessage.addListener((json) => {
                     console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
                 });
-                this.syncActivePlugins();
+                this.syncActive();
             })
         }
     }
 
-    syncActivePlugins() {
+    syncActive() {
         if (!this.port) {
             return;
         }
         this.port.postMessage({
-            msg: "Sync active plugins",
+            msg: "Sync active plugins and settings",
             sync: true,
             activePlugins: [...this.activePlugins].map(p => p.getName()),
+            activeSettings: this.activeSettings,
         })
     }
 
     handlePluginClick(plugin) {
         if (this.activePlugins.has(plugin)) {
             this.activePlugins.delete(plugin);
-            // use function scoping so we can access this
-            // outside the if statement
-            var active = false;
         } else {
             this.activePlugins.add(plugin);
-            // use function scoping so we can access this
-            // outside the if statement
-            var active = true;
         }
         this.port.postMessage({
             msg: "Plugin click",
             // Plugin instance will be different and not go
             // through JSON so pass the name instead.
-            click: plugin.getName(),
-            active: active,
+            pluginClick: plugin.getName(),
+            active: this.activePlugins.has(plugin),
+        });
+    }
+
+    handleSettingClick(setting) {
+        if (this.activeSettings.has(setting)) {
+            this.activeSettings.delete(setting);
+        } else {
+            this.activeSettings.add(setting);
+        }
+        this.port.postMessage({
+            msg: "Setting click",
+            // Settings are just identified by strings
+            settingClick: setting,
+            active: this.activeSettings.has(setting),
         });
     }
 
@@ -261,9 +330,22 @@ class ToolbarController {
         let $logo = $(logoTemplate());
         let $toolbar;
 
-        let $defaultPlugins = plugins.default.map((Plugin) => { // eslint-disable-line no-unused-vars
-            return <Plugin onClick={this.handlePluginClick.bind(this)} />;
-        });
+        let $defaultPlugins = (
+            <li>
+                <div className="tota11y-plugins-separator">
+                    Plugins
+                </div>
+                <ul>
+                    {
+                        plugins.default.map((Plugin) => { // eslint-disable-line no-unused-vars
+                            return (
+                                <Plugin onClick={this.handlePluginClick.bind(this)} />
+                            );
+                        })
+                    }
+                </ul>
+            </li>
+        );
 
         let $experimentalPlugins = null;
         if (plugins.experimental.length) {
@@ -285,8 +367,34 @@ class ToolbarController {
             );
         }
 
+        let $settings = (
+            <li>
+                <div className="tota11y-plugins-separator">
+                    Settings
+                </div>
+                <ul>
+                    <li role="menuitem" className="tota11y-plugin">
+                        <label className="tota11y-plugin-switch">
+                            <input
+                                className="tota11y-plugin-checkbox tota11y-sr-only"
+                                type="checkbox"
+                                onClick={() => this.handleSettingClick("translucentAnnotations")} />
+                            <div aria-hidden="true"
+                                 className="tota11y-plugin-indicator">
+                                &#x2713;
+                            </div>
+                            <div className="tota11y-plugin-info-setting">
+                                    Translucent annotations
+                            </div>
+                        </label>
+                    </li>
+                </ul>
+            </li>
+        );
+
         let $plugins = (
             <ul className="tota11y-plugins">
+                {$settings}
                 {$defaultPlugins}
                 {$experimentalPlugins}
             </ul>
