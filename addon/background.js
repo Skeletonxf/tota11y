@@ -9,6 +9,23 @@
 
 let openDevTools = new Map();
 
+let backgroundPort;
+
+function notifyActiveDevTools() {
+    if (backgroundPort) {
+        browser.tabs.query({
+            active: true,
+            currentWindow: true,
+        }).then((tabs) => {
+            let activeTab = tabs[0];
+            backgroundPort.postMessage({
+                devToolsStatus: true,
+                isActive: openDevTools.has(activeTab.id),
+            });
+        });
+    }
+}
+
 browser.runtime.onConnect.addListener((port) => {
     if (port.name.startsWith("devtools-")) {
         // Extract the tabId from the port name suffix
@@ -16,9 +33,11 @@ browser.runtime.onConnect.addListener((port) => {
         console.log(`Opened dev tools on tab: ${tabId}`);
 
         openDevTools.set(tabId, port);
+        notifyActiveDevTools();
         port.onDisconnect.addListener((port) => {
             console.log(`Closed dev tools on tab: ${tabId}`);
             openDevTools.delete(tabId);
+            notifyActiveDevTools();
         });
     }
 
@@ -26,6 +45,9 @@ browser.runtime.onConnect.addListener((port) => {
     // code so that sidebar code does not need to determine information
     // about which DevTools are open
     if (port.name === "background") {
+        backgroundPort = port;
+        notifyActiveDevTools();
+
         port.onMessage.addListener((json) => {
             if (json.msg) {
                 console.log(`Background received msg: ${json.msg}, ${json}`);
@@ -62,7 +84,7 @@ browser.runtime.onConnect.addListener((port) => {
                                 inspectedElement: json.inspectedElement,
                             });
                         }
-                    })
+                    });
                     devToolsPort.postMessage({
                         msg: json.msg,
                         inspectMarkedElement: json.inspectMarkedElement,

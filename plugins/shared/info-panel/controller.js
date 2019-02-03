@@ -44,6 +44,23 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// The background script maintains knowledge about the DevTools
+// which we communicate with to trigger inspect element functionality
+// for the InfoPanels Inspect Element button in the sidebar
+let backgroundPort = browser.runtime.connect({
+    name: "background",
+});
+
+// We also sync the status to the Inspect Element buttons
+let devToolsIsActive = false;
+backgroundPort.onMessage.addListener((json) => {
+    if (json.devToolsStatus) {
+        devToolsIsActive = json.isActive;
+        $(".tota11y-info-error-inspect-element")
+            .prop("disabled", !json.isActive);
+    }
+});
+
 /*
  * The controller of all n info panels, delegating each
  * to an ActivePanel to mirror the InfoPanel instance on
@@ -92,28 +109,26 @@ class InfoPanelController {
                     }
                     this.activePanels = activePanels;
                 });
-            })
+            });
         }
     }
 
+    /*
+     * Sends a message to the background port to attempt to inspect
+     * the marked element on the page, then communicates with the
+     * content script to remove the mark from the element on the page.
+     */
     sendInspectElement(plugin) {
-        // When called we will have marked an HTML element from an error with
-        // a class to inspect it in the developer tools.
-        // The background script maintains knowledge about the DevTools
-        // which we communicate with to trigger
-        console.log("Connecting to background script");
-        let backgroundPort = browser.runtime.connect({
-            name: "background"
-        });
-        backgroundPort.onMessage.addListener((json) => {
+        let _this = this;
+        backgroundPort.onMessage.addListener(function receiver(json) {
             if (json.msg) {
                 console.log(`Info panel controller received msg: ${json.msg}, ${json}`);
             }
             if (json.inspectedElement || json.failed) {
-                backgroundPort.disconnect();
+                backgroundPort.onMessage.removeListener(receiver);
 
                 sleep(1000).then(() => {
-                    this.port.postMessage({
+                    _this.port.postMessage({
                         msg: "Unmark element for inspection",
                         unmarkInspectedElement: true,
                         plugin: plugin,
@@ -121,7 +136,7 @@ class InfoPanelController {
                 })
             }
         });
-        console.log("Posting message");
+
         backgroundPort.postMessage({
             msg: "Inspect marked element",
             inspectMarkedElement: true,
@@ -381,7 +396,11 @@ class ActivePanel {
 
                 // Add a button to inspect the element
                 let $inspectElement = $(
-                    `<button class="tota11y-info-error-inspect-element">
+                    `<button
+                        class="tota11y-info-error-inspect-element"
+                        title="Inspect Element with Developer Tools (F12) - must already be open to function"
+                        aria-label="Inspect Element with Developer Tools (F12) - must already be open to function"
+                     >
                         Inspect element
                     </button>`);
                 $inspectElement.appendTo(
@@ -396,6 +415,7 @@ class ActivePanel {
                         plugin: this.plugin.getName(),
                     });
                 });
+                $inspectElement.prop("disabled", !devToolsIsActive);
             });
 
             // Store a reference to the "Errors" tab so we can switch to it
