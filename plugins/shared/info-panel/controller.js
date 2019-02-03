@@ -248,11 +248,6 @@ class ActivePanel {
                                 type="checkbox"
                                 checked="checked" />
                         </label>
-                        <a aria-label="Close info panel"
-                           href="#"
-                           className="tota11y-info-dismiss-trigger">
-                            &times;
-                        </a>
                     </span>
                 </header>
                 <div className="tota11y-info-body">

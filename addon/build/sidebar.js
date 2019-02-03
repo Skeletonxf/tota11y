@@ -14673,11 +14673,7 @@ class ActivePanel {
       className: "toggle-annotation",
       type: "checkbox",
       checked: "checked"
-    })), buildElement("a", {
-      "aria-label": "Close info panel",
-      href: "#",
-      className: "tota11y-info-dismiss-trigger"
-    }, "\xD7"))), buildElement("div", {
+    })))), buildElement("div", {
       className: "tota11y-info-body"
     }, buildElement("div", {
       className: "tota11y-info-sections"
