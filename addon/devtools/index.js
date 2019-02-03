@@ -14,21 +14,24 @@ function doInspectMarkedElement() {
     });
 }
 
-browser.runtime.onConnect.addListener((port) => {
-    if (port.name !== "devtools") {
-        return;
+// Connect immediately to the background script when this file is loaded
+// to track which DevTools are open, and provide the tabId in the name
+let port = browser.runtime.connect({
+    name: `devtools-${browser.devtools.inspectedWindow.tabId}`,
+});
+
+// Respond to the background script to inspect the marked element in the page
+// and immediately reply to the background script to signal success
+port.onMessage.addListener((json) => {
+    if (json.msg) {
+        console.log(`Devtools page ${browser.devtools.inspectedWindow.tabId} received msg: ${json.msg}, ${json}`);
     }
-    port.onMessage.addListener((json) => {
-        if (json.msg) {
-            console.log(`Devtools page received msg: ${json.msg}, ${json}`);
-        }
-        if (json.inspectMarkedElement) {
-            console.log("Opening marked element in dev tools inspector");
-            doInspectMarkedElement();
-            port.postMessage({
-                msg: "Opened dev tools inspector",
-                inspectedElement: true,
-            });
-        }
-    });
+    if (json.inspectMarkedElement) {
+        console.log("Opening marked element in dev tools inspector");
+        doInspectMarkedElement();
+        port.postMessage({
+            msg: "Opened dev tools inspector",
+            inspectedElement: true,
+        });
+    }
 });

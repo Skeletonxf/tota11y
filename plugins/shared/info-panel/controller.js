@@ -99,22 +99,19 @@ class InfoPanelController {
     sendInspectElement(plugin) {
         // When called we will have marked an HTML element from an error with
         // a class to inspect it in the developer tools.
-        // Create a Port for communicating with the devtools
-        // panel so it can inspect the element on the page
-        console.log("Creating devtools Port");
-        let devtoolsPort = browser.runtime.connect({
-            name: "devtools"
+        // The background script maintains knowledge about the DevTools
+        // which we communicate with to trigger
+        console.log("Connecting to background script");
+        let backgroundPort = browser.runtime.connect({
+            name: "background"
         });
-        devtoolsPort.onMessage.addListener((json) => {
+        backgroundPort.onMessage.addListener((json) => {
             if (json.msg) {
                 console.log(`Info panel controller received msg: ${json.msg}, ${json}`);
             }
-            if (json.inspectedElement) {
-                // Success! now close the devtools port
-                devtoolsPort.disconnect();
-                // then remove the class added to the element
-                // after a short delay to ensure the element is
-                // inspected by the dev tools
+            if (json.inspectedElement || json.failed) {
+                backgroundPort.disconnect();
+
                 sleep(1000).then(() => {
                     this.port.postMessage({
                         msg: "Unmark element for inspection",
@@ -125,7 +122,7 @@ class InfoPanelController {
             }
         });
         console.log("Posting message");
-        devtoolsPort.postMessage({
+        backgroundPort.postMessage({
             msg: "Inspect marked element",
             inspectMarkedElement: true,
         });
