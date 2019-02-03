@@ -15316,6 +15316,14 @@ class Toolbar {
       // Disable this toolbar as the sidebar will be controlling
       // the active plugins
       this.$el.addClass(DISABLE_CSS);
+      this.$el.attr("role", "presentation");
+      this.$el.removeAttr("aria-expanded");
+      let $button = this.$el.find(".tota11y-toolbar-toggle");
+      $button.prop("disabled", true);
+      $button.attr("role", "presentation");
+      $button.removeAttr("aria-controls");
+      $button.attr("aria-label", "[tota11y] Indicator");
+      this.$el.find(".tota11y-toolbar-body").remove();
     }
   }
   /**
