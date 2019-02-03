@@ -68,36 +68,7 @@ class Toolbar {
         let $logo = $(logoTemplate());
         let $toolbar;
 
-        let $defaultPlugins = plugins.default.map((Plugin) => { // eslint-disable-line no-unused-vars
-            return <Plugin onClick={this.handlePluginClick.bind(this)} />;
-        });
-
-        let $experimentalPlugins = null;
-        if (plugins.experimental.length) {
-            $experimentalPlugins = (
-                <li>
-                    <div className="tota11y-plugins-separator">
-                        Experimental
-                    </div>
-                    <ul>
-                      {
-                          plugins.experimental.map((Plugin) => { // eslint-disable-line no-unused-vars
-                              return (
-                                  <Plugin onClick={this.handlePluginClick.bind(this)} />
-                              );
-                          })
-                      }
-                    </ul>
-                </li>
-            );
-        }
-
-        let $plugins = (
-            <ul className="tota11y-plugins">
-                {$defaultPlugins}
-                {$experimentalPlugins}
-            </ul>
-        );
+        let $plugins = buildPlugins.bind(this)();
 
         let handleToggleClick = (e) => {
             e.preventDefault();
@@ -330,75 +301,7 @@ class ToolbarController {
         let $logo = $(logoTemplate());
         let $toolbar;
 
-        let $defaultPlugins = (
-            <li>
-                <div className="tota11y-plugins-separator">
-                    Plugins
-                </div>
-                <ul>
-                    {
-                        plugins.default.map((Plugin) => { // eslint-disable-line no-unused-vars
-                            return (
-                                <Plugin onClick={this.handlePluginClick.bind(this)} />
-                            );
-                        })
-                    }
-                </ul>
-            </li>
-        );
-
-        let $experimentalPlugins = null;
-        if (plugins.experimental.length) {
-            $experimentalPlugins = (
-                <li>
-                    <div className="tota11y-plugins-separator">
-                        Experimental
-                    </div>
-                    <ul>
-                      {
-                          plugins.experimental.map((Plugin) => { // eslint-disable-line no-unused-vars
-                              return (
-                                  <Plugin onClick={this.handlePluginClick.bind(this)} />
-                              );
-                          })
-                      }
-                    </ul>
-                </li>
-            );
-        }
-
-        let $settings = (
-            <li>
-                <div className="tota11y-plugins-separator">
-                    Settings
-                </div>
-                <ul>
-                    <li role="menuitem" className="tota11y-plugin">
-                        <label className="tota11y-plugin-switch">
-                            <input
-                                className="tota11y-plugin-checkbox tota11y-sr-only"
-                                type="checkbox"
-                                onClick={() => this.handleSettingClick("translucentAnnotations")} />
-                            <div aria-hidden="true"
-                                 className="tota11y-plugin-indicator">
-                                &#x2713;
-                            </div>
-                            <div className="tota11y-plugin-info-setting">
-                                    Translucent annotations
-                            </div>
-                        </label>
-                    </li>
-                </ul>
-            </li>
-        );
-
-        let $plugins = (
-            <ul className="tota11y-plugins">
-                {$settings}
-                {$defaultPlugins}
-                {$experimentalPlugins}
-            </ul>
-        );
+        let $plugins = buildPlugins.bind(this)();
 
         $toolbar = (
             <div id="tota11y-toolbar" className="tota11y tota11y-toolbar tota11y-expanded tota11y-sidebar"
@@ -412,6 +315,85 @@ class ToolbarController {
 
         $el.append($toolbar);
     }
+}
+
+/*
+ * Plugin DOM element building logic that is common to both the Toolbar
+ * and the ToolbarController
+ * `this` must be bound to the Toolbar or ToolbarController respectively
+ */
+function buildPlugins() {
+    let $defaultPlugins = (
+        <li>
+            <div className="tota11y-plugins-separator">
+                Plugins
+            </div>
+            <ul>
+                {
+                    plugins.default.map((Plugin) => { // eslint-disable-line no-unused-vars
+                        return (
+                            <Plugin onClick={this.handlePluginClick.bind(this)} />
+                        );
+                    })
+                }
+            </ul>
+        </li>
+    );
+
+    let $experimentalPlugins = null;
+    if (plugins.experimental.length) {
+        $experimentalPlugins = (
+            <li>
+                <div className="tota11y-plugins-separator">
+                    Experimental
+                </div>
+                <ul>
+                  {
+                      plugins.experimental.map((Plugin) => { // eslint-disable-line no-unused-vars
+                          return (
+                              <Plugin onClick={this.handlePluginClick.bind(this)} />
+                          );
+                      })
+                  }
+                </ul>
+            </li>
+        );
+    }
+
+    let $settings = (
+        <li>
+            <div className="tota11y-plugins-separator">
+                Settings
+            </div>
+            <ul>
+                <li role="menuitem" className="tota11y-plugin">
+                    <label className="tota11y-plugin-switch">
+                        <input
+                            className="tota11y-plugin-checkbox tota11y-sr-only"
+                            type="checkbox"
+                            onClick={() => this.handleSettingClick("translucentAnnotations")} />
+                        <div aria-hidden="true"
+                             className="tota11y-plugin-indicator">
+                            &#x2713;
+                        </div>
+                        <div className="tota11y-plugin-info-setting">
+                                Translucent annotations
+                        </div>
+                    </label>
+                </li>
+            </ul>
+        </li>
+    );
+
+    let $plugins = (
+        <ul className="tota11y-plugins">
+            {$settings}
+            {$defaultPlugins}
+            {$experimentalPlugins}
+        </ul>
+    );
+
+    return $plugins;
 }
 
 module.exports = {

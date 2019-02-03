@@ -15280,28 +15280,7 @@ class Toolbar {
   appendTo($el) {
     let $logo = $(logoTemplate());
     let $toolbar;
-    let $defaultPlugins = plugins.default.map(Plugin => {
-      // eslint-disable-line no-unused-vars
-      return buildElement(Plugin, {
-        onClick: this.handlePluginClick.bind(this)
-      });
-    });
-    let $experimentalPlugins = null;
-
-    if (plugins.experimental.length) {
-      $experimentalPlugins = buildElement("li", null, buildElement("div", {
-        className: "tota11y-plugins-separator"
-      }, "Experimental"), buildElement("ul", null, plugins.experimental.map(Plugin => {
-        // eslint-disable-line no-unused-vars
-        return buildElement(Plugin, {
-          onClick: this.handlePluginClick.bind(this)
-        });
-      })));
-    }
-
-    let $plugins = buildElement("ul", {
-      className: "tota11y-plugins"
-    }, $defaultPlugins, $experimentalPlugins);
+    let $plugins = buildPlugins.bind(this)();
 
     let handleToggleClick = e => {
       e.preventDefault();
@@ -15446,7 +15425,7 @@ class Toolbar {
         let $style = $(`<style id="tota11y-setting-translucentAnnotations"
                             type="text/css">
                         .tota11y-label {
-                            opacity: 0.7;
+                            opacity: 0.6;
                         }
                         .tota11y-label:hover {
                             opacity: 0.9;
@@ -15541,47 +15520,7 @@ class ToolbarController {
   appendTo($el) {
     let $logo = $(logoTemplate());
     let $toolbar;
-    let $defaultPlugins = buildElement("li", null, buildElement("div", {
-      className: "tota11y-plugins-separator"
-    }, "Plugins"), buildElement("ul", null, plugins.default.map(Plugin => {
-      // eslint-disable-line no-unused-vars
-      return buildElement(Plugin, {
-        onClick: this.handlePluginClick.bind(this)
-      });
-    })));
-    let $experimentalPlugins = null;
-
-    if (plugins.experimental.length) {
-      $experimentalPlugins = buildElement("li", null, buildElement("div", {
-        className: "tota11y-plugins-separator"
-      }, "Experimental"), buildElement("ul", null, plugins.experimental.map(Plugin => {
-        // eslint-disable-line no-unused-vars
-        return buildElement(Plugin, {
-          onClick: this.handlePluginClick.bind(this)
-        });
-      })));
-    }
-
-    let $settings = buildElement("li", null, buildElement("div", {
-      className: "tota11y-plugins-separator"
-    }, "Settings"), buildElement("ul", null, buildElement("li", {
-      role: "menuitem",
-      className: "tota11y-plugin"
-    }, buildElement("label", {
-      className: "tota11y-plugin-switch"
-    }, buildElement("input", {
-      className: "tota11y-plugin-checkbox tota11y-sr-only",
-      type: "checkbox",
-      onClick: () => this.handleSettingClick("translucentAnnotations")
-    }), buildElement("div", {
-      "aria-hidden": "true",
-      className: "tota11y-plugin-indicator"
-    }, "\u2713"), buildElement("div", {
-      className: "tota11y-plugin-info-setting"
-    }, "Translucent annotations")))));
-    let $plugins = buildElement("ul", {
-      className: "tota11y-plugins"
-    }, $settings, $defaultPlugins, $experimentalPlugins);
+    let $plugins = buildPlugins.bind(this)();
     $toolbar = buildElement("div", {
       id: "tota11y-toolbar",
       className: "tota11y tota11y-toolbar tota11y-expanded tota11y-sidebar",
@@ -15593,6 +15532,57 @@ class ToolbarController {
     $el.append($toolbar);
   }
 
+}
+/*
+ * Plugin DOM element building logic that is common to both the Toolbar
+ * and the ToolbarController
+ * `this` must be bound to the Toolbar or ToolbarController respectively
+ */
+
+
+function buildPlugins() {
+  let $defaultPlugins = buildElement("li", null, buildElement("div", {
+    className: "tota11y-plugins-separator"
+  }, "Plugins"), buildElement("ul", null, plugins.default.map(Plugin => {
+    // eslint-disable-line no-unused-vars
+    return buildElement(Plugin, {
+      onClick: this.handlePluginClick.bind(this)
+    });
+  })));
+  let $experimentalPlugins = null;
+
+  if (plugins.experimental.length) {
+    $experimentalPlugins = buildElement("li", null, buildElement("div", {
+      className: "tota11y-plugins-separator"
+    }, "Experimental"), buildElement("ul", null, plugins.experimental.map(Plugin => {
+      // eslint-disable-line no-unused-vars
+      return buildElement(Plugin, {
+        onClick: this.handlePluginClick.bind(this)
+      });
+    })));
+  }
+
+  let $settings = buildElement("li", null, buildElement("div", {
+    className: "tota11y-plugins-separator"
+  }, "Settings"), buildElement("ul", null, buildElement("li", {
+    role: "menuitem",
+    className: "tota11y-plugin"
+  }, buildElement("label", {
+    className: "tota11y-plugin-switch"
+  }, buildElement("input", {
+    className: "tota11y-plugin-checkbox tota11y-sr-only",
+    type: "checkbox",
+    onClick: () => this.handleSettingClick("translucentAnnotations")
+  }), buildElement("div", {
+    "aria-hidden": "true",
+    className: "tota11y-plugin-indicator"
+  }, "\u2713"), buildElement("div", {
+    className: "tota11y-plugin-info-setting"
+  }, "Translucent annotations")))));
+  let $plugins = buildElement("ul", {
+    className: "tota11y-plugins"
+  }, $settings, $defaultPlugins, $experimentalPlugins);
+  return $plugins;
 }
 
 module.exports = {
