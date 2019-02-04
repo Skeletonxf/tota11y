@@ -1,0 +1,19 @@
+<p>
+    This <code>&lt;{{elementName}}&gt;</code> element plays audio automatically
+    for more than 3 seconds with no controls provided to turn the audio off.
+    Audio output can interfere with users navigating a page with screen readers
+    and may interfere with their ability to navigatate to stop it.
+    Please either make the audio be started by a user action (prefered) or
+    provide controls for this element so that the audio can be stopped like so:
+</p>
+<pre><code>Mute by default
+&lt;{{elementName}} autoplay <ins>muted</ins>&gt;&lt;/{{elementName}}&gt;
+Remove autoplay attribute
+&lt;{{elementName}} <del>autoplay</del>&gt;&lt;/{{elementName}}&gt;
+Provide controls
+&lt;{{elementName}} autoplay <ins>controls</ins>&gt;&lt;/{{elementName}}&gt;</code></pre>
+<p><a
+        href="https://www.w3.org/TR/WCAG21/#audio-control"
+        target="_blank" class="tota11y-info-link">
+    WCAG &sect; 1.4.2
+</a></p>

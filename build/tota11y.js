@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-03
+ * Date: 2019-02-04
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13590,10 +13590,12 @@ let LandmarksPlugin = __webpack_require__(/*! ./landmarks */ "./plugins/landmark
 
 let LinkTextPlugin = __webpack_require__(/*! ./link-text */ "./plugins/link-text/index.js");
 
+let NavigationPlugin = __webpack_require__(/*! ./navigation */ "./plugins/navigation/index.js");
+
 let TablesPlugin = __webpack_require__(/*! ./tables */ "./plugins/tables/index.js");
 
 module.exports = {
-  default: [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new LandmarksPlugin(), new TablesPlugin(), new A11yName(), new DocumentPlugin()],
+  default: [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new NavigationPlugin(), new LandmarksPlugin(), new TablesPlugin(), new A11yName(), new DocumentPlugin()],
   experimental: [new A11yTextWand()]
 };
 
@@ -13913,6 +13915,99 @@ class LinkTextPlugin extends Plugin {
 }
 
 module.exports = LinkTextPlugin;
+
+/***/ }),
+
+/***/ "./plugins/navigation/error-template.handlebars":
+/*!******************************************************!*\
+  !*** ./plugins/navigation/error-template.handlebars ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<p>\n    This <code>&lt;"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "&gt;</code> element plays audio automatically\n    for more than 3 seconds with no controls provided to turn the audio off.\n    Audio output can interfere with users navigating a page with screen readers\n    and may interfere with their ability to navigatate to stop it.\n    Please either make the audio be started by a user action (prefered) or\n    provide controls for this element so that the audio can be stopped like so:\n</p>\n<pre><code>Mute by default\n&lt;"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + " autoplay <ins>muted</ins>&gt;&lt;/"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "&gt;\nRemove autoplay attribute\n&lt;"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + " <del>autoplay</del>&gt;&lt;/"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "&gt;\nProvide controls\n&lt;"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + " autoplay <ins>controls</ins>&gt;&lt;/"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "&gt;</code></pre>\n<p><a\n        href=\"https://www.w3.org/TR/WCAG21/#audio-control\"\n        target=\"_blank\" class=\"tota11y-info-link\">\n    WCAG &sect; 1.4.2\n</a></p>\n";
+},"useData":true});
+
+/***/ }),
+
+/***/ "./plugins/navigation/index.js":
+/*!*************************************!*\
+  !*** ./plugins/navigation/index.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
+let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
+
+let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("navigation");
+
+let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/navigation/error-template.handlebars");
+
+class NavigationPlugin extends Plugin {
+  getName() {
+    return "navigation";
+  }
+
+  getTitle() {
+    return "Navigation";
+  }
+
+  getDescription() {
+    return "Detects elements on the page that may interfere with navigation";
+  }
+
+  getAnnotate() {
+    return annotate;
+  }
+
+  reportError($el) {
+    let $description = errorTemplate({
+      elementName: $el.prop("tagName").toLowerCase()
+    });
+    let entry = this.error("Autoplaying audio", $description, $el);
+    annotate.errorLabel($el, "", "Autoplaying audio", entry);
+  }
+
+  run() {
+    $("audio[autoplay], video[autoplay]").filter((i, el) => {
+      // Keep only audio and video elements that have audio
+      // lasting more than 3 seconds, no controls to mute
+      // the audio and are not muted by default
+      return !el.controls && (el.duration <= 3 || el.loop) // && el.audioTracks.length !== 0 FIXME: Firefox disables this by default, might need to use Web Audio API instead
+      && !el.defaultMuted;
+    }).each((i, el) => {
+      this.reportError($(el));
+    });
+  }
+
+  cleanup() {
+    annotate.removeAll();
+  }
+
+}
+
+module.exports = NavigationPlugin;
 
 /***/ }),
 

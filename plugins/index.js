@@ -13,6 +13,7 @@ let HeadingsPlugin = require("./headings");
 let LabelsPlugin = require("./labels");
 let LandmarksPlugin = require("./landmarks");
 let LinkTextPlugin = require("./link-text");
+let NavigationPlugin = require("./navigation");
 let TablesPlugin = require("./tables");
 
 module.exports = {
@@ -22,6 +23,7 @@ module.exports = {
         new LinkTextPlugin(),
         new LabelsPlugin(),
         new AltTextPlugin(),
+        new NavigationPlugin(),
         new LandmarksPlugin(),
         new TablesPlugin(),
         new A11yName(),
