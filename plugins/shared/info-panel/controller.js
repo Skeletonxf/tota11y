@@ -126,7 +126,8 @@ class InfoPanelController {
             }
             if (json.inspectedElement || json.failed) {
                 backgroundPort.onMessage.removeListener(receiver);
-
+                // Short delay for the element to actually be inspected
+                // by the browser before we remove the class that marked it
                 sleep(1000).then(() => {
                     _this.port.postMessage({
                         msg: "Unmark element for inspection",

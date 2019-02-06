@@ -6,6 +6,7 @@
  *     getName: name to use for messaging to communicate to sidebar
  *     getTitle: title to display in the toolbar
  *     getDescription: description to display in the toolbar
+ *     getAnnotate: gets the plugin's namespaced annotation module, if any
  *     run: code to run when the plugin is activated from the toolbar
  *     cleanup: code to run when the plugin is deactivated from the toolbar
  */
@@ -36,7 +37,6 @@ class Plugin {
         return "";
     }
 
-    // returns this plugin's namespaced annotate module, if any
     getAnnotate() {
         return null;
     }

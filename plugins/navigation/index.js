@@ -39,7 +39,10 @@ class NavigationPlugin extends Plugin {
             // the audio and are not muted by default
             return !el.controls
                 && (el.duration <= 3 || el.loop)
-                // && el.audioTracks.length !== 0 FIXME: Firefox disables this by default, might need to use Web Audio API instead
+                // FIXME: Firefox disables this JS API by default, locked
+                // behind about:config setting, so need to use the Web Audio
+                // API instead
+                // && el.audioTracks.length !== 0
                 && !el.defaultMuted
         })
         .each((i, el) => {
