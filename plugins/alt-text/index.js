@@ -58,33 +58,9 @@ class AltTextPlugin extends Plugin {
     }
 
     run() {
-        // Generate errors for any images that fail the Accessibility
-        // Developer Tools audit
-        let {result, elements} = audit("imagesWithoutAltText");
-
-        if (result === "FAIL") {
-            elements.forEach(this.reportImageError.bind(this));
-        }
-
-        // Additionally, label presentational elements
-        $(`img[role="presentation"],
-                img[alt=""],
-                video[role="presentation"],
-                audio[role="presentation"]`).each((i, el) => {
-            // "Error" labels have a warning icon and expanded text on hover,
-            // but we add a special `warning` class to color it differently.
-            let $el = $(el);
-            annotate
-                .errorLabel(
-                    $el,
-                    "",
-                    `This ${$el.prop("tagName").toLowerCase()} is decorative`)
-                .addClass("tota11y-label-warning");
-        });
-
-        // Also check audio and video elements for captions and text
-        // alternatives of any kind
-        $(`audio, video`).each((i, el) => {
+        // Check elements for captions and/or text alternatives of any kind
+        // (ie alt tags for images)
+        $(`audio, video, img, input[type="image"], object`).each((i, el) => {
             let $el = $(el);
 
             if (axs.utils.isElementOrAncestorHidden(el)) {
@@ -99,15 +75,56 @@ class AltTextPlugin extends Plugin {
 
             let textAlternatives = {};
             axs.properties.findTextAlternatives(el, textAlternatives);
+            // Remove false negative when noLabel is the only key in
+            // text alternatives
+            delete textAlternatives["noLabel"];
             let noTextAlternatives = Object.keys(textAlternatives).length === 0;
+
+            let elementName = $el.prop("tagName").toLowerCase();
+
+            if (elementName === "img") {
+                if (noTextAlternatives) {
+                    this.reportImageError(el);
+                }
+                return;
+            }
+
+            if (elementName === "input") {
+                console.log(`Element: ${el}, ${JSON.stringify(textAlternatives)}`);
+                if (noTextAlternatives) {
+                    // TODO custom error
+                    this.reportImageError(el);
+                }
+                return;
+            }
 
             let hasCaptions = $el.find("track[kind=captions]").length > 0;
 
             if (noTextAlternatives && !hasCaptions) {
+                // TODO Split into independent errors
+                // TODO custom error for object elements
                 this.reportAudiovisualError(
                     el, $el.prop("tagName").toLowerCase()
                 );
             }
+        });
+
+        // Additionally, label presentational elements
+        $(`img[role="presentation"],
+                img[alt=""],
+                input[type="image"][alt=""],
+                input[type="image"][role="presentation"],
+                video[role="presentation"],
+                audio[role="presentation"]`).each((i, el) => {
+            // "Error" labels have a warning icon and expanded text on hover,
+            // but we add a special `warning` class to color it differently.
+            let $el = $(el);
+            annotate
+                .errorLabel(
+                    $el,
+                    "",
+                    `This ${$el.prop("tagName").toLowerCase()} is decorative`)
+                .addClass("tota11y-label-warning");
         });
 
         this.about($(aboutTemplate()));

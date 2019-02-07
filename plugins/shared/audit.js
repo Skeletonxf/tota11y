@@ -121,4 +121,5 @@ function audit(ruleName) {
         .filter(result => result.rule.name === ruleName)[0];
 }
 
+
 module.exports = audit;

@@ -19,6 +19,10 @@
             font-size: 24px;
             font-weight: bold;
         }
+
+        input[type="image"] {
+            vertical-align: middle;
+        }
     </style>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -68,10 +72,17 @@
                 <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" alt="">
                 <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" role="presentation">
                 <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256">
+                |
                 <!-- Aria label instead of alt -->
                 <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" aria-label="jordan">
                 <!-- Aria labelled by instead of alt -->
                 <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" aria-labelledby="gravatarLabel">
+                |
+                <!-- Input images -->
+                <input type="image" width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256"></input>
+                <input type="image" width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" alt=""></input>
+                <input type="image" width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" alt="jordan"></input>
+                <input type="image" width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" role="presentation"></input>
             </p>
 
             <p>
@@ -330,6 +341,18 @@
                 <div class="col-md-4">
                     <!-- Autoplaying looped element -->
                     <audio loop autoplay src="https://upload.wikimedia.org/wikipedia/commons/2/2e/En-us-Wikipedia.ogg"></audio>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <p>Object elements</p>
+                <div class="col-md-6">
+                    <object src="https://upload.wikimedia.org/wikipedia/commons/2/2e/En-us-Wikipedia.ogg"></object>
+                </div>
+                <div class="col-md-6">
+                    <object src="https://upload.wikimedia.org/wikipedia/commons/2/2e/En-us-Wikipedia.ogg">Wikipedia</object>
                 </div>
             </div>
         </div>
