@@ -180,11 +180,18 @@ class ActivePanel {
                     title: json.title,
                     // convert HTML strings back to jQuery HTML objects
                     $description: $(json.description),
-                    $el: $(json.el),
-                    id: json.id,
                     // Hold reference to the HTML string because some
                     // objects like <html> can't be recreated by jQuery
+                    // and we also do not want to execute arbitray code
+                    // defined on the web page by deserialising it
+                    //
+                    // The Navigation Plugin was tested on an auto playing
+                    // audio element in the page and reconstructing the
+                    // element here with jQuery caused the audio to auto
+                    // play from the sidebar, which the browser provides
+                    // no UI to mute!
                     elHTMLString: json.el,
+                    id: json.id,
                 };
                 // We use the same ids as the InfoPanel in the content
                 // script generates so we can map between our error
@@ -377,9 +384,8 @@ class ActivePanel {
                 $trigger.on("mouseleave blur", () => this.sendHighlightOff(id));
                 $scroll.on("mouseleave blur", () => this.sendHighlightOff(id));
 
-                // Add code from error.$el to the information panel
-                // Use the saved html string as a fallback
-                let errorHTML = error.$el[0].outerHTML || error.elHTMLString;
+                // Add code from error elemnt string to the information panel
+                let errorHTML = error.elHTMLString;
 
                 // Trim the code block if it is over 300 characters
                 if (errorHTML.length > 300) {

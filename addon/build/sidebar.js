@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-04
+ * Date: 2019-02-07
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -12940,6 +12940,7 @@ module.exports = AltTextPlugin;
  *     getName: name to use for messaging to communicate to sidebar
  *     getTitle: title to display in the toolbar
  *     getDescription: description to display in the toolbar
+ *     getAnnotate: gets the plugin's namespaced annotation module, if any
  *     run: code to run when the plugin is activated from the toolbar
  *     cleanup: code to run when the plugin is deactivated from the toolbar
  */
@@ -12968,8 +12969,7 @@ class Plugin {
 
   getDescription() {
     return "";
-  } // returns this plugin's namespaced annotate module, if any
-
+  }
 
   getAnnotate() {
     return null;
@@ -14074,7 +14074,7 @@ module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,"
     + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
     + " autoplay <ins>controls</ins>&gt;&lt;/"
     + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
-    + "&gt;</code></pre>\n<p><a\n        href=\"https://www.w3.org/TR/WCAG21/#audio-control\"\n        target=\"_blank\" class=\"tota11y-info-link\">\n    WCAG &sect; 1.4.2\n</a></p>\n";
+    + "&gt;</code></pre>\n<p><a\n        href=\"https://www.w3.org/TR/WCAG21/#audio-control\"\n        target=\"_blank\" class=\"tota11y-info-link\">\n    WCAG &sect; 1.4.2\n</a></p>\n<p>\n    Note: Firefox 66 blocks autoplay by default, as might some assistive tools\n</p>\n";
 },"useData":true});
 
 /***/ }),
@@ -14124,7 +14124,10 @@ class NavigationPlugin extends Plugin {
       // Keep only audio and video elements that have audio
       // lasting more than 3 seconds, no controls to mute
       // the audio and are not muted by default
-      return !el.controls && (el.duration <= 3 || el.loop) // && el.audioTracks.length !== 0 FIXME: Firefox disables this by default, might need to use Web Audio API instead
+      return !el.controls && (el.duration <= 3 || el.loop) // FIXME: Firefox disables this JS API by default, locked
+      // behind about:config setting, so need to use the Web Audio
+      // API instead
+      // && el.audioTracks.length !== 0
       && !el.defaultMuted;
     }).each((i, el) => {
       this.reportError($(el));
@@ -14641,7 +14644,9 @@ class InfoPanelController {
       }
 
       if (json.inspectedElement || json.failed) {
-        backgroundPort.onMessage.removeListener(receiver);
+        backgroundPort.onMessage.removeListener(receiver); // Short delay for the element to actually be inspected
+        // by the browser before we remove the class that marked it
+
         sleep(1000).then(() => {
           _this.port.postMessage({
             msg: "Unmark element for inspection",
@@ -14694,11 +14699,18 @@ class ActivePanel {
           title: json.title,
           // convert HTML strings back to jQuery HTML objects
           $description: $(json.description),
-          $el: $(json.el),
-          id: json.id,
           // Hold reference to the HTML string because some
           // objects like <html> can't be recreated by jQuery
-          elHTMLString: json.el
+          // and we also do not want to execute arbitray code
+          // defined on the web page by deserialising it
+          //
+          // The Navigation Plugin was tested on an auto playing
+          // audio element in the page and reconstructing the
+          // element here with jQuery caused the audio to auto
+          // play from the sidebar, which the browser provides
+          // no UI to mute!
+          elHTMLString: json.el,
+          id: json.id
         }; // We use the same ids as the InfoPanel in the content
         // script generates so we can map between our error
         // objects and the content script's error objects
@@ -14885,10 +14897,9 @@ class ActivePanel {
         $trigger.on("mouseenter focus", () => this.sendHighlightOn(id));
         $scroll.on("mouseenter focus", () => this.sendHighlightOn(id));
         $trigger.on("mouseleave blur", () => this.sendHighlightOff(id));
-        $scroll.on("mouseleave blur", () => this.sendHighlightOff(id)); // Add code from error.$el to the information panel
-        // Use the saved html string as a fallback
+        $scroll.on("mouseleave blur", () => this.sendHighlightOff(id)); // Add code from error elemnt string to the information panel
 
-        let errorHTML = error.$el[0].outerHTML || error.elHTMLString; // Trim the code block if it is over 300 characters
+        let errorHTML = error.elHTMLString; // Trim the code block if it is over 300 characters
 
         if (errorHTML.length > 300) {
           errorHTML = errorHTML.substring(0, 300) + "...";
