@@ -1,0 +1,18 @@
+<p>
+    This image input element does not have an associated "alt" attribute.
+    Please specify a short alt text for this input like so
+    to convey the same information textually:
+</p>
+
+<pre><code>&lt;input type="image" src={{src}} alt="Description"&gt;&lt;/input&gt;</code></pre>
+
+<p>
+    If the image input is decorative and does not convey any
+    information to the surrounding content then you should
+    leave this "alt" attribute empty, or specify a "role"
+    attribute with a value of "presentation" so assistive
+    technologies can ignore the image.
+</p>
+
+<pre><code>&lt;input type="image" src={{src}} alt=""&gt;&lt;/input&gt;
+&lt;input type="image" src={{src}} role="presentation"&gt;&lt;/input&gt;</code></pre>

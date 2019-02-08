@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-07
+ * Date: 2019-02-08
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -12742,36 +12742,7 @@ if(false) {}
 var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
 function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div>\n<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#text-alternatives\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.1.1\n        </span>\n    </a>\n</div>\n<p>\n    Visual and audio information is not accessible to all users. Text\n    alternatives to audiovisual information can provide blind, deaf, hard of\n    hearing, and other users with access to the same information.\n</p>\n<p>\n    The Web Content Accessibility Guidelines list this criteria at the lowest\n    level of conformance and as first in the guidelines.\n    Providing alt text on all images is a good starting place.\n</p>\n</div>\n";
-},"useData":true});
-
-/***/ }),
-
-/***/ "./plugins/alt-text/audiovisual-error-template.handlebars":
-/*!****************************************************************!*\
-  !*** ./plugins/alt-text/audiovisual-error-template.handlebars ***!
-  \****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
-function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
-module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
-
-  return "<p>\n    This <code>&lt;"
-    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
-    + "&gt;</code> element does not have any\n    text alternatives. Please provide some text\n    alternatives to convey as much of the same information\n    textually as possible.\n</p>\n\n<p>\n    Breif fallback text may be given with the enclosed text\n    like so, which will be displayed if the browser cannot\n    play the file types:\n</p>\n\n<pre><code>&lt;"
-    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
-    + "&gt;Description&lt;/"
-    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
-    + "&gt;</code></pre>\n\n<p>\n    Further text alternatives can be given\n    with ARIA and the <code>track</code> element.\n    For instance if your webpage contains the transcript of\n    the "
-    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
-    + " then you could use ARIA like so:\n</p>\n\n<pre><code>&lt;"
-    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
-    + " aria-describedby=\"transcriptId\"&gt;</code></pre>\n\n<p>\n    If you can provide a <code>track</code> element users will\n    be able to access timed text data such as captions.\n</p>\n\n<p>\n    If this element is purely decorative such as a background\n    video then you should specify a \"role\"  attribute with a value of\n    \"presentation\" so assistive technologies can ignore the element.\n</p>\n\n<pre><code>&lt;"
-    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
-    + " role=\"presentation\"&gt;</code></pre>\n\n<div class=\"tota11y-info-resources\">\n    <p>\n        Resources\n    </p>\n    <ul>\n        <li>\n            <a\n                    href=\"https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                The track element\n            </a>\n        </li>\n        <li>\n            <a\n                    href=\"https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                ARIA\n            </a>\n        </li>\n    </ul>\n</div>\n";
+    return "<div>\n<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#text-alternatives\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.1.1 (Level A)\n        </span>\n    </a>\n</div>\n<p>\n    Visual and audio information is not accessible to all users. Text\n    alternatives to audiovisual information can provide blind, deaf, hard of\n    hearing, and other users with access to the same information.\n</p>\n<p>\n    The Web Content Accessibility Guidelines list this criteria at the lowest\n    level of conformance and as first in the guidelines.\n    Providing alt text on all images is a good starting place.\n</p>\n</div>\n";
 },"useData":true});
 
 /***/ }),
@@ -12819,7 +12790,13 @@ let audit = __webpack_require__(/*! ../shared/audit */ "./plugins/shared/audit.j
 
 let imageErrorTemplate = __webpack_require__(/*! ./image-error-template.handlebars */ "./plugins/alt-text/image-error-template.handlebars");
 
-let audiovisualErrorTemplate = __webpack_require__(/*! ./audiovisual-error-template.handlebars */ "./plugins/alt-text/audiovisual-error-template.handlebars");
+let inputErrorTemplate = __webpack_require__(/*! ./input-image-error-template.handlebars */ "./plugins/alt-text/input-image-error-template.handlebars");
+
+let fallbackTextErrorTemplate = __webpack_require__(/*! ./no-fallback-text-error-template.handlebars */ "./plugins/alt-text/no-fallback-text-error-template.handlebars");
+
+let noCaptionsErrorTemplate = __webpack_require__(/*! ./no-captions-error-template.handlebars */ "./plugins/alt-text/no-captions-error-template.handlebars");
+
+let noAudioDescriptionErrorTemplate = __webpack_require__(/*! ./no-audio-description-error-template.handlebars */ "./plugins/alt-text/no-audio-description-error-template.handlebars");
 
 let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/alt-text/about.handlebars");
 
@@ -12853,17 +12830,44 @@ class AltTextPlugin extends Plugin {
     annotate.errorLabel($el, "", title, entry);
   }
 
-  reportAudiovisualError(el, elementName) {
+  reportInputError(el) {
     let $el = $(el);
-    let elementCapitalised = elementName.charAt(0).toUpperCase() + elementName.slice(1);
-    let title = `${elementCapitalised} is missing text alternatives`;
-    let $error = audiovisualErrorTemplate({
-      elementName: elementName
+    let src = $el.attr("src") || "..";
+    let title = "Input image is missing alt text";
+    let $error = inputErrorTemplate({
+      src: src
     }); // Place an error label on the element and register it as an
     // error in the info panel
 
     let entry = this.error(title, $error, $el);
     annotate.errorLabel($el, "", title, entry);
+  }
+
+  reportErrorFactory(_title, template) {
+    return (el, elementName) => {
+      let $el = $(el);
+      let elementCapitalised = elementName.charAt(0).toUpperCase() + elementName.slice(1);
+      let title = `${elementCapitalised} ${_title}`;
+      let $error = template({
+        elementName: elementName
+      }); // Place an error label on the element and register it as an
+      // error in the info panel
+
+      let entry = this.error(title, $error, $el);
+      annotate.errorLabel($el, "", title, entry);
+    };
+  }
+
+  reportFallbackTextError(el, elementName) {
+    this.reportErrorFactory("is missing text alternatives", fallbackTextErrorTemplate)(el, elementName);
+  }
+
+  reportNoCaptionsError(el, elementName) {
+    this.reportErrorFactory("has no captions", noCaptionsErrorTemplate)(el, elementName);
+  }
+
+  reportNoAudioDescriptionError(el, elementName) {
+    this.reportErrorFactory("has no audio descriptions", noAudioDescriptionErrorTemplate)(el, elementName);
   }
 
   run() {
@@ -12899,22 +12903,31 @@ class AltTextPlugin extends Plugin {
       }
 
       if (elementName === "input") {
-        console.log(`Element: ${el}, ${JSON.stringify(textAlternatives)}`);
-
         if (noTextAlternatives) {
-          // TODO custom error
-          this.reportImageError(el);
+          this.reportInputError(el);
         }
 
         return;
       }
 
-      let hasCaptions = $el.find("track[kind=captions]").length > 0;
+      let hasCaptions = $el.find(`track[kind="captions"]`).length > 0;
+      let hasAudioDescription = $el.find(`track[kind="descriptions"]`).length > 0;
 
-      if (noTextAlternatives && !hasCaptions) {
-        // TODO Split into independent errors
-        // TODO custom error for object elements
-        this.reportAudiovisualError(el, $el.prop("tagName").toLowerCase());
+      if (noTextAlternatives && !hasCaptions && !hasAudioDescription) {
+        this.reportFallbackTextError(el, elementName);
+      }
+
+      if (elementName === "video") {
+        // FIXME Detect the most suitable ARIA for indicating
+        // the element is a media alternative to text, in which
+        // case this test does not apply.
+        if (!hasCaptions) {
+          this.reportNoCaptionsError(el, elementName);
+        }
+
+        if (!hasAudioDescription) {
+          this.reportNoAudioDescriptionError(el, elementName);
+        }
       }
     }); // Additionally, label presentational elements
 
@@ -12939,6 +12952,96 @@ class AltTextPlugin extends Plugin {
 }
 
 module.exports = AltTextPlugin;
+
+/***/ }),
+
+/***/ "./plugins/alt-text/input-image-error-template.handlebars":
+/*!****************************************************************!*\
+  !*** ./plugins/alt-text/input-image-error-template.handlebars ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<p>\n    This image input element does not have an associated \"alt\" attribute.\n    Please specify a short alt text for this input like so\n    to convey the same information textually:\n</p>\n\n<pre><code>&lt;input type=\"image\" src="
+    + alias4(((helper = (helper = helpers.src || (depth0 != null ? depth0.src : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"src","hash":{},"data":data}) : helper)))
+    + " alt=\"Description\"&gt;&lt;/input&gt;</code></pre>\n\n<p>\n    If the image input is decorative and does not convey any\n    information to the surrounding content then you should\n    leave this \"alt\" attribute empty, or specify a \"role\"\n    attribute with a value of \"presentation\" so assistive\n    technologies can ignore the image.\n</p>\n\n<pre><code>&lt;input type=\"image\" src="
+    + alias4(((helper = (helper = helpers.src || (depth0 != null ? depth0.src : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"src","hash":{},"data":data}) : helper)))
+    + " alt=\"\"&gt;&lt;/input&gt;\n&lt;input type=\"image\" src="
+    + alias4(((helper = (helper = helpers.src || (depth0 != null ? depth0.src : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"src","hash":{},"data":data}) : helper)))
+    + " role=\"presentation\"&gt;&lt;/input&gt;</code></pre>\n";
+},"useData":true});
+
+/***/ }),
+
+/***/ "./plugins/alt-text/no-audio-description-error-template.handlebars":
+/*!*************************************************************************!*\
+  !*** ./plugins/alt-text/no-audio-description-error-template.handlebars ***!
+  \*************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "<p>\n    This <code>&lt;"
+    + container.escapeExpression(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "&gt;</code> element does not have an\n    audio description. You should provide an audio description with <a\n            href=\"https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        the track element\n    </a> using <code>kind=\"descriptions\"</code> which will users to access\n    timed text alternatives to visual content in media. Audio descriptions\n    should include as much meaningful visual information as possible during\n    pauses in existing dialogue such as scene changes or on-screen text that\n    is not spoken in the main soundtrack.\n</p>\n<p>\n    Audio descriptions are important for blind or visually impaired users\n    who cannot see visual information to access the full content of videos.\n</p>\n<p>\n    If all the information in video is already provided in the audio of the\n    media then no audio description is neccessary.\n</p>\n<div class=\"tota11y-info-resources\">\n    <p>\n        Resources\n    </p>\n    <ul>\n        <li>\n            <a\n                    href=\"https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                The track element\n            </a>\n        </li>\n        <li>\n            <a\n                    href=\"https://www.w3.org/TR/WCAG21/#audio-description-or-media-alternative-prerecorded\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                WCAG &sect; 1.2.3 (Level A)\n            </a>\n        </li>\n        <li>\n            <a\n                    href=\"https://www.w3.org/TR/WCAG21/#audio-description-prerecorded\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                WCAG &sect; 1.2.5 (Level AA)\n            </a>\n        </li>\n    </ul>\n</div>\n";
+},"useData":true});
+
+/***/ }),
+
+/***/ "./plugins/alt-text/no-captions-error-template.handlebars":
+/*!****************************************************************!*\
+  !*** ./plugins/alt-text/no-captions-error-template.handlebars ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "<p>\n    This <code>&lt;"
+    + container.escapeExpression(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "&gt;</code> element does not have any\n    captions. You should provide captions with <a\n            href=\"https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        the track element\n    </a> using <code>kind=\"captions\"</code> which will allow users to access\n    timed text alternatives to audio. Captions should include as much meaningful\n    audio information as possible, not just what is said but who is speaking\n    and sound descriptions.\n</p>\n<p>\n    Captions are important for deaf users and users who cannot listen\n    to audio in their current context to access the full content of videos.\n</p>\n<p>\n    Captions are not neccessary when the media is an alternative for text and\n    users can read the text instead.\n</p>\n<div class=\"tota11y-info-resources\">\n    <p>\n        Resources\n    </p>\n    <ul>\n        <li>\n            <a\n                    href=\"https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                The track element\n            </a>\n        </li>\n        <li>\n            <a\n                    href=\"https://www.w3.org/TR/WCAG21/#captions-prerecorded\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                WCAG &sect; 1.2.2 (Level A)\n            </a>\n        </li>\n    </ul>\n</div>\n";
+},"useData":true});
+
+/***/ }),
+
+/***/ "./plugins/alt-text/no-fallback-text-error-template.handlebars":
+/*!*********************************************************************!*\
+  !*** ./plugins/alt-text/no-fallback-text-error-template.handlebars ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<p>\n    This <code>&lt;"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "&gt;</code> element does not have any\n    text alternatives. You should provide some text\n    alternatives to convey as much of the same information\n    textually as possible.\n</p>\n\n<p>\n    Brief fallback text may be given with the enclosed text\n    like so, which will also be displayed if the browser cannot\n    run the file types:\n</p>\n\n<pre><code>&lt;"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "&gt;Description&lt;/"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + "&gt;</code></pre>\n\n<p>\n    Further text alternatives can be given\n    with <a href=\"https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track\"\n            target=\"_blank\" class=\"tota11y-info-link\">the track element</a> and\n    ARIA. For instance if your webpage contains the transcript of\n    the "
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + " then you could use ARIA like so:\n</p>\n\n<pre><code>&lt;"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + " aria-describedby=\"transcriptId\"&gt;</code></pre>\n\n<p>\n    If this element is purely decorative such as a background\n    video with no audio then you should specify a \"role\" attribute with a\n    value of \"presentation\" so assistive technologies can ignore the element.\n</p>\n\n<p>\n    You should not\n    use <code>role=\"presentation\"</code> or <code>aria-hidden</code> on elements\n    that users should be able to interact with, such as a video that\n    users might play, pause or mute.\n</p>\n\n<pre><code>&lt;"
+    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data}) : helper)))
+    + " role=\"presentation\"&gt;</code></pre>\n\n<div class=\"tota11y-info-resources\">\n    <p>\n        Resources\n    </p>\n    <ul>\n        <li>\n            <a\n                    href=\"https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                ARIA\n            </a>\n        </li>\n        <li>\n            <a\n                    href=\"https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                The track element\n            </a>\n        </li>\n    </ul>\n</div>\n";
+},"useData":true});
 
 /***/ }),
 

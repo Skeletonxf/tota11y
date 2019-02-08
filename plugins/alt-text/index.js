@@ -8,7 +8,10 @@ let annotate = require("../shared/annotate")("alt-text");
 let audit = require("../shared/audit");
 
 let imageErrorTemplate = require("./image-error-template.handlebars");
-let audiovisualErrorTemplate = require("./audiovisual-error-template.handlebars");
+let inputErrorTemplate = require("./input-image-error-template.handlebars");
+let fallbackTextErrorTemplate = require("./no-fallback-text-error-template.handlebars");
+let noCaptionsErrorTemplate = require("./no-captions-error-template.handlebars");
+let noAudioDescriptionErrorTemplate = require("./no-audio-description-error-template.handlebars");
 let aboutTemplate = require("./about.handlebars");
 
 class AltTextPlugin extends Plugin {
@@ -42,19 +45,53 @@ class AltTextPlugin extends Plugin {
         annotate.errorLabel($el, "", title, entry);
     }
 
-    reportAudiovisualError(el, elementName) {
+    reportInputError(el) {
         let $el = $(el);
-        let elementCapitalised = elementName.charAt(0).toUpperCase() +
-            elementName.slice(1);
-        let title = `${elementCapitalised} is missing text alternatives`;
-        let $error = audiovisualErrorTemplate({
-            elementName: elementName,
+        let src = $el.attr("src") || "..";
+        let title = "Input image is missing alt text";
+        let $error = inputErrorTemplate({
+            src: src,
         });
 
         // Place an error label on the element and register it as an
         // error in the info panel
         let entry = this.error(title, $error, $el);
         annotate.errorLabel($el, "", title, entry);
+    }
+
+    reportErrorFactory(_title, template) {
+        return (el, elementName) => {
+            let $el = $(el);
+            let elementCapitalised = elementName.charAt(0).toUpperCase() +
+                elementName.slice(1);
+            let title = `${elementCapitalised} ${_title}`;
+            let $error = template({
+                elementName: elementName,
+            });
+
+            // Place an error label on the element and register it as an
+            // error in the info panel
+            let entry = this.error(title, $error, $el);
+            annotate.errorLabel($el, "", title, entry);
+        }
+    }
+
+    reportFallbackTextError(el, elementName) {
+        this.reportErrorFactory(
+            "is missing text alternatives",
+            fallbackTextErrorTemplate)(el, elementName);
+    }
+
+    reportNoCaptionsError(el, elementName) {
+        this.reportErrorFactory(
+            "has no captions",
+            noCaptionsErrorTemplate)(el, elementName);
+    }
+
+    reportNoAudioDescriptionError(el, elementName) {
+        this.reportErrorFactory(
+            "has no audio descriptions",
+            noAudioDescriptionErrorTemplate)(el, elementName);
     }
 
     run() {
@@ -90,22 +127,29 @@ class AltTextPlugin extends Plugin {
             }
 
             if (elementName === "input") {
-                console.log(`Element: ${el}, ${JSON.stringify(textAlternatives)}`);
                 if (noTextAlternatives) {
-                    // TODO custom error
-                    this.reportImageError(el);
+                    this.reportInputError(el);
                 }
                 return;
             }
 
-            let hasCaptions = $el.find("track[kind=captions]").length > 0;
+            let hasCaptions = $el.find(`track[kind="captions"]`).length > 0;
+            let hasAudioDescription = $el.find(`track[kind="descriptions"]`).length > 0;
 
-            if (noTextAlternatives && !hasCaptions) {
-                // TODO Split into independent errors
-                // TODO custom error for object elements
-                this.reportAudiovisualError(
-                    el, $el.prop("tagName").toLowerCase()
-                );
+            if (noTextAlternatives && !hasCaptions && !hasAudioDescription) {
+                this.reportFallbackTextError(el, elementName);
+            }
+
+            if (elementName === "video") {
+                // FIXME Detect the most suitable ARIA for indicating
+                // the element is a media alternative to text, in which
+                // case this test does not apply.
+                if (!hasCaptions) {
+                    this.reportNoCaptionsError(el, elementName);
+                }
+                if (!hasAudioDescription) {
+                    this.reportNoAudioDescriptionError(el, elementName);
+                }
             }
         });
 

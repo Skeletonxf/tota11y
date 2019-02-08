@@ -1,0 +1,61 @@
+<p>
+    This <code>&lt;{{elementName}}&gt;</code> element does not have any
+    text alternatives. You should provide some text
+    alternatives to convey as much of the same information
+    textually as possible.
+</p>
+
+<p>
+    Brief fallback text may be given with the enclosed text
+    like so, which will also be displayed if the browser cannot
+    run the file types:
+</p>
+
+<pre><code>&lt;{{elementName}}&gt;Description&lt;/{{elementName}}&gt;</code></pre>
+
+<p>
+    Further text alternatives can be given
+    with <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track"
+            target="_blank" class="tota11y-info-link">the track element</a> and
+    ARIA. For instance if your webpage contains the transcript of
+    the {{elementName}} then you could use ARIA like so:
+</p>
+
+<pre><code>&lt;{{elementName}} aria-describedby="transcriptId"&gt;</code></pre>
+
+<p>
+    If this element is purely decorative such as a background
+    video with no audio then you should specify a "role" attribute with a
+    value of "presentation" so assistive technologies can ignore the element.
+</p>
+
+<p>
+    You should not
+    use <code>role="presentation"</code> or <code>aria-hidden</code> on elements
+    that users should be able to interact with, such as a video that
+    users might play, pause or mute.
+</p>
+
+<pre><code>&lt;{{elementName}} role="presentation"&gt;</code></pre>
+
+<div class="tota11y-info-resources">
+    <p>
+        Resources
+    </p>
+    <ul>
+        <li>
+            <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA"
+                    target="_blank" class="tota11y-info-link">
+                ARIA
+            </a>
+        </li>
+        <li>
+            <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track"
+                    target="_blank" class="tota11y-info-link">
+                The track element
+            </a>
+        </li>
+    </ul>
+</div>
