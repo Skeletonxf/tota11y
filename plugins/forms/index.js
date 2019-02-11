@@ -8,6 +8,7 @@ let annotate = require("../shared/annotate")("labels");
 let audit = require("../shared/audit");
 
 let errorTemplate = require("./error-template.handlebars");
+let altTextErrorTemplate = require("./alt-text-error-template.handlebars");
 
 class FormsPlugin extends Plugin {
     getName() {
@@ -34,6 +35,13 @@ class FormsPlugin extends Plugin {
         });
     }
 
+    altTextErrorMessage($el) {
+        return altTextErrorTemplate({
+            id: $el.attr("id"),
+            tagName: $el.prop("tagName").toLowerCase()
+        });
+    }
+
     run() {
         let {result, elements} = audit("controlsWithoutLabel");
 
@@ -41,6 +49,8 @@ class FormsPlugin extends Plugin {
             elements.forEach((element) => {
                 let $el = $(element);
                 let title = "Input is missing a label";
+
+                // FIXME Adjust error for video control fail
 
                 // Place an error label on the element and register it as an
                 // error in the info panel
@@ -68,18 +78,28 @@ class FormsPlugin extends Plugin {
                 }
             }
 
-            let text = $el.text().replace(/^\s+|\s+$/g, '');
+            let text = $el.text().trim();
 
             let hasLabel = axs.utils.hasLabel(el);
 
+            if (!hasLabel) {
+                let title = "Widget is missing a label";
+                let entry = this.error(title, $(this.errorMessage($el)), $el);
+                annotate.errorLabel($el, "", title, entry);
+            }
+
             let textAlternatives = {};
             axs.properties.findTextAlternatives(el, textAlternatives);
-            // // Remove false negative when noLabel is the only key in
-            // // text alternatives
-            // delete textAlternatives["noLabel"];
             let noTextAlternatives = Object.keys(textAlternatives).length === 0;
 
-            console.log(`text alt: ${JSON.stringify(textAlternatives)}, text: ${text}, label: ${hasLabel}`);
+            if (noTextAlternatives) {
+                let title = "Widget has no alt text";
+                let entry = this.error(
+                        title,
+                        $(this.altTextErrorMessage($el)),
+                        $el);
+                annotate.errorLabel($el, "", title, entry);
+            }
         });
     }
 

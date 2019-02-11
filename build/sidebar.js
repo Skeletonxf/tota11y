@@ -13595,6 +13595,29 @@ module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,"
 
 /***/ }),
 
+/***/ "./plugins/forms/alt-text-error-template.handlebars":
+/*!**********************************************************!*\
+  !*** ./plugins/forms/alt-text-error-template.handlebars ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<p>\n    Assistive technologies like screen readers will read the text contained\n    inside the "
+    + alias4(((helper = (helper = helpers.tagName || (depth0 != null ? depth0.tagName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"tagName","hash":{},"data":data}) : helper)))
+    + " element. It is important to provide this text\n    and keep it up to date with the visual presentation of the element.\n</p>\n<p>\n    The simplest way to provide text to assistive technologies is by\n    including it inside the element like so:\n</p>\n<pre><code>&lt;"
+    + alias4(((helper = (helper = helpers.tagName || (depth0 != null ? depth0.tagName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"tagName","hash":{},"data":data}) : helper)))
+    + "&gt;\n    Descriptive text here...\n&lt;/"
+    + alias4(((helper = (helper = helpers.tagName || (depth0 != null ? depth0.tagName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"tagName","hash":{},"data":data}) : helper)))
+    + "&gt;</code></pre>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/forms/error-template.handlebars":
 /*!*************************************************!*\
   !*** ./plugins/forms/error-template.handlebars ***!
@@ -13648,6 +13671,8 @@ let audit = __webpack_require__(/*! ../shared/audit */ "./plugins/shared/audit.j
 
 let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/forms/error-template.handlebars");
 
+let altTextErrorTemplate = __webpack_require__(/*! ./alt-text-error-template.handlebars */ "./plugins/forms/alt-text-error-template.handlebars");
+
 class FormsPlugin extends Plugin {
   getName() {
     return "forms";
@@ -13673,6 +13698,13 @@ class FormsPlugin extends Plugin {
     });
   }
 
+  altTextErrorMessage($el) {
+    return altTextErrorTemplate({
+      id: $el.attr("id"),
+      tagName: $el.prop("tagName").toLowerCase()
+    });
+  }
+
   run() {
     let {
       result,
@@ -13682,7 +13714,8 @@ class FormsPlugin extends Plugin {
     if (result === "FAIL") {
       elements.forEach(element => {
         let $el = $(element);
-        let title = "Input is missing a label"; // Place an error label on the element and register it as an
+        let title = "Input is missing a label"; // FIXME Adjust error for video control fail
+        // Place an error label on the element and register it as an
         // error in the info panel
 
         let entry = this.error(title, $(this.errorMessage($el)), $el);
@@ -13707,15 +13740,24 @@ class FormsPlugin extends Plugin {
         }
       }
 
-      let text = $el.text().replace(/^\s+|\s+$/g, '');
+      let text = $el.text().trim();
       let hasLabel = axs.utils.hasLabel(el);
-      let textAlternatives = {};
-      axs.properties.findTextAlternatives(el, textAlternatives); // // Remove false negative when noLabel is the only key in
-      // // text alternatives
-      // delete textAlternatives["noLabel"];
 
+      if (!hasLabel) {
+        let title = "Widget is missing a label";
+        let entry = this.error(title, $(this.errorMessage($el)), $el);
+        annotate.errorLabel($el, "", title, entry);
+      }
+
+      let textAlternatives = {};
+      axs.properties.findTextAlternatives(el, textAlternatives);
       let noTextAlternatives = Object.keys(textAlternatives).length === 0;
-      console.log(`text alt: ${JSON.stringify(textAlternatives)}, text: ${text}, label: ${hasLabel}`);
+
+      if (noTextAlternatives) {
+        let title = "Widget has no alt text";
+        let entry = this.error(title, $(this.altTextErrorMessage($el)), $el);
+        annotate.errorLabel($el, "", title, entry);
+      }
     });
   }
 
@@ -15632,7 +15674,6 @@ class InfoPanel {
           errorHTML = errorHTML.substring(0, 300) + "...";
         }
 
-        console.log(`Trimmed errorHTML element: ${errorHTML}`);
         let $relevantCode = $error.find(".tota11y-info-error-description-code-container code");
         $relevantCode.text(errorHTML);
       });
