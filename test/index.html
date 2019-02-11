@@ -363,6 +363,33 @@
 
         <video muted controls src="https://archive.org/download/dn2016-1109_vid/dn2016-1109_vid.ogv"></video>
 
+        <div class="container">
+            <h1>Some form</h1>
+            <form>
+                <input>
+                <select>
+                    <option>One</option>
+                    <option>Two</option>
+                    <option>Three</option>
+                </select>
+                <p>Progress:</p>
+                <progress max="100" value="70">
+                    <!-- 70% -->
+                </progress>
+                <label for="progress">Progress:</label>
+                <progress max="100" id="progress" value="70">
+                    70%
+                </progress>
+                <p>Fuel level:</p>
+                <meter min="0" max="100" low="33" high="66" optimum="80" value="50">
+                    <!-- at 50/100 -->
+                </meter>
+                <button type="submit">
+                    Submit
+                </button>
+            </form>
+        </div>
+
         <hr>
 
         <footer>

@@ -9,13 +9,13 @@ let audit = require("../shared/audit");
 
 let errorTemplate = require("./error-template.handlebars");
 
-class LabelsPlugin extends Plugin {
+class FormsPlugin extends Plugin {
     getName() {
-        return "labels";
+        return "forms";
     }
 
     getTitle() {
-        return "Labels";
+        return "Forms";
     }
 
     getDescription() {
@@ -48,6 +48,39 @@ class LabelsPlugin extends Plugin {
                 annotate.errorLabel($el, "", title, entry);
             });
         }
+
+        $("progress, meter").each((i, el) => {
+            let $el = $(el);
+
+            // filter in the same way as the audit, ignoring elements "which
+            // have negative tabindex and an ancestor with a widget role,
+            // since they can be accessed neither with tab nor with
+            // a screen reader"
+            // https://github.com/GoogleChrome/accessibility-developer-tools/blob/3d7c96bf34b3146f40aeb2720e0927f221ad8725/src/audits/ControlsWithoutLabel.js#L38
+            if (el.tabindex < 0) {
+                return;
+            }
+            for (let parent = axs.dom.parentElement(el);
+                    parent != null;
+                    parent = axs.dom.parentElement(parent)) {
+                if (axs.utils.elementIsAriaWidget(parent)) {
+                    return;
+                }
+            }
+
+            let text = $el.text().replace(/^\s+|\s+$/g, '');
+
+            let hasLabel = axs.utils.hasLabel(el);
+
+            let textAlternatives = {};
+            axs.properties.findTextAlternatives(el, textAlternatives);
+            // // Remove false negative when noLabel is the only key in
+            // // text alternatives
+            // delete textAlternatives["noLabel"];
+            let noTextAlternatives = Object.keys(textAlternatives).length === 0;
+
+            console.log(`text alt: ${JSON.stringify(textAlternatives)}, text: ${text}, label: ${hasLabel}`);
+        });
     }
 
     cleanup() {
@@ -55,4 +88,4 @@ class LabelsPlugin extends Plugin {
     }
 }
 
-module.exports = LabelsPlugin;
+module.exports = FormsPlugin;

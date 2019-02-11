@@ -10,7 +10,7 @@ let AltTextPlugin = require("./alt-text");
 let ContrastPlugin = require("./contrast");
 let DocumentPlugin = require("./document");
 let HeadingsPlugin = require("./headings");
-let LabelsPlugin = require("./labels");
+let FormsPlugin = require("./forms");
 let LandmarksPlugin = require("./landmarks");
 let LinkTextPlugin = require("./link-text");
 let NavigationPlugin = require("./navigation");
@@ -21,7 +21,7 @@ module.exports = {
         new HeadingsPlugin(),
         new ContrastPlugin(),
         new LinkTextPlugin(),
-        new LabelsPlugin(),
+        new FormsPlugin(),
         new AltTextPlugin(),
         new NavigationPlugin(),
         new LandmarksPlugin(),

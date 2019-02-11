@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-08
+ * Date: 2019-02-11
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13595,6 +13595,140 @@ module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,"
 
 /***/ }),
 
+/***/ "./plugins/forms/error-template.handlebars":
+/*!*************************************************!*\
+  !*** ./plugins/forms/error-template.handlebars ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+    return "    <p>\n        The <code>placeholder</code> attribute is not guaranteed to be read by\n        assistive technologies. It is better to include a proper label.\n    </p>\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "    <p>\n        The simplest way to do so is by creating a <code>&lt;label&gt;</code>\n        tag with a <code>for</code> attribute like so:\n    </p>\n\n    <pre><code>&lt;label for=\""
+    + container.escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"id","hash":{},"data":data}) : helper)))
+    + "\"&gt;\n    Label text here...\n&lt;/label&gt;</code></pre>\n";
+},"5":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "    <p>\n        You can give this element an <code>id</code> attribute and build a\n        <code>&lt;label&gt;</code> with a corresponding <code>for</code>\n        attribute like so:\n\n        <pre><code>&lt;label for=\"my-input\"&gt;\n    Label text here...\n&lt;/label&gt;\n&lt;"
+    + container.escapeExpression(((helper = (helper = helpers.tagName || (depth0 != null ? depth0.tagName : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"tagName","hash":{},"data":data}) : helper)))
+    + " id=\"my-input\"&gt;</code></pre>\n    </p>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.placeholder : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.id : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.program(5, data, 0),"data":data})) != null ? stack1 : "");
+},"useData":true});
+
+/***/ }),
+
+/***/ "./plugins/forms/index.js":
+/*!********************************!*\
+  !*** ./plugins/forms/index.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * A plugin to identify unlabeled inputs
+ */
+let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
+let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
+
+let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("labels");
+
+let audit = __webpack_require__(/*! ../shared/audit */ "./plugins/shared/audit.js");
+
+let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/forms/error-template.handlebars");
+
+class FormsPlugin extends Plugin {
+  getName() {
+    return "forms";
+  }
+
+  getTitle() {
+    return "Forms";
+  }
+
+  getDescription() {
+    return "Identifies inputs with missing labels";
+  }
+
+  getAnnotate() {
+    return annotate;
+  }
+
+  errorMessage($el) {
+    return errorTemplate({
+      placeholder: $el.attr("placeholder"),
+      id: $el.attr("id"),
+      tagName: $el.prop("tagName").toLowerCase()
+    });
+  }
+
+  run() {
+    let {
+      result,
+      elements
+    } = audit("controlsWithoutLabel");
+
+    if (result === "FAIL") {
+      elements.forEach(element => {
+        let $el = $(element);
+        let title = "Input is missing a label"; // Place an error label on the element and register it as an
+        // error in the info panel
+
+        let entry = this.error(title, $(this.errorMessage($el)), $el);
+        annotate.errorLabel($el, "", title, entry);
+      });
+    }
+
+    $("progress, meter").each((i, el) => {
+      let $el = $(el); // filter in the same way as the audit, ignoring elements "which
+      // have negative tabindex and an ancestor with a widget role,
+      // since they can be accessed neither with tab nor with
+      // a screen reader"
+      // https://github.com/GoogleChrome/accessibility-developer-tools/blob/3d7c96bf34b3146f40aeb2720e0927f221ad8725/src/audits/ControlsWithoutLabel.js#L38
+
+      if (el.tabindex < 0) {
+        return;
+      }
+
+      for (let parent = axs.dom.parentElement(el); parent != null; parent = axs.dom.parentElement(parent)) {
+        if (axs.utils.elementIsAriaWidget(parent)) {
+          return;
+        }
+      }
+
+      let text = $el.text().replace(/^\s+|\s+$/g, '');
+      let hasLabel = axs.utils.hasLabel(el);
+      let textAlternatives = {};
+      axs.properties.findTextAlternatives(el, textAlternatives); // // Remove false negative when noLabel is the only key in
+      // // text alternatives
+      // delete textAlternatives["noLabel"];
+
+      let noTextAlternatives = Object.keys(textAlternatives).length === 0;
+      console.log(`text alt: ${JSON.stringify(textAlternatives)}, text: ${text}, label: ${hasLabel}`);
+    });
+  }
+
+  cleanup() {
+    annotate.removeAll();
+  }
+
+}
+
+module.exports = FormsPlugin;
+
+/***/ }),
+
 /***/ "./plugins/headings/index.js":
 /*!***********************************!*\
   !*** ./plugins/headings/index.js ***!
@@ -13834,7 +13968,7 @@ let DocumentPlugin = __webpack_require__(/*! ./document */ "./plugins/document/i
 
 let HeadingsPlugin = __webpack_require__(/*! ./headings */ "./plugins/headings/index.js");
 
-let LabelsPlugin = __webpack_require__(/*! ./labels */ "./plugins/labels/index.js");
+let FormsPlugin = __webpack_require__(/*! ./forms */ "./plugins/forms/index.js");
 
 let LandmarksPlugin = __webpack_require__(/*! ./landmarks */ "./plugins/landmarks/index.js");
 
@@ -13845,115 +13979,9 @@ let NavigationPlugin = __webpack_require__(/*! ./navigation */ "./plugins/naviga
 let TablesPlugin = __webpack_require__(/*! ./tables */ "./plugins/tables/index.js");
 
 module.exports = {
-  default: [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new NavigationPlugin(), new LandmarksPlugin(), new TablesPlugin(), new A11yName(), new DocumentPlugin()],
+  default: [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new FormsPlugin(), new AltTextPlugin(), new NavigationPlugin(), new LandmarksPlugin(), new TablesPlugin(), new A11yName(), new DocumentPlugin()],
   experimental: [new A11yTextWand()]
 };
-
-/***/ }),
-
-/***/ "./plugins/labels/error-template.handlebars":
-/*!**************************************************!*\
-  !*** ./plugins/labels/error-template.handlebars ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
-function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
-module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
-    return "    <p>\n        The <code>placeholder</code> attribute is not guaranteed to be read by\n        assistive technologies. It is better to include a proper label.\n    </p>\n";
-},"3":function(container,depth0,helpers,partials,data) {
-    var helper;
-
-  return "    <p>\n        The simplest way to do so is by creating a <code>&lt;label&gt;</code>\n        tag with a <code>for</code> attribute like so:\n    </p>\n\n    <pre><code>&lt;label for=\""
-    + container.escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"id","hash":{},"data":data}) : helper)))
-    + "\"&gt;\n    Label text here...\n&lt;/label&gt;</code></pre>\n";
-},"5":function(container,depth0,helpers,partials,data) {
-    var helper;
-
-  return "    <p>\n        You can give this element an <code>id</code> attribute and build a\n        <code>&lt;label&gt;</code> with a corresponding <code>for</code>\n        attribute like so:\n\n        <pre><code>&lt;label for=\"my-input\"&gt;\n    Label text here...\n&lt;/label&gt;\n&lt;"
-    + container.escapeExpression(((helper = (helper = helpers.tagName || (depth0 != null ? depth0.tagName : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"tagName","hash":{},"data":data}) : helper)))
-    + " id=\"my-input\"&gt;</code></pre>\n    </p>\n";
-},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
-
-  return ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.placeholder : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.id : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.program(5, data, 0),"data":data})) != null ? stack1 : "");
-},"useData":true});
-
-/***/ }),
-
-/***/ "./plugins/labels/index.js":
-/*!*********************************!*\
-  !*** ./plugins/labels/index.js ***!
-  \*********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * A plugin to identify unlabeled inputs
- */
-let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-
-let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
-
-let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("labels");
-
-let audit = __webpack_require__(/*! ../shared/audit */ "./plugins/shared/audit.js");
-
-let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/labels/error-template.handlebars");
-
-class LabelsPlugin extends Plugin {
-  getName() {
-    return "labels";
-  }
-
-  getTitle() {
-    return "Labels";
-  }
-
-  getDescription() {
-    return "Identifies inputs with missing labels";
-  }
-
-  getAnnotate() {
-    return annotate;
-  }
-
-  errorMessage($el) {
-    return errorTemplate({
-      placeholder: $el.attr("placeholder"),
-      id: $el.attr("id"),
-      tagName: $el.prop("tagName").toLowerCase()
-    });
-  }
-
-  run() {
-    let {
-      result,
-      elements
-    } = audit("controlsWithoutLabel");
-
-    if (result === "FAIL") {
-      elements.forEach(element => {
-        let $el = $(element);
-        let title = "Input is missing a label"; // Place an error label on the element and register it as an
-        // error in the info panel
-
-        let entry = this.error(title, $(this.errorMessage($el)), $el);
-        annotate.errorLabel($el, "", title, entry);
-      });
-    }
-  }
-
-  cleanup() {
-    annotate.removeAll();
-  }
-
-}
-
-module.exports = LabelsPlugin;
 
 /***/ }),
 
