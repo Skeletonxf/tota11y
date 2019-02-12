@@ -26,7 +26,7 @@ class A11yName extends Plugin {
     }
 
     run() {
-        $("a, input, textarea, select").each((i, el) => {
+        $("a, input, textarea, select, button").each((i, el) => {
             // elementIsHtmlControl
 
             let $el = $(el);
@@ -89,8 +89,9 @@ class A11yName extends Plugin {
                 visibleText.push($(`label[for=${el.id}]`).text());
             }
 
-            if ($el.prop("tagName").toLowerCase() === "a") {
-                // Need to use #text() on a elements
+            if (["a", "button"].some(
+                    t => t === $el.prop("tagName").toLowerCase())) {
+                // Need to use #text() on a and button elements
                 visibleText.push($el.text());
             } else {
                 // Need to use #val() instead of #text() on

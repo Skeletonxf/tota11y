@@ -7,6 +7,12 @@
     The simplest way to provide text to assistive technologies is by
     including it inside the element like so:
 </p>
+{{#if type}}
+<pre><code>&lt;{{tagName}} type="{{type}}"&gt;
+    Descriptive text here...
+&lt;/{{tagName}}&gt;</code></pre>
+{{else}}
 <pre><code>&lt;{{tagName}}&gt;
     Descriptive text here...
 &lt;/{{tagName}}&gt;</code></pre>
+{{/if}}

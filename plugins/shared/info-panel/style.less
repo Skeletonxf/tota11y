@@ -256,6 +256,40 @@
         line-height: 1px;
         margin-left: calc(100% - 15px);
     }
+
+    .tota11y-click-to-expand .tota11y-expandable {
+        max-height: @descriptionFontSize * 2;
+        cursor: pointer;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 100%;
+        text-overflow: ellipsis;
+
+        p {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .tota11y-click-to-expand.tota11y-expanded .tota11y-expandable {
+        max-height: none;
+        overflow: auto;
+        white-space: normal;
+        text-overflow: clip;
+
+        p {
+            overflow: auto;
+            text-overflow: clip;
+        }
+    }
+
+    /*
+     * Avoid scrollbars on code snippets that are expandable as clicking
+     * scrollbars is difficult if the entire block is click to expand/collapse
+     */
+    .tota11y-expandable code {
+        white-space: pre-wrap;
+    }
 }
 
 .tota11y-sidebar {

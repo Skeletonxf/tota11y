@@ -9,6 +9,7 @@ let audit = require("../shared/audit");
 
 let errorTemplate = require("./error-template.handlebars");
 let altTextErrorTemplate = require("./alt-text-error-template.handlebars");
+let aboutTemplate = require("./about.handlebars");
 
 class FormsPlugin extends Plugin {
     getName() {
@@ -38,11 +39,14 @@ class FormsPlugin extends Plugin {
     altTextErrorMessage($el) {
         return altTextErrorTemplate({
             id: $el.attr("id"),
-            tagName: $el.prop("tagName").toLowerCase()
+            tagName: $el.prop("tagName").toLowerCase(),
+            type: $el.attr("type"),
         });
     }
 
     run() {
+        // audit doesn't return elements that are decorational
+        // or hidden
         let {result, elements} = audit("controlsWithoutLabel");
 
         if (result === "FAIL") {
@@ -50,17 +54,41 @@ class FormsPlugin extends Plugin {
                 let $el = $(element);
                 let title = "Input is missing a label";
 
-                // FIXME Adjust error for video control fail
+                let tagName = $el.prop("tagName").toLowerCase();
+
+                if (tagName === "video") {
+                    return;
+                }
+
+                let button = (tagName === "button")
+                        || ((tagName === "input")
+                            && ["button", "submit", "reset"].some(
+                                t => t === $el.attr("type")));
 
                 // Place an error label on the element and register it as an
                 // error in the info panel
-                let entry = this.error(title, $(this.errorMessage($el)), $el);
+                let entry;
+                if (button) {
+                    title = "Button has no text";
+
+                    entry = this.error(
+                            title,
+                            $(this.altTextErrorMessage($el)),
+                            $el);
+                } else {
+                    entry = this.error(title, $(this.errorMessage($el)), $el);
+                }
                 annotate.errorLabel($el, "", title, entry);
             });
         }
 
         $("progress, meter").each((i, el) => {
             let $el = $(el);
+
+            if ($el.attr("role") === "presentation") {
+                // ignore presentational elements
+                return;
+            }
 
             // filter in the same way as the audit, ignoring elements "which
             // have negative tabindex and an ancestor with a widget role,
@@ -80,9 +108,7 @@ class FormsPlugin extends Plugin {
 
             let text = $el.text().trim();
 
-            let hasLabel = axs.utils.hasLabel(el);
-
-            if (!hasLabel) {
+            if (!axs.utils.hasLabel(el)) {
                 let title = "Widget is missing a label";
                 let entry = this.error(title, $(this.errorMessage($el)), $el);
                 annotate.errorLabel($el, "", title, entry);
@@ -93,7 +119,7 @@ class FormsPlugin extends Plugin {
             let noTextAlternatives = Object.keys(textAlternatives).length === 0;
 
             if (noTextAlternatives) {
-                let title = "Widget has no alt text";
+                let title = "Widget has no text";
                 let entry = this.error(
                         title,
                         $(this.altTextErrorMessage($el)),
@@ -101,6 +127,8 @@ class FormsPlugin extends Plugin {
                 annotate.errorLabel($el, "", title, entry);
             }
         });
+
+        this.about($(aboutTemplate()));
     }
 
     cleanup() {
