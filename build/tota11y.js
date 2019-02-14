@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-12
+ * Date: 2019-02-14
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13573,6 +13573,8 @@ let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./pl
 
 let altTextErrorTemplate = __webpack_require__(/*! ./alt-text-error-template.handlebars */ "./plugins/forms/alt-text-error-template.handlebars");
 
+let readOnlyClickEventErrorTemplate = __webpack_require__(/*! ./read-only-click-event-error-template.handlebars */ "./plugins/forms/read-only-click-event-error-template.handlebars");
+
 let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/forms/about.handlebars");
 
 class FormsPlugin extends Plugin {
@@ -13683,6 +13685,22 @@ class FormsPlugin extends Plugin {
         annotate.errorLabel($el, "", title, entry);
       }
     });
+    $("input[readonly][onclick]:not([disabled])").each((i, el) => {
+      let $el = $(el);
+      let title = "Read only interactive input";
+      let entry = this.error(title, $(readOnlyClickEventErrorTemplate({})), $el);
+      annotate.errorLabel($el, "", title, entry); // TODO
+      // Check if the DevTools are open and if so send a message
+      // over the Port that will trigger the devtools getEventListeners()
+      // helper on these readonly input elements (via a special marking
+      // class as for inspecting elements) to identify if there are any
+      // click event listeners on the input that have been added
+      // dynamically with JavaScript
+      // https://stackoverflow.com/questions/446892/how-to-find-event-listeners-on-a-dom-node-when-debugging-or-from-the-javascript
+      // As of 14/02/2019 this helper is not available to WebExtensions
+      // in Firefox so this cannot be implemented yet.
+      // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/devtools.inspectedWindow/eval#Helpers
+    });
     this.about($(aboutTemplate()));
   }
 
@@ -13693,6 +13711,21 @@ class FormsPlugin extends Plugin {
 }
 
 module.exports = FormsPlugin;
+
+/***/ }),
+
+/***/ "./plugins/forms/read-only-click-event-error-template.handlebars":
+/*!***********************************************************************!*\
+  !*** ./plugins/forms/read-only-click-event-error-template.handlebars ***!
+  \***********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<p>\n    This input is marked as read only but has a click event associated with\n    it which suggests there may be JavaScript that interacts with this input\n    to set its value (such as a popup calandar date selector).\n</p>\n<p>\n    For people using screen readers any interactive popups such as a calendar\n    wiget may not be easily noticed or accessible via tabbing through the form.\n    If this input value should be filled by users then you should remove the\n    readonly attribute as screen reader users may try to fill it in directly via\n    the keyboard and be unable to proceed.\n</p>\n<pre><code>&lt;input&gt;<del>readonly</del> onclick=\"...\"&lt;/input&gt;</code></pre>\n";
+},"useData":true});
 
 /***/ }),
 
