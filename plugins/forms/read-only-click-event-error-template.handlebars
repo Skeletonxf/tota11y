@@ -1,0 +1,13 @@
+<p>
+    This input is marked as read only but has a click event associated with
+    it which suggests there may be JavaScript that interacts with this input
+    to set its value (such as a popup calandar date selector).
+</p>
+<p>
+    For people using screen readers any interactive popups such as a calendar
+    wiget may not be easily noticed or accessible via tabbing through the form.
+    If this input value should be filled in by users then you should remove the
+    readonly attribute as screen reader users may try to fill it in directly via
+    the keyboard and be unable to proceed.
+</p>
+<pre><code>&lt;input&gt;<del>readonly</del> onclick="..."&lt;/input&gt;</code></pre>

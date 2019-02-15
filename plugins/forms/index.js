@@ -9,6 +9,7 @@ let audit = require("../shared/audit");
 
 let errorTemplate = require("./error-template.handlebars");
 let altTextErrorTemplate = require("./alt-text-error-template.handlebars");
+let readOnlyClickEventErrorTemplate = require("./read-only-click-event-error-template.handlebars");
 let aboutTemplate = require("./about.handlebars");
 
 class FormsPlugin extends Plugin {
@@ -126,6 +127,29 @@ class FormsPlugin extends Plugin {
                         $el);
                 annotate.errorLabel($el, "", title, entry);
             }
+        });
+
+        $("input[readonly][onclick]:not([disabled])").each((i, el) => {
+            let $el = $(el);
+
+            let title = "Read only interactive input";
+            let entry = this.error(
+                    title,
+                    $(readOnlyClickEventErrorTemplate({})),
+                    $el);
+            annotate.errorLabel($el, "", title, entry);
+
+            // TODO
+            // Check if the DevTools are open and if so send a message
+            // over the Port that will trigger the devtools getEventListeners()
+            // helper on these readonly input elements (via a special marking
+            // class as for inspecting elements) to identify if there are any
+            // click event listeners on the input that have been added
+            // dynamically with JavaScript
+            // https://stackoverflow.com/questions/446892/how-to-find-event-listeners-on-a-dom-node-when-debugging-or-from-the-javascript
+            // As of 14/02/2019 this helper is not available to WebExtensions
+            // in Firefox so this cannot be implemented yet.
+            // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/devtools.inspectedWindow/eval#Helpers
         });
 
         this.about($(aboutTemplate()));
