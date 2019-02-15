@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-12
+ * Date: 2019-02-15
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13055,7 +13055,7 @@ module.exports = Plugin;
 var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
 function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div>\n<div class=\"tota11y-info-about-title\">\n    <a href=\"https://www.w3.org/TR/WCAG21/#contrast-minimum\" target=\"_blank\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.4.3\n        </span>\n    </a>\n</div>\n<p>\n    Text with low contract can be hard to read for some users, particularly\n    when the text is small or in direct sunlight.\n</p>\n<p>\n    The Web Content Accessibility Guidelines give criteria for minimum text\n    contrast standards, which depend on the size of the text.\n</p>\n<p>\n    This tool cannot identify text contrast against background images or\n    in images of text but these should also meet the minimum text contrast\n    guidelines to ensure that your website is accessible to people with\n    visual impairments.\n</p>\n<p>\n    <a\n            href=\"https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html\"\n            class=\"tota11y-info-link\">\n        Learn more\n    </a>\n</p>\n</div>\n";
+    return "<div>\n<div class=\"tota11y-info-about-title\">\n    <a href=\"https://www.w3.org/TR/WCAG21/#contrast-minimum\" target=\"_blank\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.4.3 (Level AA)\n        </span>\n    </a>\n</div>\n<p>\n    Text with low contract can be hard to read for some users, particularly\n    when the text is small or in direct sunlight.\n</p>\n<p>\n    The Web Content Accessibility Guidelines give criteria for minimum text\n    contrast standards, which depend on the size of the text.\n</p>\n<p>\n    This tool cannot identify text contrast against background images or\n    in images of text but these should also meet the minimum text contrast\n    guidelines to ensure that your website is accessible to people with\n    visual impairments.\n</p>\n<p>\n    <a\n            href=\"https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html\"\n            class=\"tota11y-info-link\">\n        Understanding minimum contrast\n    </a>\n</p>\n</div>\n";
 },"useData":true});
 
 /***/ }),
@@ -14001,10 +14001,10 @@ module.exports = LandmarksPlugin;
 
 /***/ }),
 
-/***/ "./plugins/link-text/error-template.handlebars":
-/*!*****************************************************!*\
-  !*** ./plugins/link-text/error-template.handlebars ***!
-  \*****************************************************/
+/***/ "./plugins/link-text/in-context-error-template.handlebars":
+/*!****************************************************************!*\
+  !*** ./plugins/link-text/in-context-error-template.handlebars ***!
+  \****************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -14015,11 +14015,11 @@ module.exports = (Handlebars["default"] || Handlebars).template({"1":function(co
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "<p>\n    The text \"<i>"
+  return "<p>\n    The link text and surrounding context we found for this\n    link \"<i>"
     + container.escapeExpression(((helper = (helper = helpers.extractedText || (depth0 != null ? depth0.extractedText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"extractedText","hash":{},"data":data}) : helper)))
-    + "</i>\" is unclear without context and may be\n    confusing to screen readers. Consider rearranging the <code>\n    &lt;a&gt;&lt;/a&gt;</code> tags or including special screen reader text\n    such as <code>aria-label=\"detailed description\"</code> or <code>\n    aria-labelledby=\"labeling element id\"</code> in the <code>\n    &lt;a&gt;</code> element to provide more context.\n"
+    + "</i>\" is unclear despite the surrounding context\n    and may be confusing to screen readers. Consider rearranging the <code>\n    &lt;a&gt;&lt;/a&gt;</code> tags or including special screen reader text\n    such as <code>aria-label=\"detailed description\"</code> or <code>\n    aria-labelledby=\"labeling element id\"</code> in the <code>\n    &lt;a&gt;</code> element to provide more context.\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.linkedImage : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "</p>\n";
+    + "</p>\n<p><a\n        href=\"https://www.w3.org/TR/WCAG21/#link-purpose-in-context\"\n        target=\"_blank\" class=\"tota11y-info-link\">\n    WCAG &sect; 2.4.4 (Level A)\n</a></p>\n";
 },"useData":true});
 
 /***/ }),
@@ -14041,7 +14041,9 @@ let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("link-text");
 
-let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/link-text/error-template.handlebars");
+let inContextErrorTemplate = __webpack_require__(/*! ./in-context-error-template.handlebars */ "./plugins/link-text/in-context-error-template.handlebars");
+
+let linkOnlyErrorTemplate = __webpack_require__(/*! ./link-only-error-template.handlebars */ "./plugins/link-text/link-only-error-template.handlebars");
 
 let stopWords = ["click", "tap", "go", "here", "learn", "more", "this", "page", "link", "about"]; // Generate a regex to match each of the stopWords
 
@@ -14100,13 +14102,15 @@ class LinkTextPlugin extends Plugin {
     return textContent.trim() !== "";
   }
 
-  reportError($el, $description, content) {
+  reportError($el, $description, content, withContext) {
+    let context = withContext ? "with context" : "without context";
+
     if (content === null) {
-      let entry = this.error("No link text present", $description, $el);
-      annotate.errorLabel($el, "", "No link text", entry);
+      let entry = this.error(`No link text present ${context}`, $description, $el);
+      annotate.errorLabel($el, "", `No link text ${context}`, entry);
     } else {
-      let entry = this.error("Link text is unclear", $description, $el);
-      annotate.errorLabel($el, "", `Link text "${content}" is unclear`, entry);
+      let entry = this.error(`Link text is unclear ${context}`, $description, $el);
+      annotate.errorLabel($el, "", `Link text "${content}" is unclear ${context}`, entry);
     }
   }
   /**
@@ -14141,14 +14145,39 @@ class LinkTextPlugin extends Plugin {
 
 
       let alts = {};
-      let extractedText = axs.properties.findTextAlternatives(el, alts);
+      let extractedTextLinkOnly = axs.properties.findTextAlternatives(el, alts); // "In HTML, information that is programmatically determinable
+      // from a link in English includes text that is in the same
+      // paragraph, list, or table cell as the link or in a table header
+      // cell that is associated with the table cell that contains the
+      // link"
+      // https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-in-context.html
 
-      if (!this.isDescriptiveText(extractedText)) {
-        let $description = errorTemplate({
-          extractedText: extractedText,
+      let $context = $el.closest("p, li, td, th");
+      let extractedTextInContext = extractedTextLinkOnly;
+
+      if ($context[0]) {
+        let _alts = {};
+        extractedTextInContext = axs.properties.findTextAlternatives($context[0], _alts);
+      }
+
+      if (!this.isDescriptiveText(extractedTextInContext)) {
+        let $description = inContextErrorTemplate({
+          extractedText: extractedTextLinkOnly,
           linkedImage: $el.find("img").length > 0
         });
-        this.reportError($el, $description, extractedText);
+        this.reportError($context, $description, extractedTextInContext, true);
+      } else {
+        // Context can only add information so if a link is
+        // unclear with context it would also be unclear without
+        // so this test is only useful if the link is descriptive
+        // with context
+        if (!this.isDescriptiveText(extractedTextLinkOnly)) {
+          let $description = linkOnlyErrorTemplate({
+            extractedText: extractedTextLinkOnly,
+            linkedImage: $el.find("img").length > 0
+          });
+          this.reportError($el, $description, extractedTextLinkOnly, false);
+        }
       }
     });
   }
@@ -14160,6 +14189,29 @@ class LinkTextPlugin extends Plugin {
 }
 
 module.exports = LinkTextPlugin;
+
+/***/ }),
+
+/***/ "./plugins/link-text/link-only-error-template.handlebars":
+/*!***************************************************************!*\
+  !*** ./plugins/link-text/link-only-error-template.handlebars ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+    return "    You can also provide link text via the image element's alt text\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return "<p>\n    The text \"<i>"
+    + container.escapeExpression(((helper = (helper = helpers.extractedText || (depth0 != null ? depth0.extractedText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"extractedText","hash":{},"data":data}) : helper)))
+    + "</i>\" is unclear without context and may be\n    confusing to screen readers. Consider rearranging the <code>\n    &lt;a&gt;&lt;/a&gt;</code> tags or including special screen reader text\n    such as <code>aria-label=\"detailed description\"</code> or <code>\n    aria-labelledby=\"labeling element id\"</code> in the <code>\n    &lt;a&gt;</code> element to provide more context.\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.linkedImage : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</p>\n<p>\n    Screen readers can pull all links out of a page and present them\n    in a single list but this loses all context information so the links must be\n    understandable from their link text alone for this type of navigation.\n</p>\n<p><a\n        href=\"https://www.w3.org/TR/WCAG21/#link-purpose-link-only\"\n        target=\"_blank\" class=\"tota11y-info-link\">\n    WCAG &sect; 2.4.9 (Level AAA)\n</a></p>\n";
+},"useData":true});
 
 /***/ }),
 
