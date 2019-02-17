@@ -1,16 +1,14 @@
 let $ = require("jquery");
 
 let plugins = require("./plugins");
+let settings = require("./settings");
 let logoTemplate = require("./templates/logo.handlebars");
 
 const PORT_NAME = "toolbar";
 
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map((p) => p.getName());
-
-let allSettings = [
-    "translucentAnnotations", // make the annotations translucent
-];
+let namedSettings = settings.map((p) => p.getName());
 
 const DISABLE_CSS = "tota11y-disabled-toolbar";
 
@@ -48,15 +46,19 @@ class Toolbar {
     }
 
     /*
-     * Manages the active setting strings in a similar way to plugins.
+     * Manages the active setting strings in a similar way to plugins,
      */
     handleSettingClick(setting) {
+        if (!setting.applyToPage()) {
+            // skip
+            return;
+        }
         console.log(`Handling setting click ${setting}`);
         if (this.activeSettings.has(setting)) {
-            this.applySetting(setting, false);
+            setting.disable();
             this.activeSettings.delete(setting);
         } else {
-            this.applySetting(setting, true);
+            setting.enable();
             this.activeSettings.add(setting);
         }
     }
@@ -68,7 +70,7 @@ class Toolbar {
         let $logo = $(logoTemplate());
         let $toolbar;
 
-        let $plugins = buildPlugins.bind(this)();
+        let $plugins = buildPlugins.bind(this)(false);
 
         let handleToggleClick = (e) => {
             e.preventDefault();
@@ -112,7 +114,6 @@ class Toolbar {
 
             let $button = this.$el.find(".tota11y-toolbar-toggle");
             $button.prop("disabled", true);
-            $button.attr("role", "presentation");
             $button.removeAttr("aria-controls");
             $button.attr("aria-label", "[tota11y] Indicator");
 
@@ -142,26 +143,33 @@ class Toolbar {
                         let plugin = allPlugins[index];
                         console.log(`Plugin click sent through port ${plugin.getName()}`);
                         let doToggle = (
-                            this.activePlugins.has(plugin) !=
+                            this.activePlugins.has(plugin) !==
                             json.active
                         );
                         if (doToggle) {
-                            // only toggle the plugin if not in sync with
-                            // controller
+                            // only toggle if not in sync with controller
                             this.handlePluginClick(plugin);
-                        } else {
-                            console.log("Skipped, plugin already synced state");
                         }
                     } else {
                         port.postMessage("Unrecognised plugin");
                     }
                 }
                 if (json.settingClick) {
-                    let active = this.activeSettings.has(json.settingClick);
-                    if (active != json.active) {
-                        this.handleSettingClick(json.settingClick);
+                    // retrieve the setting instance from the name
+                    let index = namedSettings.findIndex(s => s === json.settingClick);
+                    if (index !== -1) {
+                        let setting = settings[index];
+                        console.log(`Setting click sent through port ${setting.getName()}`);
+                        let doToggle = (
+                            this.activeSettings.has(setting) !==
+                            json.active
+                        )
+                        if (doToggle) {
+                            // only toggle if not in sync with controller
+                            this.handleSettingClick(setting);
+                        }
                     } else {
-                        console.log("Skipped, setting already synced state");
+                        port.postMessage("Unrecognised setting");
                     }
                 }
                 if (json.sync) {
@@ -170,19 +178,17 @@ class Toolbar {
                     for (let plugin of allPlugins) {
                         let activate = activePlugins.has(plugin.getName());
                         let active = this.activePlugins.has(plugin);
-                        if (activate != active) {
-                            // toggle all plugins that aren't
-                            // in sync with the controller
+                        if (activate !== active) {
+                            // only toggle if not in sync with controller
                             this.handlePluginClick(plugin);
                         }
                     }
                     let activeSettings = new Set(json.activeSettings);
-                    for (let setting of allSettings) {
-                        let activate = activeSettings.has(setting);
+                    for (let setting of settings) {
+                        let activate = activeSettings.has(setting.getName());
                         let active = this.activeSettings.has(setting);
-                        if (activate != active) {
-                            // toggle all settings that aren't
-                            // in sync with the controller
+                        if (activate !== active) {
+                            // only toggle if not in sync with controller
                             this.handleSettingClick(setting);
                         }
                     }
@@ -201,27 +207,6 @@ class Toolbar {
                     this.$el = null;
                 }
             });
-        }
-    }
-
-    applySetting(setting, enable) {
-        if (setting === "translucentAnnotations") {
-            if (enable) {
-                let $style = $(
-                    `<style id="tota11y-setting-translucentAnnotations"
-                            type="text/css">
-                        .tota11y-label {
-                            opacity: 0.6;
-                        }
-                        .tota11y-label:hover {
-                            opacity: 0.9;
-                        }
-                    </style>`
-                );
-                $style.appendTo($("head"));
-            } else {
-                $("#tota11y-setting-translucentAnnotations").remove();
-            }
         }
     }
 }
@@ -261,7 +246,10 @@ class ToolbarController {
             msg: "Sync active plugins and settings",
             sync: true,
             activePlugins: [...this.activePlugins].map(p => p.getName()),
-            activeSettings: this.activeSettings,
+            // don't sync settings that don't do anything on the page
+            activeSettings: [...this.activeSettings]
+                .filter(s => s.applyToPage())
+                .map(s => s.getName()),
         })
     }
 
@@ -282,14 +270,20 @@ class ToolbarController {
 
     handleSettingClick(setting) {
         if (this.activeSettings.has(setting)) {
+            setting.disable();
             this.activeSettings.delete(setting);
         } else {
+            setting.enable();
             this.activeSettings.add(setting);
+        }
+        if (!setting.applyToPage()) {
+            // don't sync settings that don't do anything on the page
+            return;
         }
         this.port.postMessage({
             msg: "Setting click",
             // Settings are just identified by strings
-            settingClick: setting,
+            settingClick: setting.getName(),
             active: this.activeSettings.has(setting),
         });
     }
@@ -301,7 +295,7 @@ class ToolbarController {
         let $logo = $(logoTemplate());
         let $toolbar;
 
-        let $plugins = buildPlugins.bind(this)();
+        let $plugins = buildPlugins.bind(this)(true);
 
         $toolbar = (
             <div id="tota11y-toolbar" className="tota11y tota11y-toolbar tota11y-expanded tota11y-sidebar"
@@ -322,7 +316,7 @@ class ToolbarController {
  * and the ToolbarController
  * `this` must be bound to the Toolbar or ToolbarController respectively
  */
-function buildPlugins() {
+function buildPlugins(isSidebar) {
     let $defaultPlugins = (
         <li>
             <div className="tota11y-plugins-separator">
@@ -366,21 +360,15 @@ function buildPlugins() {
                 Settings
             </div>
             <ul>
-                <li role="menuitem" className="tota11y-plugin">
-                    <label className="tota11y-plugin-switch">
-                        <input
-                            className="tota11y-plugin-checkbox tota11y-sr-only"
-                            type="checkbox"
-                            onClick={() => this.handleSettingClick("translucentAnnotations")} />
-                        <div aria-hidden="true"
-                             className="tota11y-plugin-indicator">
-                            &#x2713;
-                        </div>
-                        <div className="tota11y-plugin-info-setting">
-                                Translucent annotations
-                        </div>
-                    </label>
-                </li>
+                {
+                    settings
+                            .filter(s => isSidebar ? true : s.applyToPage())
+                            .map((Setting) => { // eslint-disable-line no-unused-vars
+                        return (
+                            <Setting onClick={this.handleSettingClick.bind(this)} />
+                        );
+                    })
+                }
             </ul>
         </li>
     );
