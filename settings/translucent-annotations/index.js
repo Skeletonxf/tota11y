@@ -1,6 +1,8 @@
 let $ = require("jquery");
 let Plugin = require("../base");
 
+const STYLE_CLASS = "tota11y-setting-translucentAnnotations";
+
 class TranslucentAnnotations extends Plugin {
     getName() {
         return "translucent-annotations";
@@ -20,7 +22,7 @@ class TranslucentAnnotations extends Plugin {
 
     enable() {
         this.$style = $(
-            `<style id="tota11y-setting-translucentAnnotations"
+            `<style class="${STYLE_CLASS}"
                     type="text/css">
                 .tota11y-label {
                     opacity: 0.6;
@@ -34,7 +36,7 @@ class TranslucentAnnotations extends Plugin {
     }
 
     disable() {
-        this.$style.remove();
+        $(`.${STYLE_CLASS}`).remove();
         this.$style = null;
     }
 }

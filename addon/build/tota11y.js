@@ -15626,6 +15626,12 @@ module.exports = TablesPlugin;
 let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 
 let Plugin = __webpack_require__(/*! ../base */ "./settings/base.js");
+/*
+ * The audit-dev-only is automatically synced with
+ * the browser.storage.local area as the setting value
+ * itself is what we check in the sidebar code.
+ */
+
 
 class AuditDevOnly extends Plugin {
   getName() {
@@ -15644,10 +15650,12 @@ class AuditDevOnly extends Plugin {
     return false;
   }
 
-  enable() {// TODO
+  enable() {// TODO notify the sidebar code to insert tota11y if the
+    // active tab was non localhost or file and we didn't insert
   }
 
-  disable() {// TODO
+  disable() {// TODO notify the sidebar code to remove tota11y if
+    // the active tab is non localhost or file and we already inserted
   }
 
 }
@@ -15721,6 +15729,14 @@ class Setting {
 
   disable() {}
 
+  activate() {
+    this.enable();
+  }
+
+  deactivate() {
+    this.disable();
+  }
+
 }
 
 module.exports = Setting;
@@ -15759,6 +15775,8 @@ let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"
 
 let Plugin = __webpack_require__(/*! ../base */ "./settings/base.js");
 
+const STYLE_CLASS = "tota11y-setting-translucentAnnotations";
+
 class TranslucentAnnotations extends Plugin {
   getName() {
     return "translucent-annotations";
@@ -15777,7 +15795,7 @@ class TranslucentAnnotations extends Plugin {
   }
 
   enable() {
-    this.$style = $(`<style id="tota11y-setting-translucentAnnotations"
+    this.$style = $(`<style class="${STYLE_CLASS}"
                     type="text/css">
                 .tota11y-label {
                     opacity: 0.6;
@@ -15790,7 +15808,7 @@ class TranslucentAnnotations extends Plugin {
   }
 
   disable() {
-    this.$style.remove();
+    $(`.${STYLE_CLASS}`).remove();
     this.$style = null;
   }
 
@@ -15883,10 +15901,10 @@ class Toolbar {
     console.log(`Handling setting click ${setting}`);
 
     if (this.activeSettings.has(setting)) {
-      setting.disable();
+      setting.deactivate();
       this.activeSettings.delete(setting);
     } else {
-      setting.enable();
+      setting.activate();
       this.activeSettings.add(setting);
     }
   }
@@ -16091,21 +16109,37 @@ class ToolbarController {
       this.activePlugins.add(plugin);
     }
 
-    this.port.postMessage({
-      msg: "Plugin click",
-      // Plugin instance will be different and not go
-      // through JSON so pass the name instead.
-      pluginClick: plugin.getName(),
-      active: this.activePlugins.has(plugin)
-    });
+    if (this.port) {
+      this.port.postMessage({
+        msg: "Plugin click",
+        // Plugin instance will be different and not go
+        // through JSON so pass the name instead.
+        pluginClick: plugin.getName(),
+        active: this.activePlugins.has(plugin)
+      });
+    }
   }
 
   handleSettingClick(setting) {
     if (this.activeSettings.has(setting)) {
-      setting.disable();
+      if (setting.applyToSidebar()) {
+        setting.deactivate();
+      } // save setting to local storage regardless of type
+
+
+      browser.storage.local.set({
+        [setting.getName()]: false
+      });
       this.activeSettings.delete(setting);
     } else {
-      setting.enable();
+      if (setting.applyToSidebar()) {
+        setting.activate();
+      } // save setting to local storage regardless of type
+
+
+      browser.storage.local.set({
+        [setting.getName()]: true
+      });
       this.activeSettings.add(setting);
     }
 
@@ -16114,12 +16148,14 @@ class ToolbarController {
       return;
     }
 
-    this.port.postMessage({
-      msg: "Setting click",
-      // Settings are just identified by strings
-      settingClick: setting.getName(),
-      active: this.activeSettings.has(setting)
-    });
+    if (this.port) {
+      this.port.postMessage({
+        msg: "Setting click",
+        // Settings are just identified by strings
+        settingClick: setting.getName(),
+        active: this.activeSettings.has(setting)
+      });
+    }
   }
   /**
    * Renders the toolbar and appends it to the specified element.
@@ -16137,7 +16173,16 @@ class ToolbarController {
       "aria-expanded": "true"
     }, buildElement("div", {
       className: "tota11y-toolbar-body"
-    }, $plugins));
+    }, $plugins)); // sync the state of the local storage for settings
+    // to the sidebar UI
+
+    settings.forEach(setting => {
+      browser.storage.local.get(setting.getName()).then(storage => {
+        if (storage[setting.getName()]) {
+          setting.$checkbox.click();
+        }
+      });
+    });
     $el.append($toolbar);
   }
 

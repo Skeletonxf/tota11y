@@ -1,6 +1,11 @@
 let $ = require("jquery");
 let Plugin = require("../base");
 
+/*
+ * The audit-dev-only is automatically synced with
+ * the browser.storage.local area as the setting value
+ * itself is what we check in the sidebar code.
+ */
 class AuditDevOnly extends Plugin {
     getName() {
         return "audit-dev-only";
@@ -19,11 +24,13 @@ class AuditDevOnly extends Plugin {
     }
 
     enable() {
-        // TODO
+        // TODO notify the sidebar code to insert tota11y if the
+        // active tab was non localhost or file and we didn't insert
     }
 
     disable() {
-        // TODO
+        // TODO notify the sidebar code to remove tota11y if
+        // the active tab is non localhost or file and we already inserted
     }
 }
 

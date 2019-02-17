@@ -15,6 +15,8 @@ const Lock = require("./lock.js");
 const InfoPanelController = require("../../plugins/shared/info-panel/controller.js")
 const ToolbarController = toolbar.controller;
 
+const DEBUGGING = false;
+
 let windowId;
 
 /*
@@ -38,7 +40,15 @@ toolbarController.appendTo($("body"));
 let infoPanelController = new InfoPanelController();
 
 let activeTabId = -1;
+let currentTabId = -1;
 let insertingLock = new Lock();
+
+function developmentTab(url) {
+    return [
+        "http://localhost:",
+        "https://localhost",
+        "file://"].some(prefix => url.startsWith(prefix));
+}
 
 // Style the body so the sidebar is always filled
 $("body").css({
@@ -46,7 +56,7 @@ $("body").css({
     "background-color": "#333",
 });
 
-async function updateSidebar(data, updateType) {
+function updateSidebar(data, updateType) {
     if (insertingLock.locked()) {
         console.log("Already inserting tota11y");
         return;
@@ -101,28 +111,49 @@ async function updateSidebar(data, updateType) {
             throw new Error(`${tab.url} ignored, cannot inject tota11y`);
         }
 
+        if (currentTabId === tab.id && updateType === "new-active") {
+            throw new Error("Current tab id became active again, ignoring")
+        }
+
         if (insertingLock.locked()) {
             throw new Error("Already inserting tota11y");
         }
 
-        console.log(`Inserting tota11y into the page ${tab.url}`);
-        console.log(`Setting lock on tab id ${tab.id}`);
-        insertingLock.lock(); // will throw error if already locked
+        let executing = browser.storage.local.get("audit-dev-only")
+        executing.then((storage) => {
+            if (storage["audit-dev-only"]) {
+                if (!developmentTab(tab.url)) {
+                    throw new Error("Not development tab");
+                }
+            }
+        }).then(() => {
+            console.log(`Inserting tota11y into the page ${tab.url}`);
+            console.log(`Setting lock on tab id ${tab.id}`);
+            insertingLock.lock(); // will throw error if already locked
 
-        let executing = browser.tabs.executeScript(tab.id, {
-            file: "/build/tota11y.js"
+            return browser.tabs.executeScript(tab.id, {
+                file: "/build/tota11y.js"
+            }).then(() => {
+                currentTabId = tab.id
+            }).then(() => {
+                insertingLock.unlock();
+                console.log("Freed lock");
+            }).catch(() => {
+                // catch errors relating to executing the script
+                // but not errors thrown deliberately in prior checks
+                insertingLock.unlock();
+                console.log("Error inserting, freed lock");
+            });
         });
-        executing.then(() => {
-            console.log(`Sending tab id ${tab.id} to tota11y script`)
-            toolbarController.sendTabId(tab.id);
-        });
+
+        // allow any errors thrown deliberately in prior checks to propagate
         return executing;
     })
-    .then(() => {
-        insertingLock.unlock();
-        console.log("Freed lock");
-    })
-    .catch(propagateError("Executing script"));
+    .catch((error) => {
+        if (DEBUGGING) {
+            propagateError("Executing script")(error);
+        }
+    });
 }
 
 /*

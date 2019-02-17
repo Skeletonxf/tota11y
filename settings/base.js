@@ -63,11 +63,17 @@ class Setting {
     }
 
     enable() {
-
     }
 
     disable() {
+    }
 
+    activate() {
+        this.enable();
+    }
+
+    deactivate() {
+        this.disable();
     }
 }
 

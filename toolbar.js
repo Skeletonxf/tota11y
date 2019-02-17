@@ -55,10 +55,10 @@ class Toolbar {
         }
         console.log(`Handling setting click ${setting}`);
         if (this.activeSettings.has(setting)) {
-            setting.disable();
+            setting.deactivate();
             this.activeSettings.delete(setting);
         } else {
-            setting.enable();
+            setting.activate();
             this.activeSettings.add(setting);
         }
     }
@@ -259,33 +259,49 @@ class ToolbarController {
         } else {
             this.activePlugins.add(plugin);
         }
-        this.port.postMessage({
-            msg: "Plugin click",
-            // Plugin instance will be different and not go
-            // through JSON so pass the name instead.
-            pluginClick: plugin.getName(),
-            active: this.activePlugins.has(plugin),
-        });
+        if (this.port) {
+            this.port.postMessage({
+                msg: "Plugin click",
+                // Plugin instance will be different and not go
+                // through JSON so pass the name instead.
+                pluginClick: plugin.getName(),
+                active: this.activePlugins.has(plugin),
+            });
+        }
     }
 
     handleSettingClick(setting) {
         if (this.activeSettings.has(setting)) {
-            setting.disable();
+            if (setting.applyToSidebar()) {
+                setting.deactivate();
+            }
+            // save setting to local storage regardless of type
+            browser.storage.local.set({
+                [setting.getName()]: false,
+            });
             this.activeSettings.delete(setting);
         } else {
-            setting.enable();
+            if (setting.applyToSidebar()) {
+                setting.activate();
+            }
+            // save setting to local storage regardless of type
+            browser.storage.local.set({
+                [setting.getName()]: true,
+            });
             this.activeSettings.add(setting);
         }
         if (!setting.applyToPage()) {
             // don't sync settings that don't do anything on the page
             return;
         }
-        this.port.postMessage({
-            msg: "Setting click",
-            // Settings are just identified by strings
-            settingClick: setting.getName(),
-            active: this.activeSettings.has(setting),
-        });
+        if (this.port) {
+            this.port.postMessage({
+                msg: "Setting click",
+                // Settings are just identified by strings
+                settingClick: setting.getName(),
+                active: this.activeSettings.has(setting),
+            });
+        }
     }
 
     /**
@@ -306,6 +322,16 @@ class ToolbarController {
                 </div>
             </div>
         );
+
+        // sync the state of the local storage for settings
+        // to the sidebar UI
+        settings.forEach((setting) => {
+            browser.storage.local.get(setting.getName()).then((storage) => {
+                if (storage[setting.getName()]) {
+                    setting.$checkbox.click();
+                }
+            })
+        })
 
         $el.append($toolbar);
     }

@@ -4,7 +4,7 @@
   "name": "Tota11y prototype",
   "version": "1.0",
 
-  "permissions": ["tabs", "https://*/*", "http://*/*", "file://*/*", "activeTab"],
+  "permissions": ["tabs", "https://*/*", "http://*/*", "file://*/*", "activeTab", "storage"],
 
   "background": {
     "scripts": [

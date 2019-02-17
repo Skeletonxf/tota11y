@@ -87,7 +87,18 @@ class InfoPanelController {
                             return;
                         }
                         let plugin = allPlugins[index];
-                        console.log('registering active panel');
+
+                        // Destroy any existing active panel for the same plugin
+                        // to prevent double-renders
+                        [...this.activePanels]
+                        .filter((ap) => {
+                            return ap.plugin.getName() === plugin.getName();
+                        })
+                        .forEach((ap) => {
+                            this.activePanels.delete(ap);
+                            ap.destroy();
+                        });
+
                         this.activePanels.add(new ActivePanel(port, plugin));
                     }
                     if (json.elementMarked) {
