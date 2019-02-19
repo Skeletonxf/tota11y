@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-17
+ * Date: 2019-02-19
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13966,11 +13966,13 @@ let ContrastPlugin = __webpack_require__(/*! ./contrast */ "./plugins/contrast/i
 
 let DocumentPlugin = __webpack_require__(/*! ./document */ "./plugins/document/index.js");
 
-let HeadingsPlugin = __webpack_require__(/*! ./headings */ "./plugins/headings/index.js");
-
 let FormsPlugin = __webpack_require__(/*! ./forms */ "./plugins/forms/index.js");
 
+let HeadingsPlugin = __webpack_require__(/*! ./headings */ "./plugins/headings/index.js");
+
 let LandmarksPlugin = __webpack_require__(/*! ./landmarks */ "./plugins/landmarks/index.js");
+
+let LayoutPlugin = __webpack_require__(/*! ./layout */ "./plugins/layout/index.js");
 
 let LinkTextPlugin = __webpack_require__(/*! ./link-text */ "./plugins/link-text/index.js");
 
@@ -13979,7 +13981,7 @@ let NavigationPlugin = __webpack_require__(/*! ./navigation */ "./plugins/naviga
 let TablesPlugin = __webpack_require__(/*! ./tables */ "./plugins/tables/index.js");
 
 module.exports = {
-  default: [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new FormsPlugin(), new AltTextPlugin(), new NavigationPlugin(), new LandmarksPlugin(), new TablesPlugin(), new A11yName(), new DocumentPlugin()],
+  default: [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new FormsPlugin(), new AltTextPlugin(), new NavigationPlugin(), new LandmarksPlugin(), new TablesPlugin(), new LayoutPlugin(), new A11yName(), new DocumentPlugin()],
   experimental: [new A11yTextWand()]
 };
 
@@ -14031,6 +14033,118 @@ class LandmarksPlugin extends Plugin {
 }
 
 module.exports = LandmarksPlugin;
+
+/***/ }),
+
+/***/ "./plugins/layout/index.js":
+/*!*********************************!*\
+  !*** ./plugins/layout/index.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
+let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
+
+let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("layout");
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+class LayoutPlugin extends Plugin {
+  constructor() {
+    super(); // List of original font sizes for text elements
+    // Used to restore original sizes in cleanup.
+
+    this.preservedFontSizes = [];
+  }
+
+  getName() {
+    return "layout";
+  }
+
+  getTitle() {
+    return "Layout";
+  }
+
+  getDescription() {
+    return `
+            Checks the page layout is robust to user style sheets and other
+            modifications
+        `;
+  }
+
+  getAnnotate() {
+    return annotate;
+  }
+
+  isOverflow($el) {
+    // identify if the element is overflowing,
+    // ie the width of all its content is more than the width
+    // of its visible content
+    return $el[0].scrollWidth > $el.innerWidth();
+  }
+
+  run() {
+    // First apply a font size of 200%
+    $("*").each((i, el) => {
+      // Only check elements with a direct text descendant
+      if (!axs.properties.hasDirectTextDescendant(el)) {
+        return;
+      }
+
+      let $el = $(el); // Ignore elements that are part of the tota11y UI
+
+      if ($el.parents(".tota11y").length > 0) {
+        return;
+      } // Get the resolved font size normalised to pixels using
+      // getComputedStyle so the browser does CSS unit conversion
+      // work for us, and also get the style specified on the
+      // element in whatever CSS unit to restore the font size to
+
+
+      let style = window.getComputedStyle(el);
+      let pxFontSize = parseFloat(style.getPropertyValue("font-size")); // Save original font size so it can be restored on cleanup.
+
+      this.preservedFontSizes.push({
+        $el: $el,
+        pxFontSize: pxFontSize,
+        overflow: this.isOverflow($el)
+      });
+    }); // Apply font size changes after querying the computed font size
+    // of all elements to ignore these values changing as we resize elements
+
+    this.preservedFontSizes.forEach(entry => {
+      entry.$el.css("font-size", `${entry.pxFontSize * 2}px`);
+
+      if (!entry.overflow && this.isOverflow(entry.$el)) {
+        // resizing has caused overflow that wasn't present before
+        annotate.errorLabel(entry.$el, "", "Overflows at 200%");
+      }
+    });
+    this.reset();
+    sleep(1000).then(() => {
+      annotate.refreshAll();
+    });
+  }
+
+  reset() {
+    // Set all elements to original size
+    this.preservedFontSizes.forEach(entry => {
+      entry.$el.css("font-size", `${entry.pxFontSize}px`);
+    });
+  }
+
+  cleanup() {
+    this.reset();
+    annotate.removeAll();
+  }
+
+}
+
+module.exports = LayoutPlugin;
 
 /***/ }),
 
@@ -14446,10 +14560,9 @@ module.exports = namespace => {
     }
 
     window.requestAnimationFrame(loop);
-  })(); // Handle resizes by repositioning all annotations in bulk
+  })();
 
-
-  $(window).resize(() => {
+  let repositionAll = () => {
     let $annotations = $("." + ANNOTATION_CLASS); // Record the position of each annotation's corresponding element to
     // batch measurements
 
@@ -14463,7 +14576,10 @@ module.exports = namespace => {
         left: positions[i].left
       });
     });
-  });
+  }; // Handle resizes by repositioning all annotations in bulk
+
+
+  $(window).resize(repositionAll);
   return {
     // Places a small label in the top left corner of a given jQuery
     // element. By default, this label contains the element's tagName.
@@ -14548,6 +14664,10 @@ module.exports = namespace => {
 
     show() {
       $(`.tota11y.tota11y-label.${ANNOTATION_CLASS}`).show();
+    },
+
+    refreshAll() {
+      repositionAll();
     },
 
     removeAll() {

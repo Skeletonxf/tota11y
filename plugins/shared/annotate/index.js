@@ -80,8 +80,7 @@ module.exports = (namespace) => {
         window.requestAnimationFrame(loop);
     })();
 
-    // Handle resizes by repositioning all annotations in bulk
-    $(window).resize(() => {
+    let repositionAll = () => {
         let $annotations = $("." + ANNOTATION_CLASS);
 
         // Record the position of each annotation's corresponding element to
@@ -97,7 +96,10 @@ module.exports = (namespace) => {
                 left: positions[i].left
             });
         });
-    });
+    };
+
+    // Handle resizes by repositioning all annotations in bulk
+    $(window).resize(repositionAll);
 
     return {
         // Places a small label in the top left corner of a given jQuery
@@ -186,6 +188,10 @@ module.exports = (namespace) => {
 
         show() {
             $(`.tota11y.tota11y-label.${ANNOTATION_CLASS}`).show();
+        },
+
+        refreshAll() {
+            repositionAll();
         },
 
         removeAll() {

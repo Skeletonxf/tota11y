@@ -9,9 +9,10 @@ let A11yName = require("./a11y-name");
 let AltTextPlugin = require("./alt-text");
 let ContrastPlugin = require("./contrast");
 let DocumentPlugin = require("./document");
-let HeadingsPlugin = require("./headings");
 let FormsPlugin = require("./forms");
+let HeadingsPlugin = require("./headings");
 let LandmarksPlugin = require("./landmarks");
+let LayoutPlugin = require("./layout");
 let LinkTextPlugin = require("./link-text");
 let NavigationPlugin = require("./navigation");
 let TablesPlugin = require("./tables");
@@ -26,6 +27,7 @@ module.exports = {
         new NavigationPlugin(),
         new LandmarksPlugin(),
         new TablesPlugin(),
+        new LayoutPlugin(),
         new A11yName(),
         new DocumentPlugin(),
     ],
