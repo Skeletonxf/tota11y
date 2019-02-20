@@ -46,7 +46,6 @@ class FontSizeLayoutTest extends LayoutTest {
 
     detect() {
         this.preservedFontSizes.forEach((entry) => {
-            console.log(`e: ${entry.$el[0]}, o: ${JSON.stringify(entry.overflow)}, n: ${JSON.stringify(this.isOverflow(entry.$el))}`);
             if ((!entry.overflow.x && this.isOverflow(entry.$el).x)
                     || (!entry.overflow.y && this.isOverflow(entry.$el).y)) {
                 // resizing has caused overflow that wasn't present before
