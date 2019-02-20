@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-19
+ * Date: 2019-02-20
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -14049,16 +14049,11 @@ let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("layout");
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+let layoutTests = __webpack_require__(/*! ./tests */ "./plugins/layout/tests/index.js");
 
 class LayoutPlugin extends Plugin {
   constructor() {
-    super(); // List of original font sizes for text elements
-    // Used to restore original sizes in cleanup.
-
-    this.preservedFontSizes = [];
+    super();
   }
 
   getName() {
@@ -14080,15 +14075,87 @@ class LayoutPlugin extends Plugin {
     return annotate;
   }
 
-  isOverflow($el) {
-    // identify if the element is overflowing,
-    // ie the width of all its content is more than the width
-    // of its visible content
-    return $el[0].scrollWidth > $el.innerWidth();
+  run() {
+    layoutTests.forEach(test => {
+      test.apply();
+      test.detect();
+      test.cleanup();
+    });
+    layoutTests.forEach(test => {
+      test.report();
+    });
   }
 
-  run() {
-    // First apply a font size of 200%
+  cleanup() {
+    layoutTests.forEach(test => {
+      test.cleanup();
+    });
+    annotate.removeAll();
+  }
+
+}
+
+module.exports = LayoutPlugin;
+
+/***/ }),
+
+/***/ "./plugins/layout/tests/base.js":
+/*!**************************************!*\
+  !*** ./plugins/layout/tests/base.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+class LayoutTest {
+  /*
+   *  Applies a layout modification to the page.
+   */
+  apply() {}
+  /*
+   * Detects any problems the layout modification revealed.
+   */
+
+
+  detect() {}
+  /*
+   * Restores the page to before applying the layout modification.
+   */
+
+
+  cleanup() {}
+  /*
+   * Reports any problems detected.
+   */
+
+
+  report() {}
+
+}
+
+module.exports = LayoutTest;
+
+/***/ }),
+
+/***/ "./plugins/layout/tests/font-size/index.js":
+/*!*************************************************!*\
+  !*** ./plugins/layout/tests/font-size/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
+let annotate = __webpack_require__(/*! ../../../shared/annotate */ "./plugins/shared/annotate/index.js")("layout");
+
+let LayoutTest = __webpack_require__(/*! ../base */ "./plugins/layout/tests/base.js");
+
+class FontSizeLayoutTest extends LayoutTest {
+  constructor() {
+    super();
+    this.preservedFontSizes = [];
+  }
+
+  apply() {
     $("*").each((i, el) => {
       // Only check elements with a direct text descendant
       if (!axs.properties.hasDirectTextDescendant(el)) {
@@ -14118,33 +14185,63 @@ class LayoutPlugin extends Plugin {
 
     this.preservedFontSizes.forEach(entry => {
       entry.$el.css("font-size", `${entry.pxFontSize * 2}px`);
-
-      if (!entry.overflow && this.isOverflow(entry.$el)) {
-        // resizing has caused overflow that wasn't present before
-        annotate.errorLabel(entry.$el, "", "Overflows at 200%");
-      }
-    });
-    this.reset();
-    sleep(1000).then(() => {
-      annotate.refreshAll();
     });
   }
 
-  reset() {
+  detect() {
+    this.preservedFontSizes.forEach(entry => {
+      console.log(`e: ${entry.$el[0]}, o: ${JSON.stringify(entry.overflow)}, n: ${JSON.stringify(this.isOverflow(entry.$el))}`);
+
+      if (!entry.overflow.x && this.isOverflow(entry.$el).x || !entry.overflow.y && this.isOverflow(entry.$el).y) {
+        // resizing has caused overflow that wasn't present before
+        entry.error = () => {
+          annotate.errorLabel(entry.$el, "", "Overflows at 200%");
+        };
+      }
+    });
+  }
+
+  cleanup() {
     // Set all elements to original size
     this.preservedFontSizes.forEach(entry => {
       entry.$el.css("font-size", `${entry.pxFontSize}px`);
     });
   }
 
-  cleanup() {
-    this.reset();
-    annotate.removeAll();
+  report() {
+    this.preservedFontSizes.forEach(entry => {
+      if (entry.error) {
+        entry.error();
+      }
+    });
+  }
+
+  isOverflow($el) {
+    // identify if the element is overflowing,
+    // ie the width of all its content is more than the width
+    // of its visible content
+    return {
+      x: $el[0].scrollWidth > $el.innerWidth(),
+      y: $el[0].scrollHeight > $el.innerHeight()
+    };
   }
 
 }
 
-module.exports = LayoutPlugin;
+module.exports = FontSizeLayoutTest;
+
+/***/ }),
+
+/***/ "./plugins/layout/tests/index.js":
+/*!***************************************!*\
+  !*** ./plugins/layout/tests/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+let FontSizeLayoutTest = __webpack_require__(/*! ./font-size */ "./plugins/layout/tests/font-size/index.js");
+
+module.exports = [new FontSizeLayoutTest()];
 
 /***/ }),
 
