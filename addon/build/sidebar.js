@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-20
+ * Date: 2019-02-22
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -100,6 +100,33 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./addon/sidebar/errors.js":
+/*!*********************************!*\
+  !*** ./addon/sidebar/errors.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+ * Generates a function which logs an error with
+ * a custom message, then propagates the error
+ *
+ * The message should be unique so the line that
+ * caused it can be identified.
+ */
+function propagateError(msg) {
+  return error => {
+    console.error(`Error: ${error}, at: ${msg}`);
+    throw error;
+  };
+}
+
+module.exports = {
+  propagateError: propagateError
+};
+
+/***/ }),
+
 /***/ "./addon/sidebar/index.js":
 /*!********************************!*\
   !*** ./addon/sidebar/index.js ***!
@@ -120,29 +147,17 @@ let plugins = __webpack_require__(/*! ../../plugins */ "./plugins/index.js");
 
 let toolbar = __webpack_require__(/*! ../../toolbar.js */ "./toolbar.js");
 
+const errors = __webpack_require__(/*! ./errors.js */ "./addon/sidebar/errors.js");
+
 const Lock = __webpack_require__(/*! ./lock.js */ "./addon/sidebar/lock.js");
 
 const InfoPanelController = __webpack_require__(/*! ../../plugins/shared/info-panel/controller.js */ "./plugins/shared/info-panel/controller.js");
 
 const ToolbarController = toolbar.controller;
 const DEBUGGING = false;
-let windowId;
-/*
- * Generates a function which logs an error with
- * a custom message, then propagates the error
- *
- * The message should be unique so the line that
- * caused it can be identified.
- */
-
-function propagateError(msg) {
-  return error => {
-    console.error(`Error: ${error}, at: ${msg}`);
-    throw error;
-  };
-} // We only need 1 of each controller for n content scripts
+let propagateError = errors.propagateError;
+let windowId; // We only need 1 of each controller for n content scripts
 // and info panels
-
 
 let toolbarController = new ToolbarController();
 toolbarController.appendTo($("body"));
@@ -176,8 +191,9 @@ function updateSidebar(data, updateType) {
   }
 
   if (updateType === "new-active") {
-    // Always update to stay in the active tab.
-    triggerUpdate = activeTabId !== data.tabId;
+    // Always update to stay in the active tab as long as
+    // the active tab is in the same window.
+    triggerUpdate = true && activeTabId !== data.tabId && windowId === data.windowId;
     console.log(`Updating if active tab different ${triggerUpdate}`); // Update the cache of the active tab id
 
     activeTabId = data.tabId;
@@ -187,7 +203,8 @@ function updateSidebar(data, updateType) {
     // Update if a new page is loaded into the active tab
     // (ie F5).
     triggerUpdate = true // ignore loading of non active tabs
-    && activeTabId === data.tabId // ignore incomplete loading
+    && activeTabId === data.tabId // make sure this is the tab for our sidebar window
+    && windowId === data.tab.windowId // ignore incomplete loading
     && data.changeInfo.status === "complete";
     console.log(`Updating if new page loaded in active tab ${triggerUpdate}`);
   }
@@ -14348,8 +14365,6 @@ class FontSizeLayoutTest extends LayoutTest {
 
   detect() {
     this.preservedFontSizes.forEach(entry => {
-      console.log(`e: ${entry.$el[0]}, o: ${JSON.stringify(entry.overflow)}, n: ${JSON.stringify(this.isOverflow(entry.$el))}`);
-
       if (!entry.overflow.x && this.isOverflow(entry.$el).x || !entry.overflow.y && this.isOverflow(entry.$el).y) {
         // resizing has caused overflow that wasn't present before
         entry.error = () => {
@@ -14375,14 +14390,36 @@ class FontSizeLayoutTest extends LayoutTest {
   }
 
   isOverflow($el) {
-    // identify if the element is overflowing,
-    // ie the width of all its content is more than the width
-    // of its visible content
-    return {
-      x: $el[0].scrollWidth > $el.innerWidth(),
-      y: $el[0].scrollHeight > $el.innerHeight()
+    // Many elements can harmlessly 'overflow' without being cut
+    // off or rendered difficult to read. Restricting detection
+    // to elements that don't allow scroll bars when overflowing
+    // should reduce the noise in 'overflown' elements that are harmless
+    let el = $el[0];
+    let style = window.getComputedStyle(el);
+    let scrollables = ["scroll", "auto"];
+    let scrollable = {
+      x: scrollables.some(s => s === style.getPropertyValue("overflow-x")),
+      y: scrollables.some(s => s === style.getPropertyValue("overflow-y"))
     };
-  }
+    let overflow = {
+      x: el.scrollWidth > el.clientWidth,
+      y: el.scrollHeight > el.clientHeight
+    };
+    return {
+      x: !scrollable.x && overflow.x,
+      y: !scrollable.y && overflow.y
+    };
+  } //
+  // isOverflow($el) {
+  //     // identify if the element is overflowing,
+  //     // ie the width of all its content is more than the width
+  //     // of its visible content
+  //     return {
+  //         x: $el[0].scrollWidth > $el.innerWidth(),
+  //         y: $el[0].scrollHeight > $el.innerHeight(),
+  //     }
+  // }
+
 
 }
 

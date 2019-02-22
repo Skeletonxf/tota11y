@@ -10,6 +10,7 @@ let $ = require("jquery");
 let plugins = require("../../plugins");
 let toolbar = require("../../toolbar.js");
 
+const errors = require("./errors.js");
 const Lock = require("./lock.js");
 
 const InfoPanelController = require("../../plugins/shared/info-panel/controller.js")
@@ -17,21 +18,8 @@ const ToolbarController = toolbar.controller;
 
 const DEBUGGING = false;
 
+let propagateError = errors.propagateError;
 let windowId;
-
-/*
- * Generates a function which logs an error with
- * a custom message, then propagates the error
- *
- * The message should be unique so the line that
- * caused it can be identified.
- */
-function propagateError(msg) {
-    return (error) => {
-        console.error(`Error: ${error}, at: ${msg}`);
-        throw error;
-    };
-}
 
 // We only need 1 of each controller for n content scripts
 // and info panels
@@ -71,8 +59,12 @@ function updateSidebar(data, updateType) {
     }
 
     if (updateType === "new-active") {
-        // Always update to stay in the active tab.
-        triggerUpdate = activeTabId !== data.tabId;
+        // Always update to stay in the active tab as long as
+        // the active tab is in the same window.
+        triggerUpdate = true
+                && (activeTabId !== data.tabId)
+                && (windowId === data.windowId);
+
         console.log(`Updating if active tab different ${triggerUpdate}`);
 
         // Update the cache of the active tab id
@@ -85,6 +77,8 @@ function updateSidebar(data, updateType) {
         triggerUpdate = true
             // ignore loading of non active tabs
             && (activeTabId === data.tabId)
+            // make sure this is the tab for our sidebar window
+            && (windowId === data.tab.windowId)
             // ignore incomplete loading
             && (data.changeInfo.status === "complete");
 

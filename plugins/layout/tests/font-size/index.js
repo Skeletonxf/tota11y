@@ -72,12 +72,24 @@ class FontSizeLayoutTest extends LayoutTest {
     }
 
     isOverflow($el) {
-        // identify if the element is overflowing,
-        // ie the width of all its content is more than the width
-        // of its visible content
+        // Many elements can harmlessly 'overflow' without being cut
+        // off or rendered difficult to read. Restricting detection
+        // to elements that don't allow scroll bars when overflowing
+        // should reduce the noise in 'overflown' elements that are harmless
+        let el = $el[0];
+        let style = window.getComputedStyle(el);
+        let scrollables = ["scroll", "auto"];
+        let scrollable = {
+            x: scrollables.some(s => s === style.getPropertyValue("overflow-x")),
+            y: scrollables.some(s => s === style.getPropertyValue("overflow-y")),
+        }
+        let overflow = {
+            x: el.scrollWidth > el.clientWidth,
+            y: el.scrollHeight > el.clientHeight,
+        }
         return {
-            x: $el[0].scrollWidth > $el.innerWidth(),
-            y: $el[0].scrollHeight > $el.innerHeight(),
+            x: !scrollable.x && overflow.x,
+            y: !scrollable.y && overflow.y,
         }
     }
 }

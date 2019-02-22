@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-20
+ * Date: 2019-02-22
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -14190,8 +14190,6 @@ class FontSizeLayoutTest extends LayoutTest {
 
   detect() {
     this.preservedFontSizes.forEach(entry => {
-      console.log(`e: ${entry.$el[0]}, o: ${JSON.stringify(entry.overflow)}, n: ${JSON.stringify(this.isOverflow(entry.$el))}`);
-
       if (!entry.overflow.x && this.isOverflow(entry.$el).x || !entry.overflow.y && this.isOverflow(entry.$el).y) {
         // resizing has caused overflow that wasn't present before
         entry.error = () => {
@@ -14217,14 +14215,36 @@ class FontSizeLayoutTest extends LayoutTest {
   }
 
   isOverflow($el) {
-    // identify if the element is overflowing,
-    // ie the width of all its content is more than the width
-    // of its visible content
-    return {
-      x: $el[0].scrollWidth > $el.innerWidth(),
-      y: $el[0].scrollHeight > $el.innerHeight()
+    // Many elements can harmlessly 'overflow' without being cut
+    // off or rendered difficult to read. Restricting detection
+    // to elements that don't allow scroll bars when overflowing
+    // should reduce the noise in 'overflown' elements that are harmless
+    let el = $el[0];
+    let style = window.getComputedStyle(el);
+    let scrollables = ["scroll", "auto"];
+    let scrollable = {
+      x: scrollables.some(s => s === style.getPropertyValue("overflow-x")),
+      y: scrollables.some(s => s === style.getPropertyValue("overflow-y"))
     };
-  }
+    let overflow = {
+      x: el.scrollWidth > el.clientWidth,
+      y: el.scrollHeight > el.clientHeight
+    };
+    return {
+      x: !scrollable.x && overflow.x,
+      y: !scrollable.y && overflow.y
+    };
+  } //
+  // isOverflow($el) {
+  //     // identify if the element is overflowing,
+  //     // ie the width of all its content is more than the width
+  //     // of its visible content
+  //     return {
+  //         x: $el[0].scrollWidth > $el.innerWidth(),
+  //         y: $el[0].scrollHeight > $el.innerHeight(),
+  //     }
+  // }
+
 
 }
 
