@@ -2,7 +2,7 @@ let $ = require("jquery");
 let annotate = require("../../../shared/annotate")("layout");
 let LayoutTest = require("../base");
 
-class FontSizeLayoutTest extends LayoutTest {
+class TextSpacingLayoutTest extends LayoutTest {
     constructor() {
         super();
         this.textElements = [];
@@ -30,18 +30,25 @@ class FontSizeLayoutTest extends LayoutTest {
             let style = window.getComputedStyle(el);
             let pxFontSize = parseFloat(style.getPropertyValue("font-size"));
 
-            // Save original font size so it can be restored on cleanup.
+            // Save font sizes and original styles for use in applying
+            // and reverting spacing styles.
             this.textElements.push({
                 $el: $el,
                 pxFontSize: pxFontSize,
                 overflow: this.isOverflow($el),
+                lineHeight: style.getPropertyValue("line-height"),
+                letterSpacing: style.getPropertyValue("letter-spacing"),
+                wordSpacing: style.getPropertyValue("word-spacing"),
             });
         });
 
-        // Apply font size changes after querying the computed font size
-        // of all elements to ignore these values changing as we resize elements
+        // Apply style changes after querying the computed font size
+        // of all elements to ignore these values changing as we modify elements
         this.textElements.forEach((entry) => {
-            entry.$el.css("font-size", `${entry.pxFontSize * 2}px`);
+            entry.$el.css("line-height", `${entry.pxFontSize * 1.5}px`);
+            entry.$el.css("letter-spacing", `${entry.pxFontSize * 0.12}px`);
+            entry.$el.css("word-spacing", `${entry.pxFontSize * 0.16}px`);
+            // TODO spacing following paragraphs to at least 2 times font size
         });
     }
 
@@ -49,9 +56,10 @@ class FontSizeLayoutTest extends LayoutTest {
         this.textElements.forEach((entry) => {
             if ((!entry.overflow.x && this.isOverflow(entry.$el).x)
                     || (!entry.overflow.y && this.isOverflow(entry.$el).y)) {
-                // resizing has caused overflow that wasn't present before
+                // adjusting spacing has caused overflow that wasn't present
+                // before
                 entry.error = () => {
-                    annotate.errorLabel(entry.$el, "", "Overflows at 200%");
+                    annotate.errorLabel(entry.$el, "", "Overflows with increased spacing");
                 };
             }
         });
@@ -60,7 +68,9 @@ class FontSizeLayoutTest extends LayoutTest {
     cleanup() {
         // Set all elements to original size
         this.textElements.forEach((entry) => {
-            entry.$el.css("font-size", `${entry.pxFontSize}px`) ;
+            entry.$el.css("line-height", entry.lineHeight);
+            entry.$el.css("letter-spacing", entry.letterSpacing);
+            entry.$el.css("word-spacing", entry.wordSpacing);
         });
     }
 
@@ -88,6 +98,8 @@ class FontSizeLayoutTest extends LayoutTest {
             x: el.scrollWidth > el.clientWidth,
             y: el.scrollHeight > el.clientHeight,
         }
+        // FIXME the overflow should not be harmless as on most of
+        // stackoverflow.com
         return {
             x: !scrollable.x && overflow.x,
             y: !scrollable.y && overflow.y,
@@ -95,4 +107,4 @@ class FontSizeLayoutTest extends LayoutTest {
     }
 }
 
-module.exports = FontSizeLayoutTest;
+module.exports = TextSpacingLayoutTest;
