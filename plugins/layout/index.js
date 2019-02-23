@@ -3,6 +3,8 @@ let Plugin = require("../base");
 let annotate = require("../shared/annotate")("layout");
 let layoutTests = require("./tests");
 
+let aboutTemplate = require("./about.handlebars");
+
 class LayoutPlugin extends Plugin {
     constructor() {
         super();
@@ -37,6 +39,22 @@ class LayoutPlugin extends Plugin {
         layoutTests.forEach((test) => {
             test.report(this.panel);
         });
+
+        let $about = $(aboutTemplate());
+        layoutTests.forEach((test) => {
+            let previewClass = test.getPreviewClass();
+            if (previewClass) {
+                $about.find(`.${previewClass}`).click((e) => {
+                    if ($(e.target).prop("checked")) {
+                        test.apply();
+                    } else {
+                        test.cleanup();
+                    }
+                    annotate.refreshAll();
+                });
+            }
+        });
+        this.about($about);
     }
 
     cleanup() {

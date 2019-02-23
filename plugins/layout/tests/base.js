@@ -22,6 +22,13 @@ class LayoutTest {
      */
     report(infoPanel) {
     }
+
+    /*
+     * Gets the class used for a preview checkbox to visualise the
+     * apply() function to the user.
+     */
+    getPreviewClass() {
+    }
 }
 
 module.exports = LayoutTest;

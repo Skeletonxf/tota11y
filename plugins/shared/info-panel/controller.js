@@ -281,6 +281,24 @@ class ActivePanel {
         let $activeTab;
         if (this.about) {
             $activeTab = this._addTab("About", this.about);
+
+            // Sync all checkbox states in the about tab to the content
+            // script. We do this to make the layout plugin previews work from
+            // the sidebar.
+            let $checkboxes = this.about.find('input[type="checkbox"]');
+            $checkboxes.each((index, el) => {
+                $(el).click((e) => {
+                    let checked = $(e.target).prop("checked")
+                    this.port.postMessage({
+                        msg: "Checkbox sync",
+                        checkboxSync: true,
+                        checked: !!checked,
+                        about: true,
+                        plugin: this.plugin.getName(),
+                        checkboxIndex: index
+                    })
+                });
+            });
         }
 
         if (this.summary) {
@@ -335,20 +353,18 @@ class ActivePanel {
                 let $desc = $error.find(".tota11y-info-error-description");
 
                 // Sync all checkbox states in the sidebar to the content
-                // script.
-                // We do this to make the text contrast previw work from
+                // script. We do this to make the text contrast previw work from
                 // the sidebar.
                 let $checkboxes = $desc.find('input[type="checkbox"]');
-                let _this = this;
-                $checkboxes.each(function(index) {
-                    $(this).click((e) => {
+                $checkboxes.each((index, el) => {
+                    $(el).click((e) => {
                         let checked = $(e.target).prop("checked")
-                        _this.port.postMessage({
+                        this.port.postMessage({
                             msg: "Checkbox sync",
                             checkboxSync: true,
                             checked: !!checked,
                             errorId: id,
-                            plugin: _this.plugin.getName(),
+                            plugin: this.plugin.getName(),
                             checkboxIndex: index
                         })
                     });

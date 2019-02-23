@@ -2,13 +2,22 @@ let $ = require("jquery");
 let annotate = require("../../../shared/annotate")("layout");
 let LayoutTest = require("../base");
 
+let errorTemplate = require("./error-template.handlebars");
+
 class TextSpacingLayoutTest extends LayoutTest {
     constructor() {
         super();
         this.textElements = [];
+        this.applied = false;
+        this.$checkboxes = [];
     }
 
     apply() {
+        this.$checkboxes.forEach(c => c.prop("checked", true));
+        if (this.applied) {
+            return;
+        }
+
         this.textElements = [];
         $("*").each((i, el) => {
             // Only check elements with a direct text descendant
@@ -53,22 +62,62 @@ class TextSpacingLayoutTest extends LayoutTest {
             entry.$el.css("word-spacing", `${entry.pxFontSize * 0.16}px`);
             // TODO spacing following paragraphs to at least 2 times font size
         });
+
+        this.applied = true;
+    }
+
+    reportError($el, overflows, infoPanel) {
+        let $description = $(errorTemplate({
+            overflowX: overflows.x,
+            overflowY: overflows.y,
+        }));
+        let entry = infoPanel.addError(
+            "Overflows with increased text spacing",
+            $description,
+            $el
+        );
+        let $checkbox = $description.find(".preview-text-spacing");
+        $checkbox.click((e) => {
+            if ($(e.target).prop("checked")) {
+                this.apply();
+            } else {
+                this.cleanup();
+            }
+            annotate.refreshAll();
+        });
+        this.$checkboxes.push($checkbox);
+        annotate.errorLabel(
+            entry.$el,
+            "",
+            "Overflows with increased spacing",
+            entry
+        );
     }
 
     detect() {
         this.textElements.forEach((entry) => {
-            if ((!entry.overflow.x && this.isOverflow(entry.$el).x)
-                    || (!entry.overflow.y && this.isOverflow(entry.$el).y)) {
+            let overflow = this.isOverflow(entry.$el);
+            if ((!entry.overflow.x && overflow.x)
+                    || (!entry.overflow.y && overflow.y)) {
                 // adjusting spacing has caused overflow that wasn't present
                 // before
-                entry.error = () => {
-                    annotate.errorLabel(entry.$el, "", "Overflows with increased spacing");
+                entry.error = (infoPanel) => {
+                    this.reportError(
+                        entry.$el,
+                        overflow,
+                        infoPanel
+                    );
                 };
             }
         });
     }
 
     cleanup() {
+        this.$checkboxes.forEach(c => c.prop("checked", false));
+        if (!this.applied) {
+            return;
+        }
+
         // Set all elements to original size
         this.textElements.forEach((entry) => {
             // Remove the inline styles we added unless the inline styles
@@ -90,37 +139,43 @@ class TextSpacingLayoutTest extends LayoutTest {
                 entry.$el.css("word-spacing", "");
             }
         });
+
+        this.applied = false;
     }
 
-    report() {
+    report(infoPanel) {
         this.textElements.forEach((entry) => {
             if (entry.error) {
-                entry.error();
+                entry.error(infoPanel);
             }
         });
     }
 
+    getPreviewClass() {
+        return "preview-text-spacing";
+    }
+
     isOverflow($el) {
-        // Many elements can harmlessly 'overflow' without being cut
-        // off or rendered difficult to read. Restricting detection
-        // to elements that don't allow scroll bars when overflowing
-        // should reduce the noise in 'overflown' elements that are harmless
         let el = $el[0];
         let style = window.getComputedStyle(el);
-        let scrollables = ["scroll", "auto"];
-        let scrollable = {
-            x: scrollables.some(s => s === style.getPropertyValue("overflow-x")),
-            y: scrollables.some(s => s === style.getPropertyValue("overflow-y")),
+        // Filter overflow detection to only for elements that will
+        // be visually cut off if they overflow, as otherwise most of
+        // the overflowing and still visible elements are not actually
+        // any problems and create a lot of noise.
+        let cutsOff = {
+            x: style.getPropertyValue("overflow-x") === "hidden",
+            y: style.getPropertyValue("overflow-y") === "hidden",
         }
+        // Allow a 20% threshold of 'overflow' as otherwise
+        // the false positive rate is very high with many elements in visual
+        // terms not cut off at all.
         let overflow = {
-            x: el.scrollWidth > el.clientWidth,
-            y: el.scrollHeight > el.clientHeight,
+            x: el.scrollWidth > el.offsetWidth * 1.2,
+            y: el.scrollHeight > el.offsetHeight * 1.2,
         }
-        // FIXME the overflow should not be harmless as on most of
-        // stackoverflow.com
         return {
-            x: !scrollable.x && overflow.x,
-            y: !scrollable.y && overflow.y,
+            x: cutsOff.x && overflow.x,
+            y: cutsOff.y && overflow.y,
         }
     }
 }

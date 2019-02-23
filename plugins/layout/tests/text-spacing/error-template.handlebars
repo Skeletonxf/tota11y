@@ -1,0 +1,40 @@
+{{#if overflowX}}
+    {{#if overflowY}}
+        <p>
+            This element's text overflows horizontally and vertically when
+            the letter, word and lineheight spacing is increased
+            and is likely partially hidden.
+        </p>
+    {{else}}
+        <p>
+            This element's text overflows horizontally when
+            the letter, word and lineheight spacing is increased
+            and is likely partially hidden.
+        </p>
+    {{/if}}
+{{else}}
+    {{#if overflowY}}
+        <p>
+            This element's text overflows vertically when
+            the letter, word and lineheight spacing is increased
+            and is likely partially hidden.
+        </p>
+    {{/if}}
+{{/if}}
+<p>
+    Users may modify text spacing values on webpages to help them read so it is
+    important to ensure all text is still legible when all of the following
+    is applied:
+</p>
+<div class="tota11y-info-resources">
+    <ul>
+        <li>Line height to at least 1.5 times the font size</li>
+        <li>Spacing following paragraphs to at least 2 times the font size</li>
+        <li>Letter spacing to at least 0.12 times the font size</li>
+        <li>Word spacing to at least 0.16 times the font size.</li>
+    </ul>
+</div>
+<label>
+    Preview modified text spacing (minimums):
+    <input class="preview-text-spacing" type="checkbox">
+</label>

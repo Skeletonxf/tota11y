@@ -14036,6 +14036,21 @@ module.exports = LandmarksPlugin;
 
 /***/ }),
 
+/***/ "./plugins/layout/about.handlebars":
+/*!*****************************************!*\
+  !*** ./plugins/layout/about.handlebars ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<p>\n    Users may modify text properties like font size or text spacing\n    on webpages with their own user style sheets to help them read so it is\n    important to ensure all text is still legible when modified.\n</p>\n<p>\n    As enlarged text may overflow elements this creates a problem if the\n    elements are styled with <code>overflow: hidden;</code> which will hide\n    overflowing text. Other elements may also obscure overflowing text.\n</p>\n<p>\n    <label>\n        Preview 200% font size:\n        <input class=\"preview-font-size\" type=\"checkbox\">\n    </label>\n</p>\n<p>\n    <label>\n        Preview modified text spacing as outlined below:\n        <input class=\"preview-text-spacing\" type=\"checkbox\">\n    </label>\n</p>\n<div class=\"tota11y-info-resources\">\n    <ul>\n        <li>Line height to at least 1.5 times the font size</li>\n        <li>Spacing following paragraphs to at least 2 times the font size</li>\n        <li>Letter spacing to at least 0.12 times the font size</li>\n        <li>Word spacing to at least 0.16 times the font size.</li>\n    </ul>\n</div>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/layout/index.js":
 /*!*********************************!*\
   !*** ./plugins/layout/index.js ***!
@@ -14050,6 +14065,8 @@ let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("layout");
 
 let layoutTests = __webpack_require__(/*! ./tests */ "./plugins/layout/tests/index.js");
+
+let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/layout/about.handlebars");
 
 class LayoutPlugin extends Plugin {
   constructor() {
@@ -14084,6 +14101,23 @@ class LayoutPlugin extends Plugin {
     layoutTests.forEach(test => {
       test.report(this.panel);
     });
+    let $about = $(aboutTemplate());
+    layoutTests.forEach(test => {
+      let previewClass = test.getPreviewClass();
+
+      if (previewClass) {
+        $about.find(`.${previewClass}`).click(e => {
+          if ($(e.target).prop("checked")) {
+            test.apply();
+          } else {
+            test.cleanup();
+          }
+
+          annotate.refreshAll();
+        });
+      }
+    });
+    this.about($about);
   }
 
   cleanup() {
@@ -14129,6 +14163,13 @@ class LayoutTest {
 
 
   report(infoPanel) {}
+  /*
+   * Gets the class used for a preview checkbox to visualise the
+   * apply() function to the user.
+   */
+
+
+  getPreviewClass() {}
 
 }
 
@@ -14150,15 +14191,15 @@ module.exports = (Handlebars["default"] || Handlebars).template({"1":function(co
 
   return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.overflowY : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.program(4, data, 0),"data":data})) != null ? stack1 : "");
 },"2":function(container,depth0,helpers,partials,data) {
-    return "        <p>\n            This element's text overflows horizontally and vertically when\n            enlarged\n        </p>\n";
+    return "        <p>\n            This element's text overflows horizontally and vertically when\n            enlarged and is likely partially hidden.\n        </p>\n";
 },"4":function(container,depth0,helpers,partials,data) {
-    return "        <p>This element's text overflows horizontally when enlarged</p>\n";
+    return "        <p>\n            This element's text overflows horizontally when enlarged\n            and is likely partially hidden.\n        </p>\n";
 },"6":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.overflowY : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"7":function(container,depth0,helpers,partials,data) {
-    return "        <p>This element's text overflows vertically when enlarged</p>\n";
+    return "        <p>\n            This element's text overflows vertically when enlarged\n            and is likely partially hidden.\n        </p>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -14255,10 +14296,12 @@ class FontSizeLayoutTest extends LayoutTest {
 
   detect() {
     this.textElements.forEach(entry => {
-      if (!entry.overflow.x && this.isOverflow(entry.$el).x || !entry.overflow.y && this.isOverflow(entry.$el).y) {
+      let overflow = this.isOverflow(entry.$el);
+
+      if (!entry.overflow.x && overflow.x || !entry.overflow.y && overflow.y) {
         // resizing has caused overflow that wasn't present before
         entry.error = infoPanel => {
-          this.reportError(entry.$el, this.isOverflow(entry.$el), infoPanel);
+          this.reportError(entry.$el, overflow, infoPanel);
         };
       }
     });
@@ -14293,25 +14336,31 @@ class FontSizeLayoutTest extends LayoutTest {
     });
   }
 
+  getPreviewClass() {
+    return "preview-font-size";
+  }
+
   isOverflow($el) {
-    // Many elements can harmlessly 'overflow' without being cut
-    // off or rendered difficult to read. Restricting detection
-    // to elements that don't allow scroll bars when overflowing
-    // should reduce the noise in 'overflown' elements that are harmless
     let el = $el[0];
-    let style = window.getComputedStyle(el);
-    let scrollables = ["scroll", "auto"];
-    let scrollable = {
-      x: scrollables.some(s => s === style.getPropertyValue("overflow-x")),
-      y: scrollables.some(s => s === style.getPropertyValue("overflow-y"))
+    let style = window.getComputedStyle(el); // Filter overflow detection to only for elements that will
+    // be visually cut off if they overflow, as otherwise most of
+    // the overflowing and still visible elements are not actually
+    // any problems and create a lot of noise.
+
+    let cutsOff = {
+      x: style.getPropertyValue("overflow-x") === "hidden",
+      y: style.getPropertyValue("overflow-y") === "hidden" // Allow a 20% threshold of 'overflow' as otherwise
+      // the false positive rate is very high with many elements in visual
+      // terms not cut off at all.
+
     };
     let overflow = {
-      x: el.scrollWidth > el.clientWidth,
-      y: el.scrollHeight > el.clientHeight
+      x: el.scrollWidth > el.offsetWidth * 1.2,
+      y: el.scrollHeight > el.offsetHeight * 1.2
     };
     return {
-      x: !scrollable.x && overflow.x,
-      y: !scrollable.y && overflow.y
+      x: cutsOff.x && overflow.x,
+      y: cutsOff.y && overflow.y
     };
   }
 
@@ -14336,6 +14385,38 @@ module.exports = [new FontSizeLayoutTest(), new TextSpacingLayoutTest()];
 
 /***/ }),
 
+/***/ "./plugins/layout/tests/text-spacing/error-template.handlebars":
+/*!*********************************************************************!*\
+  !*** ./plugins/layout/tests/text-spacing/error-template.handlebars ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.overflowY : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.program(4, data, 0),"data":data})) != null ? stack1 : "");
+},"2":function(container,depth0,helpers,partials,data) {
+    return "        <p>\n            This element's text overflows horizontally and vertically when\n            the letter, word and lineheight spacing is increased\n            and is likely partially hidden.\n        </p>\n";
+},"4":function(container,depth0,helpers,partials,data) {
+    return "        <p>\n            This element's text overflows horizontally when\n            the letter, word and lineheight spacing is increased\n            and is likely partially hidden.\n        </p>\n";
+},"6":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.overflowY : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"7":function(container,depth0,helpers,partials,data) {
+    return "        <p>\n            This element's text overflows vertically when\n            the letter, word and lineheight spacing is increased\n            and is likely partially hidden.\n        </p>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.overflowX : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(6, data, 0),"data":data})) != null ? stack1 : "")
+    + "<p>\n    Users may modify text spacing values on webpages to help them read so it is\n    important to ensure all text is still legible when all of the following\n    is applied:\n</p>\n<div class=\"tota11y-info-resources\">\n    <ul>\n        <li>Line height to at least 1.5 times the font size</li>\n        <li>Spacing following paragraphs to at least 2 times the font size</li>\n        <li>Letter spacing to at least 0.12 times the font size</li>\n        <li>Word spacing to at least 0.16 times the font size.</li>\n    </ul>\n</div>\n<label>\n    Preview modified text spacing (minimums):\n    <input class=\"preview-text-spacing\" type=\"checkbox\">\n</label>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/layout/tests/text-spacing/index.js":
 /*!****************************************************!*\
   !*** ./plugins/layout/tests/text-spacing/index.js ***!
@@ -14349,13 +14430,23 @@ let annotate = __webpack_require__(/*! ../../../shared/annotate */ "./plugins/sh
 
 let LayoutTest = __webpack_require__(/*! ../base */ "./plugins/layout/tests/base.js");
 
+let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/layout/tests/text-spacing/error-template.handlebars");
+
 class TextSpacingLayoutTest extends LayoutTest {
   constructor() {
     super();
     this.textElements = [];
+    this.applied = false;
+    this.$checkboxes = [];
   }
 
   apply() {
+    this.$checkboxes.forEach(c => c.prop("checked", true));
+
+    if (this.applied) {
+      return;
+    }
+
     this.textElements = [];
     $("*").each((i, el) => {
       // Only check elements with a direct text descendant
@@ -14396,22 +14487,51 @@ class TextSpacingLayoutTest extends LayoutTest {
       entry.$el.css("letter-spacing", `${entry.pxFontSize * 0.12}px`);
       entry.$el.css("word-spacing", `${entry.pxFontSize * 0.16}px`); // TODO spacing following paragraphs to at least 2 times font size
     });
+    this.applied = true;
+  }
+
+  reportError($el, overflows, infoPanel) {
+    let $description = $(errorTemplate({
+      overflowX: overflows.x,
+      overflowY: overflows.y
+    }));
+    let entry = infoPanel.addError("Overflows with increased text spacing", $description, $el);
+    let $checkbox = $description.find(".preview-text-spacing");
+    $checkbox.click(e => {
+      if ($(e.target).prop("checked")) {
+        this.apply();
+      } else {
+        this.cleanup();
+      }
+
+      annotate.refreshAll();
+    });
+    this.$checkboxes.push($checkbox);
+    annotate.errorLabel(entry.$el, "", "Overflows with increased spacing", entry);
   }
 
   detect() {
     this.textElements.forEach(entry => {
-      if (!entry.overflow.x && this.isOverflow(entry.$el).x || !entry.overflow.y && this.isOverflow(entry.$el).y) {
+      let overflow = this.isOverflow(entry.$el);
+
+      if (!entry.overflow.x && overflow.x || !entry.overflow.y && overflow.y) {
         // adjusting spacing has caused overflow that wasn't present
         // before
-        entry.error = () => {
-          annotate.errorLabel(entry.$el, "", "Overflows with increased spacing");
+        entry.error = infoPanel => {
+          this.reportError(entry.$el, overflow, infoPanel);
         };
       }
     });
   }
 
   cleanup() {
-    // Set all elements to original size
+    this.$checkboxes.forEach(c => c.prop("checked", false));
+
+    if (!this.applied) {
+      return;
+    } // Set all elements to original size
+
+
     this.textElements.forEach(entry => {
       // Remove the inline styles we added unless the inline styles
       // we added overrided existing inline styles in which case
@@ -14434,37 +14554,42 @@ class TextSpacingLayoutTest extends LayoutTest {
         entry.$el.css("word-spacing", "");
       }
     });
+    this.applied = false;
   }
 
-  report() {
+  report(infoPanel) {
     this.textElements.forEach(entry => {
       if (entry.error) {
-        entry.error();
+        entry.error(infoPanel);
       }
     });
   }
 
+  getPreviewClass() {
+    return "preview-text-spacing";
+  }
+
   isOverflow($el) {
-    // Many elements can harmlessly 'overflow' without being cut
-    // off or rendered difficult to read. Restricting detection
-    // to elements that don't allow scroll bars when overflowing
-    // should reduce the noise in 'overflown' elements that are harmless
     let el = $el[0];
-    let style = window.getComputedStyle(el);
-    let scrollables = ["scroll", "auto"];
-    let scrollable = {
-      x: scrollables.some(s => s === style.getPropertyValue("overflow-x")),
-      y: scrollables.some(s => s === style.getPropertyValue("overflow-y"))
-    };
-    let overflow = {
-      x: el.scrollWidth > el.clientWidth,
-      y: el.scrollHeight > el.clientHeight // FIXME the overflow should not be harmless as on most of
-      // stackoverflow.com
+    let style = window.getComputedStyle(el); // Filter overflow detection to only for elements that will
+    // be visually cut off if they overflow, as otherwise most of
+    // the overflowing and still visible elements are not actually
+    // any problems and create a lot of noise.
+
+    let cutsOff = {
+      x: style.getPropertyValue("overflow-x") === "hidden",
+      y: style.getPropertyValue("overflow-y") === "hidden" // Allow a 20% threshold of 'overflow' as otherwise
+      // the false positive rate is very high with many elements in visual
+      // terms not cut off at all.
 
     };
+    let overflow = {
+      x: el.scrollWidth > el.offsetWidth * 1.2,
+      y: el.scrollHeight > el.offsetHeight * 1.2
+    };
     return {
-      x: !scrollable.x && overflow.x,
-      y: !scrollable.y && overflow.y
+      x: cutsOff.x && overflow.x,
+      y: cutsOff.y && overflow.y
     };
   }
 
@@ -15681,7 +15806,7 @@ class InfoPanel {
         }
 
         if (json.checkboxSync) {
-          this.doCheckboxSync(json.errorId, json.checkboxIndex, json.checked);
+          this.doCheckboxSync(json.errorId, json.about, json.checkboxIndex, json.checked);
         }
 
         if (json.inspectElement) {
@@ -15776,24 +15901,31 @@ class InfoPanel {
     }
   }
   /*
-   * Syncs the state of a checkbox in the InfoPanel's description
+   * Syncs the state of a checkbox in the InfoPanel
    * in the content script to the state of the checkbox in
-   * the sidebar of the corresponding panel, error and checkbox.
+   * the sidebar of the corresponding panel, error/about and checkbox.
    *
-   * We use this to make the contrast preview checkbox work from
+   * We use this to make the contrast and layout preview checkboxes work from
    * the sidebar.
    */
 
 
-  doCheckboxSync(errorId, checkboxIndex, checked) {
-    let error = this.errors.get(errorId);
+  doCheckboxSync(errorId, about, checkboxIndex, checked) {
+    let $parent;
 
-    if (error === undefined) {
-      return;
+    if (about) {
+      $parent = this.about;
+    } else {
+      let error = this.errors.get(errorId);
+
+      if (error === undefined) {
+        return;
+      }
+
+      $parent = error.$desc;
     }
 
-    let $desc = error.$desc;
-    let $checkboxes = $desc.find('input[type="checkbox"]');
+    let $checkboxes = $parent.find('input[type="checkbox"]');
     let checkbox = $checkboxes.get(checkboxIndex);
 
     if (checkbox === undefined) {

@@ -82,13 +82,14 @@ class FontSizeLayoutTest extends LayoutTest {
 
     detect() {
         this.textElements.forEach((entry) => {
-            if ((!entry.overflow.x && this.isOverflow(entry.$el).x)
-                    || (!entry.overflow.y && this.isOverflow(entry.$el).y)) {
+            let overflow = this.isOverflow(entry.$el);
+            if ((!entry.overflow.x && overflow.x)
+                    || (!entry.overflow.y && overflow.y)) {
                 // resizing has caused overflow that wasn't present before
                 entry.error = (infoPanel) => {
                     this.reportError(
                         entry.$el,
-                        this.isOverflow(entry.$el),
+                        overflow,
                         infoPanel
                     );
                 };
@@ -125,25 +126,31 @@ class FontSizeLayoutTest extends LayoutTest {
         });
     }
 
+    getPreviewClass() {
+        return "preview-font-size";
+    }
+
     isOverflow($el) {
-        // Many elements can harmlessly 'overflow' without being cut
-        // off or rendered difficult to read. Restricting detection
-        // to elements that don't allow scroll bars when overflowing
-        // should reduce the noise in 'overflown' elements that are harmless
         let el = $el[0];
         let style = window.getComputedStyle(el);
-        let scrollables = ["scroll", "auto"];
-        let scrollable = {
-            x: scrollables.some(s => s === style.getPropertyValue("overflow-x")),
-            y: scrollables.some(s => s === style.getPropertyValue("overflow-y")),
+        // Filter overflow detection to only for elements that will
+        // be visually cut off if they overflow, as otherwise most of
+        // the overflowing and still visible elements are not actually
+        // any problems and create a lot of noise.
+        let cutsOff = {
+            x: style.getPropertyValue("overflow-x") === "hidden",
+            y: style.getPropertyValue("overflow-y") === "hidden",
         }
+        // Allow a 20% threshold of 'overflow' as otherwise
+        // the false positive rate is very high with many elements in visual
+        // terms not cut off at all.
         let overflow = {
-            x: el.scrollWidth > el.clientWidth,
-            y: el.scrollHeight > el.clientHeight,
+            x: el.scrollWidth > el.offsetWidth * 1.2,
+            y: el.scrollHeight > el.offsetHeight * 1.2,
         }
         return {
-            x: !scrollable.x && overflow.x,
-            y: !scrollable.y && overflow.y,
+            x: cutsOff.x && overflow.x,
+            y: cutsOff.y && overflow.y,
         }
     }
 }

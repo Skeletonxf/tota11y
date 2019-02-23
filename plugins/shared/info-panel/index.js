@@ -537,7 +537,10 @@ class InfoPanel {
                 }
                 if (json.checkboxSync) {
                     this.doCheckboxSync(
-                        json.errorId, json.checkboxIndex, json.checked
+                        json.errorId,
+                        json.about,
+                        json.checkboxIndex,
+                        json.checked
                     );
                 }
                 if (json.inspectElement) {
@@ -628,22 +631,28 @@ class InfoPanel {
     }
 
     /*
-     * Syncs the state of a checkbox in the InfoPanel's description
+     * Syncs the state of a checkbox in the InfoPanel
      * in the content script to the state of the checkbox in
-     * the sidebar of the corresponding panel, error and checkbox.
+     * the sidebar of the corresponding panel, error/about and checkbox.
      *
-     * We use this to make the contrast preview checkbox work from
+     * We use this to make the contrast and layout preview checkboxes work from
      * the sidebar.
      */
-    doCheckboxSync(errorId, checkboxIndex, checked) {
-        let error = this.errors.get(errorId);
+    doCheckboxSync(errorId, about, checkboxIndex, checked) {
+        let $parent;
 
-        if (error === undefined) {
-            return;
+        if (about) {
+            $parent = this.about;
+        } else {
+            let error = this.errors.get(errorId);
+
+            if (error === undefined) {
+                return;
+            }
+            $parent = error.$desc;
         }
 
-        let $desc = error.$desc;
-        let $checkboxes = $desc.find('input[type="checkbox"]');
+        let $checkboxes = $parent.find('input[type="checkbox"]');
 
         let checkbox = $checkboxes.get(checkboxIndex);
 
