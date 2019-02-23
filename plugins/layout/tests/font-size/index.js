@@ -34,6 +34,7 @@ class FontSizeLayoutTest extends LayoutTest {
             this.textElements.push({
                 $el: $el,
                 pxFontSize: pxFontSize,
+                hasInlineFontSize: !!el.style.fontSize,
                 overflow: this.isOverflow($el),
             });
         });
@@ -60,7 +61,14 @@ class FontSizeLayoutTest extends LayoutTest {
     cleanup() {
         // Set all elements to original size
         this.textElements.forEach((entry) => {
-            entry.$el.css("font-size", `${entry.pxFontSize}px`) ;
+            // Remove the inline style we added unless the inline style
+            // we added overrided an existing inline style in which case
+            // apply it again.
+            if (entry.hasInlineFontSize) {
+                entry.$el.css("font-size", `${entry.pxFontSize}px`) ;
+            } else {
+                entry.$el.css("font-size", "");
+            }
         });
     }
 

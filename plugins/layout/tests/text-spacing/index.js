@@ -37,8 +37,11 @@ class TextSpacingLayoutTest extends LayoutTest {
                 pxFontSize: pxFontSize,
                 overflow: this.isOverflow($el),
                 lineHeight: style.getPropertyValue("line-height"),
+                hasInlineLineHeight: !!el.style.lineHeight,
                 letterSpacing: style.getPropertyValue("letter-spacing"),
+                hasInlineLetterSpacing: !!el.style.letterSpacing,
                 wordSpacing: style.getPropertyValue("word-spacing"),
+                hasInlineWordSpacing: !!el.style.inlineWordSpacing,
             });
         });
 
@@ -68,9 +71,24 @@ class TextSpacingLayoutTest extends LayoutTest {
     cleanup() {
         // Set all elements to original size
         this.textElements.forEach((entry) => {
-            entry.$el.css("line-height", entry.lineHeight);
-            entry.$el.css("letter-spacing", entry.letterSpacing);
-            entry.$el.css("word-spacing", entry.wordSpacing);
+            // Remove the inline styles we added unless the inline styles
+            // we added overrided existing inline styles in which case
+            // apply them again.
+            if (entry.hasInlineLineHeight) {
+                entry.$el.css("line-height", entry.lineHeight);
+            } else {
+                entry.$el.css("line-height", "");
+            }
+            if (entry.hasInlineLetterSpacing) {
+                entry.$el.css("letter-spacing", entry.letterSpacing);
+            } else {
+                entry.$el.css("letter-spacing", "");
+            }
+            if (entry.hasInlineWordSpacing) {
+                entry.$el.css("word-spacing", entry.wordSpacing);
+            } else {
+                entry.$el.css("word-spacing", "");
+            }
         });
     }
 

@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-22
+ * Date: 2019-02-23
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -14179,6 +14179,7 @@ class FontSizeLayoutTest extends LayoutTest {
       this.textElements.push({
         $el: $el,
         pxFontSize: pxFontSize,
+        hasInlineFontSize: !!el.style.fontSize,
         overflow: this.isOverflow($el)
       });
     }); // Apply font size changes after querying the computed font size
@@ -14203,7 +14204,14 @@ class FontSizeLayoutTest extends LayoutTest {
   cleanup() {
     // Set all elements to original size
     this.textElements.forEach(entry => {
-      entry.$el.css("font-size", `${entry.pxFontSize}px`);
+      // Remove the inline style we added unless the inline style
+      // we added overrided an existing inline style in which case
+      // apply it again.
+      if (entry.hasInlineFontSize) {
+        entry.$el.css("font-size", `${entry.pxFontSize}px`);
+      } else {
+        entry.$el.css("font-size", "");
+      }
     });
   }
 
@@ -14304,14 +14312,16 @@ class TextSpacingLayoutTest extends LayoutTest {
         pxFontSize: pxFontSize,
         overflow: this.isOverflow($el),
         lineHeight: style.getPropertyValue("line-height"),
+        hasInlineLineHeight: !!el.style.lineHeight,
         letterSpacing: style.getPropertyValue("letter-spacing"),
-        wordSpacing: style.getPropertyValue("word-spacing")
+        hasInlineLetterSpacing: !!el.style.letterSpacing,
+        wordSpacing: style.getPropertyValue("word-spacing"),
+        hasInlineWordSpacing: !!el.style.inlineWordSpacing
       });
     }); // Apply style changes after querying the computed font size
     // of all elements to ignore these values changing as we modify elements
 
     this.textElements.forEach(entry => {
-      // TODO Should only increase these if current value is lower
       entry.$el.css("line-height", `${entry.pxFontSize * 1.5}px`);
       entry.$el.css("letter-spacing", `${entry.pxFontSize * 0.12}px`);
       entry.$el.css("word-spacing", `${entry.pxFontSize * 0.16}px`); // TODO spacing following paragraphs to at least 2 times font size
@@ -14333,10 +14343,26 @@ class TextSpacingLayoutTest extends LayoutTest {
   cleanup() {
     // Set all elements to original size
     this.textElements.forEach(entry => {
-      //entry.$el.css("font-size", `${entry.pxFontSize}px`) ;
-      entry.$el.css("line-height", entry.lineHeight);
-      entry.$el.css("letter-spacing", entry.letterSpacing);
-      entry.$el.css("word-spacing", entry.wordSpacing);
+      // Remove the inline styles we added unless the inline styles
+      // we added overrided existing inline styles in which case
+      // apply them again.
+      if (entry.hasInlineLineHeight) {
+        entry.$el.css("line-height", entry.lineHeight);
+      } else {
+        entry.$el.css("line-height", "");
+      }
+
+      if (entry.hasInlineLetterSpacing) {
+        entry.$el.css("letter-spacing", entry.letterSpacing);
+      } else {
+        entry.$el.css("letter-spacing", "");
+      }
+
+      if (entry.hasInlineWordSpacing) {
+        entry.$el.css("word-spacing", entry.wordSpacing);
+      } else {
+        entry.$el.css("word-spacing", "");
+      }
     });
   }
 
@@ -14362,7 +14388,9 @@ class TextSpacingLayoutTest extends LayoutTest {
     };
     let overflow = {
       x: el.scrollWidth > el.clientWidth,
-      y: el.scrollHeight > el.clientHeight
+      y: el.scrollHeight > el.clientHeight // FIXME the overflow should not be harmless as on most of
+      // stackoverflow.com
+
     };
     return {
       x: !scrollable.x && overflow.x,
