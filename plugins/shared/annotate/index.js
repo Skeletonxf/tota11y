@@ -46,6 +46,7 @@ module.exports = (namespace) => {
             .addClass("tota11y")    // tota11y base class for styling
             .addClass(ANNOTATION_CLASS)
             .addClass(className)
+            .addClass("tota11y-annotation")
             .css($el.position())
             .data({$el});
 
@@ -80,8 +81,8 @@ module.exports = (namespace) => {
         window.requestAnimationFrame(loop);
     })();
 
-    let repositionAll = () => {
-        let $annotations = $("." + ANNOTATION_CLASS);
+    let reposition = (annotationClass) => {
+        let $annotations = $("." + annotationClass);
 
         // Record the position of each annotation's corresponding element to
         // batch measurements
@@ -99,7 +100,7 @@ module.exports = (namespace) => {
     };
 
     // Handle resizes by repositioning all annotations in bulk
-    $(window).resize(repositionAll);
+    $(window).resize(() => reposition(ANNOTATION_CLASS));
 
     return {
         // Places a small label in the top left corner of a given jQuery
@@ -190,8 +191,10 @@ module.exports = (namespace) => {
             $(`.tota11y.tota11y-label.${ANNOTATION_CLASS}`).show();
         },
 
+        // Some plugins may alter the page and require us to reposition
+        // all annotations from all plugins
         refreshAll() {
-            repositionAll();
+            reposition("tota11y-annotation");
         },
 
         removeAll() {

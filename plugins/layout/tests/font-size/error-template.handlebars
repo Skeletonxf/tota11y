@@ -1,0 +1,22 @@
+{{#if overflowX}}
+    {{#if overflowY}}
+        <p>
+            This element's text overflows horizontally and vertically when
+            enlarged
+        </p>
+    {{else}}
+        <p>This element's text overflows horizontally when enlarged</p>
+    {{/if}}
+{{else}}
+    {{#if overflowY}}
+        <p>This element's text overflows vertically when enlarged</p>
+    {{/if}}
+{{/if}}
+<p>
+    Users may modify the font size on webpages to help them read so it is
+    important to ensure all text is still legible when enlarged up to 200%.
+</p>
+<label>
+    Preview 200% font size:
+    <input class="preview-font-size" type="checkbox">
+</label>

@@ -14082,7 +14082,7 @@ class LayoutPlugin extends Plugin {
       test.cleanup();
     });
     layoutTests.forEach(test => {
-      test.report();
+      test.report(this.panel);
     });
   }
 
@@ -14128,11 +14128,43 @@ class LayoutTest {
    */
 
 
-  report() {}
+  report(infoPanel) {}
 
 }
 
 module.exports = LayoutTest;
+
+/***/ }),
+
+/***/ "./plugins/layout/tests/font-size/error-template.handlebars":
+/*!******************************************************************!*\
+  !*** ./plugins/layout/tests/font-size/error-template.handlebars ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ./node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.overflowY : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.program(4, data, 0),"data":data})) != null ? stack1 : "");
+},"2":function(container,depth0,helpers,partials,data) {
+    return "        <p>\n            This element's text overflows horizontally and vertically when\n            enlarged\n        </p>\n";
+},"4":function(container,depth0,helpers,partials,data) {
+    return "        <p>This element's text overflows horizontally when enlarged</p>\n";
+},"6":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.overflowY : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"7":function(container,depth0,helpers,partials,data) {
+    return "        <p>This element's text overflows vertically when enlarged</p>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.overflowX : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(6, data, 0),"data":data})) != null ? stack1 : "")
+    + "<p>\n    Users may modify the font size on webpages to help them read so it is\n    important to ensure all text is still legible when enlarged up to 200%.\n</p>\n<label>\n    Preview 200% font size:\n    <input class=\"preview-font-size\" type=\"checkbox\">\n</label>\n";
+},"useData":true});
 
 /***/ }),
 
@@ -14149,13 +14181,23 @@ let annotate = __webpack_require__(/*! ../../../shared/annotate */ "./plugins/sh
 
 let LayoutTest = __webpack_require__(/*! ../base */ "./plugins/layout/tests/base.js");
 
+let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/layout/tests/font-size/error-template.handlebars");
+
 class FontSizeLayoutTest extends LayoutTest {
   constructor() {
     super();
     this.textElements = [];
+    this.applied = false;
+    this.$checkboxes = [];
   }
 
   apply() {
+    this.$checkboxes.forEach(c => c.prop("checked", true));
+
+    if (this.applied) {
+      return;
+    }
+
     this.textElements = [];
     $("*").each((i, el) => {
       // Only check elements with a direct text descendant
@@ -14188,21 +14230,48 @@ class FontSizeLayoutTest extends LayoutTest {
     this.textElements.forEach(entry => {
       entry.$el.css("font-size", `${entry.pxFontSize * 2}px`);
     });
+    this.applied = true;
+  }
+
+  reportError($el, overflows, infoPanel) {
+    let $description = $(errorTemplate({
+      overflowX: overflows.x,
+      overflowY: overflows.y
+    }));
+    let entry = infoPanel.addError("Overflows at 200% font size", $description, $el);
+    let $checkbox = $description.find(".preview-font-size");
+    $checkbox.click(e => {
+      if ($(e.target).prop("checked")) {
+        this.apply();
+      } else {
+        this.cleanup();
+      }
+
+      annotate.refreshAll();
+    });
+    this.$checkboxes.push($checkbox);
+    annotate.errorLabel(entry.$el, "", "Overflows at 200%", entry);
   }
 
   detect() {
     this.textElements.forEach(entry => {
       if (!entry.overflow.x && this.isOverflow(entry.$el).x || !entry.overflow.y && this.isOverflow(entry.$el).y) {
         // resizing has caused overflow that wasn't present before
-        entry.error = () => {
-          annotate.errorLabel(entry.$el, "", "Overflows at 200%");
+        entry.error = infoPanel => {
+          this.reportError(entry.$el, this.isOverflow(entry.$el), infoPanel);
         };
       }
     });
   }
 
   cleanup() {
-    // Set all elements to original size
+    this.$checkboxes.forEach(c => c.prop("checked", false));
+
+    if (!this.applied) {
+      return;
+    } // Set all elements to original size
+
+
     this.textElements.forEach(entry => {
       // Remove the inline style we added unless the inline style
       // we added overrided an existing inline style in which case
@@ -14213,12 +14282,13 @@ class FontSizeLayoutTest extends LayoutTest {
         entry.$el.css("font-size", "");
       }
     });
+    this.applied = false;
   }
 
-  report() {
+  report(infoPanel) {
     this.textElements.forEach(entry => {
       if (entry.error) {
-        entry.error();
+        entry.error(infoPanel);
       }
     });
   }
@@ -14787,7 +14857,7 @@ module.exports = namespace => {
     // We also store the element its annotation so we can reposition when
     // the window resizes.
     let $annotation = $("<div>").addClass("tota11y") // tota11y base class for styling
-    .addClass(ANNOTATION_CLASS).addClass(className).css($el.position()).data({
+    .addClass(ANNOTATION_CLASS).addClass(className).addClass("tota11y-annotation").css($el.position()).data({
       $el
     }); // TODO: We can invoke a requestAnimationFrame(render) here to limit
     // the amount of times we run that timer
@@ -14818,8 +14888,8 @@ module.exports = namespace => {
     window.requestAnimationFrame(loop);
   })();
 
-  let repositionAll = () => {
-    let $annotations = $("." + ANNOTATION_CLASS); // Record the position of each annotation's corresponding element to
+  let reposition = annotationClass => {
+    let $annotations = $("." + annotationClass); // Record the position of each annotation's corresponding element to
     // batch measurements
 
     let positions = $annotations.map((i, el) => {
@@ -14835,7 +14905,7 @@ module.exports = namespace => {
   }; // Handle resizes by repositioning all annotations in bulk
 
 
-  $(window).resize(repositionAll);
+  $(window).resize(() => reposition(ANNOTATION_CLASS));
   return {
     // Places a small label in the top left corner of a given jQuery
     // element. By default, this label contains the element's tagName.
@@ -14922,8 +14992,10 @@ module.exports = namespace => {
       $(`.tota11y.tota11y-label.${ANNOTATION_CLASS}`).show();
     },
 
+    // Some plugins may alter the page and require us to reposition
+    // all annotations from all plugins
     refreshAll() {
-      repositionAll();
+      reposition("tota11y-annotation");
     },
 
     removeAll() {

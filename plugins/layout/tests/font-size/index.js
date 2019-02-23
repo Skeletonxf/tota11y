@@ -2,13 +2,22 @@ let $ = require("jquery");
 let annotate = require("../../../shared/annotate")("layout");
 let LayoutTest = require("../base");
 
+let errorTemplate = require("./error-template.handlebars");
+
 class FontSizeLayoutTest extends LayoutTest {
     constructor() {
         super();
         this.textElements = [];
+        this.applied = false;
+        this.$checkboxes = [];
     }
 
     apply() {
+        this.$checkboxes.forEach(c => c.prop("checked", true));
+        if (this.applied) {
+            return;
+        }
+
         this.textElements = [];
         $("*").each((i, el) => {
             // Only check elements with a direct text descendant
@@ -44,6 +53,31 @@ class FontSizeLayoutTest extends LayoutTest {
         this.textElements.forEach((entry) => {
             entry.$el.css("font-size", `${entry.pxFontSize * 2}px`);
         });
+
+        this.applied = true;
+    }
+
+    reportError($el, overflows, infoPanel) {
+        let $description = $(errorTemplate({
+            overflowX: overflows.x,
+            overflowY: overflows.y,
+        }));
+        let entry = infoPanel.addError(
+            "Overflows at 200% font size",
+            $description,
+            $el
+        );
+        let $checkbox = $description.find(".preview-font-size");
+        $checkbox.click((e) => {
+            if ($(e.target).prop("checked")) {
+                this.apply();
+            } else {
+                this.cleanup();
+            }
+            annotate.refreshAll();
+        });
+        this.$checkboxes.push($checkbox);
+        annotate.errorLabel(entry.$el, "", "Overflows at 200%", entry);
     }
 
     detect() {
@@ -51,14 +85,23 @@ class FontSizeLayoutTest extends LayoutTest {
             if ((!entry.overflow.x && this.isOverflow(entry.$el).x)
                     || (!entry.overflow.y && this.isOverflow(entry.$el).y)) {
                 // resizing has caused overflow that wasn't present before
-                entry.error = () => {
-                    annotate.errorLabel(entry.$el, "", "Overflows at 200%");
+                entry.error = (infoPanel) => {
+                    this.reportError(
+                        entry.$el,
+                        this.isOverflow(entry.$el),
+                        infoPanel
+                    );
                 };
             }
         });
     }
 
     cleanup() {
+        this.$checkboxes.forEach(c => c.prop("checked", false));
+        if (!this.applied) {
+            return;
+        }
+
         // Set all elements to original size
         this.textElements.forEach((entry) => {
             // Remove the inline style we added unless the inline style
@@ -70,12 +113,14 @@ class FontSizeLayoutTest extends LayoutTest {
                 entry.$el.css("font-size", "");
             }
         });
+
+        this.applied = false;
     }
 
-    report() {
+    report(infoPanel) {
         this.textElements.forEach((entry) => {
             if (entry.error) {
-                entry.error();
+                entry.error(infoPanel);
             }
         });
     }

@@ -35,7 +35,7 @@ class LayoutPlugin extends Plugin {
         });
 
         layoutTests.forEach((test) => {
-            test.report();
+            test.report(this.panel);
         });
     }
 

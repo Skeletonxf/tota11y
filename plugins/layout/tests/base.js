@@ -20,7 +20,7 @@ class LayoutTest {
     /*
      * Reports any problems detected.
      */
-    report() {
+    report(infoPanel) {
     }
 }
 
