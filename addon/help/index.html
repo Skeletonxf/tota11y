@@ -1,13 +1,13 @@
 <!doctype html>
 <html>
 <head>
-    <title>TAAS Help Page</title>
+    <title>Totally Help Page</title>
     <link href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <header>
-        <h1>Totally Automatic Accessibility Scanner</h1>
+        <h1>Totally Automated Accessibility Scanner</h1>
     </header>
     <main>
         <aside class="text">
@@ -19,21 +19,21 @@
             <div class="text">
             <h2>About</h2>
             <p>
-                Totally Automatic Accessibility Scanner is a completely free
+                Totally Automated Accessibility Scanner is a completely free
                 tool which automatically detects and reports common accessibly
                 violations on your website. Unfortunately you still have to
                 manually read and fix the errors but hopefully you'll learn a
                 bit about accessibility as you do.
             </p>
             <p>
-                TAAS is built from the accessibility visualization toolkit
-                <a href="https://khan.github.io/tota11y/">tota11y by Khan Academy</a>.
-                TAAS runs in your browser's sidebar and like tota11y helps
-                you to visualise how your site performs with assistive
-                technologies.
+                Tota<strong>ll</strong>y is built from the accessibility
+                visualization toolkit <a href="https://khan.github.io/tota11y/">
+                tota<strong>11</strong>y by Khan Academy</a>. Totally runs in
+                your browser's sidebar and like tota11y helps you to
+                visualise how your site performs with assistive technologies.
             </p>
             <p>
-                TAAS is designed to help you identify a number of accessibility
+                Totally is designed to help you identify a number of accessibility
                 concerns relating to the comprehensive guidelines maintained
                 by the WC3 in the <a href="https://www.w3.org/TR/WCAG21/">WCAG</a>
                 without prior accessibility knowledge to make sense of the
@@ -41,7 +41,10 @@
             </p>
             </div>
             <div class="image">
-                <img src="./error-overview.png" alt=""></img>
+                <img src="./error-overview.png"
+                    alt="Error annotation from totally on a webpage"
+                    title="Error annotation from totally on a webpage">
+                </img>
             </div>
             </div>
         </section>
@@ -50,13 +53,17 @@
             <div class="text">
             <h2>How it works</h2>
             <p>
-                TAAS presents you with a menu in your browser's sidebar with
-                lots of Plugins. If you can't see this sidebar you need
-                to open it first under View -> Sidebar -> TAAS.
+                When Totally is running you will see a transparent icon with
+                glasses in the bottom left corner of your webpage.
+            </p>
+            <p>
+                In your sidebar you can enable and disable Plugins.
+                If you can't see this sidebar you need to open it first under
+                View -> Sidebar -> Totally.
             </p>
             <p>
                 When you enable a Plugin it runs on the current page and creates
-                an InfoPanel below the menu. Each plugin tests for different
+                an InfoPanel below the menu. Each Plugin tests for different
                 accessibility criteria and may create annotations on the page
                 or list errors in their InfoPanel. All plugins also have an
                 About tab in their InfoPanel which provides supporting
@@ -64,7 +71,11 @@
             </p>
             </div>
             <div class="image">
-                <img src="./sidebar-overview.png" alt=""></img>
+                <!-- FIXME -->
+                <img src="./sidebar-overview.png"
+                    alt="Totally sidebar"
+                    title="Totally sidebar">
+                </img>
             </div>
             </div>
         </section>
@@ -73,20 +84,49 @@
             <div class="text">
             <h2>Errors</h2>
             <p>
-                Many TAAS plugins also suggest fixes for the accessibility
+                Many Totally Plugins also suggest fixes for the accessibility
                 violations they find on your page, as well as providing
                 supporting information and links to help you understand what's
                 gone wrong.
             </p>
             </div>
             <div class="image">
-                <img src="./taas-overview.png" alt=""></img>
+                <!-- FIXME -->
+                <img src="./totally-overview.png" alt=""></img>
             </div>
             </div>
         </section>
         <section class="text">
-            <h2>Get started!</h2>
-            <p>TODO</p>
+            <h2>Getting started</h2>
+            <p>Here are some elements to audit</p>
+            <h4>This heading is not in order</h4>
+            <p class="low-contrast">
+                This text has really poor contrast
+            </p>
+            <p>
+                Here's an <a href="javascript:void">informative link about something</a>.
+                Here's another that simply says <a href="javascript:void">click here</a>,
+                which is not as helpful to a screen reader.
+            </p>
+            <form>
+                <div>
+                    <p>This input has no label of any sort</p>
+                    <p>Username: </p>
+                    <input></input>
+                </div>
+                <div>
+                    <p>This input has uses a placeholder</p>
+                    <p>Email: </p>
+                    <input placeholder="foobar@example.com"></input>
+                </div>
+                <div>
+                    <p>This input has a proper label</p>
+                    <label for="foo">Password: </label>
+                    <input id="foo"></input>
+                </div>
+            </form>
+            <!-- Alt text -->
+
         </section>
         <section class="text">
             <h2>Special thanks</h2>
@@ -100,6 +140,9 @@
             </p>
         </section>
     </main>
+    <div id="indicator" role="presentation">
+        &larr; You should see glasses here when totally is running
+    </div>
     <footer>
     </footer>
 </body>

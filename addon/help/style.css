@@ -2,7 +2,7 @@ html, body {
     margin: 0;
     padding: 0;
     color: #4d2a2a;
-    font: 19px/1.6 "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font: 19px "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
 header {
@@ -71,4 +71,45 @@ section:before {
         margin-left: inherit !important;
         margin-right: inherit !important;
     }
+}
+
+#indicator {
+    position: fixed;
+    bottom: 260px;
+    left: -165px;
+    transform: rotate(-85deg);
+    font-size: 19px !important;
+}
+
+@media screen and (max-width: 1250px) {
+    #indicator {
+        display: none;
+    }
+}
+
+form {
+    display: flex;
+    flex-direction: row;
+}
+
+form div {
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem;
+}
+
+form div label, form div p {
+    display: block;
+    padding: 0.1rem;
+    margin: 0.1rem;
+}
+
+@media screen and (max-width: 900px) {
+    form {
+        flex-direction: column;
+    }
+}
+
+.low-contrast {
+    color: lightblue;
 }
