@@ -315,7 +315,7 @@ class ToolbarController {
             <div id="tota11y-toolbar" className="tota11y tota11y-toolbar tota11y-expanded tota11y-sidebar"
                  role="region"
                  aria-expanded="true">
-                 <a href="/help/index.html" class="tota11y-help" target="_blank">Help</a>
+                 <a href="https://skeletonxf.gitlab.io/totally-automated-a11y-scanner/" class="tota11y-help" target="_blank">Help</a>
                 <div className="tota11y-toolbar-body">
                     {$plugins}
                 </div>

@@ -17188,10 +17188,8 @@ const DISABLE_CSS = "tota11y-disabled-toolbar";
  * In a standalone script the toolbar is responsible for switching
  * active plugins and drawing its UI.
  * In a WebExtension the UI and the content script run in different
- * JS sandboxes, ie the content script can use eval() but not most
- * WebExtension APIs and the sidebar UI JS can use WebExtension APIs
- * but not eval(). Therefore the toolbar becomes responsible for
- * everything but the UI, and the UI is synced to the rest of
+ * JS sandboxes with different priviledges. Therefore the toolbar becomes
+ * responsible for everything but the UI, and the UI is synced to the rest of
  * the WebExtension over a Port to the ToolbarController.
  */
 
@@ -17503,7 +17501,7 @@ class ToolbarController {
       role: "region",
       "aria-expanded": "true"
     }, buildElement("a", {
-      href: "/help/index.html",
+      href: "https://skeletonxf.gitlab.io/totally-automated-a11y-scanner/",
       class: "tota11y-help",
       target: "_blank"
     }, "Help"), buildElement("div", {
