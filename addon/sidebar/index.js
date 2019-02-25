@@ -32,6 +32,9 @@ let currentTabId = -1;
 let insertingLock = new Lock();
 
 function developmentTab(url) {
+    if (url === "https://skeletonxf.gitlab.io/totally-automated-a11y-scanner/") {
+        return true;
+    }
     return [
         "http://localhost:",
         "https://localhost",
