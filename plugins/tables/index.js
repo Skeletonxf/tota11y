@@ -26,11 +26,21 @@ class TablesPlugin extends Plugin {
         return annotate;
     }
 
-    errorMessage($el, presentation, noHeadings, tooManyHeads,
-            headInData, dataInHead, data) {
+    errorMessage(
+            $el,
+            presentationError,
+            illegalHeaders,
+            illegalCaption,
+            noHeadings,
+            tooManyHeads,
+            headInData,
+            dataInHead,
+            data) {
         return errorTemplate({
             id: $el.attr("id"),
-            presentation: presentation,
+            presentationError: presentationError,
+            illegalHeaders: illegalHeaders,
+            illegalCaption: illegalCaption,
             noHeadings: noHeadings,
             tooManyHeads: tooManyHeads,
             headInData: headInData,
@@ -51,13 +61,18 @@ class TablesPlugin extends Plugin {
                 let data = {
                     presentational: $el.attr("role") === "presentation",
                     noHeadings: $el.find("th").length === 0,
+                    noCaptions: $el.find("caption").length === 0,
                     heads: $el.find("thead").length,
                     tableBodys: $el.children("tbody").length > 0,
                     rootTableRows: $el.children("tr").length > 0,
                 }
 
-                let presentation = data.presentational && !data.noHeadings;
+                let illegalHeaders = data.presentational && !data.noHeadings;
+                let illegalCaption = data.presentational && !data.noCaptions;
+                let presentationError = illegalHeaders || illegalCaption;
+
                 let noHeadings = !data.presentational && data.noHeadings;
+
                 let tooManyHeads = data.heads > 1;
 
                 let dataInHead = false;
@@ -70,8 +85,12 @@ class TablesPlugin extends Plugin {
                     title = "Table has too many &lt;thead&gt;s";
                     problems += 1;
                 }
-                if (presentation) {
+                if (illegalHeaders) {
                     title = "Presentational table should not have headers";
+                    problems += 1;
+                }
+                if (illegalCaption) {
+                    title = "Presentational table should not have a caption";
                     problems += 1;
                 }
                 if (noHeadings) {
@@ -82,7 +101,7 @@ class TablesPlugin extends Plugin {
                 // Only scan into table markup for more complex
                 // problems if there are not more simpler ones that
                 // this might be confusing to see listed with.
-                if (!noHeadings && !presentation) {
+                if (!noHeadings && !presentationError) {
                     let $tableHead = $el.children("thead");
                     if ($tableHead.length === 0) {
                         let $rows;
@@ -118,7 +137,9 @@ class TablesPlugin extends Plugin {
                     // error in the info panel
                     let entry = _this.error(title, $(
                             _this.errorMessage($el,
-                                presentation,
+                                presentationError,
+                                illegalHeaders,
+                                illegalCaption,
                                 noHeadings,
                                 tooManyHeads,
                                 headInData,

@@ -58,14 +58,28 @@
 ...
 </code></pre>
 {{/if}}
-{{#if presentation}}
-    <p>
-        Presentational tables should not have table headers (<code>&lt;th&gt;</code>) or heads (<code>&lt;thead&gt;</code>)
-    </p>
+{{#if presentationError}}
+    {{#if illegalCaption}}
+        <p>
+            Presentational tables should not have a caption (<code>&lt;caption&gt;</code>)
+        </p>
+    {{/if}}
+
+    {{#if illegalHeaders}}
+        <p>
+            Presentational tables should not have table headers (<code>&lt;th&gt;</code>) or heads (<code>&lt;thead&gt;</code>)
+        </p>
+    {{/if}}
 
     <p>
         If the table is not for presentation only you can remove the presentation
         role like so:
         <pre><code>&lt;table&gt;<del>role="presentation"</del>&lt;/table&gt;</code></pre>
+    </p>
+
+    <p>
+        Presentational tables are hidden from assistive technologies and
+        should only be marked as such when they are used for purposes other
+        than tabulating data such as controlling page layout.
     </p>
 {{/if}}

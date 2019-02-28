@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-25
+ * Date: 2019-02-28
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -16794,14 +16794,23 @@ module.exports = (Handlebars["default"] || Handlebars).template({"1":function(co
 },"8":function(container,depth0,helpers,partials,data) {
     return "    <p>\n        Tables should have at most one &lt;thead&gt; This table has more than one.\n    </p>\n    <p>\n        You should move all the table rows (&lt;tr&gt;) into a single &lt;thead&gt; like so:\n    </p>\n\n    <pre><code>&lt;table&gt;\n  &lt;thead&gt;\n    &lt;tr&gt;\n      &lt;th&gt;First table header&lt;th/&gt;\n    &lt;tr/&gt;\n    &lt;tr&gt;\n      &lt;th&gt;Second table header&lt;th/&gt;\n...\n</code></pre>\n";
 },"10":function(container,depth0,helpers,partials,data) {
-    return "    <p>\n        Presentational tables should not have table headers (<code>&lt;th&gt;</code>) or heads (<code>&lt;thead&gt;</code>)\n    </p>\n\n    <p>\n        If the table is not for presentation only you can remove the presentation\n        role like so:\n        <pre><code>&lt;table&gt;<del>role=\"presentation\"</del>&lt;/table&gt;</code></pre>\n    </p>\n";
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.illegalCaption : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.illegalHeaders : depth0),{"name":"if","hash":{},"fn":container.program(13, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\n    <p>\n        If the table is not for presentation only you can remove the presentation\n        role like so:\n        <pre><code>&lt;table&gt;<del>role=\"presentation\"</del>&lt;/table&gt;</code></pre>\n    </p>\n\n    <p>\n        Presentational tables are hidden from assistive technologies and\n        should only be marked as such when they are used for purposes other\n        than tabulating data such as controlling page layout.\n    </p>\n";
+},"11":function(container,depth0,helpers,partials,data) {
+    return "        <p>\n            Presentational tables should not have a caption (<code>&lt;caption&gt;</code>)\n        </p>\n";
+},"13":function(container,depth0,helpers,partials,data) {
+    return "        <p>\n            Presentational tables should not have table headers (<code>&lt;th&gt;</code>) or heads (<code>&lt;thead&gt;</code>)\n        </p>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
   return ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.noHeadings : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.headInData : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.tooManyHeads : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.presentation : depth0),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.presentationError : depth0),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
 
 /***/ }),
@@ -16843,10 +16852,12 @@ class TablesPlugin extends Plugin {
     return annotate;
   }
 
-  errorMessage($el, presentation, noHeadings, tooManyHeads, headInData, dataInHead, data) {
+  errorMessage($el, presentationError, illegalHeaders, illegalCaption, noHeadings, tooManyHeads, headInData, dataInHead, data) {
     return errorTemplate({
       id: $el.attr("id"),
-      presentation: presentation,
+      presentationError: presentationError,
+      illegalHeaders: illegalHeaders,
+      illegalCaption: illegalCaption,
       noHeadings: noHeadings,
       tooManyHeads: tooManyHeads,
       headInData: headInData,
@@ -16867,11 +16878,14 @@ class TablesPlugin extends Plugin {
         let data = {
           presentational: $el.attr("role") === "presentation",
           noHeadings: $el.find("th").length === 0,
+          noCaptions: $el.find("caption").length === 0,
           heads: $el.find("thead").length,
           tableBodys: $el.children("tbody").length > 0,
           rootTableRows: $el.children("tr").length > 0
         };
-        let presentation = data.presentational && !data.noHeadings;
+        let illegalHeaders = data.presentational && !data.noHeadings;
+        let illegalCaption = data.presentational && !data.noCaptions;
+        let presentationError = illegalHeaders || illegalCaption;
         let noHeadings = !data.presentational && data.noHeadings;
         let tooManyHeads = data.heads > 1;
         let dataInHead = false;
@@ -16884,8 +16898,13 @@ class TablesPlugin extends Plugin {
           problems += 1;
         }
 
-        if (presentation) {
+        if (illegalHeaders) {
           title = "Presentational table should not have headers";
+          problems += 1;
+        }
+
+        if (illegalCaption) {
+          title = "Presentational table should not have a caption";
           problems += 1;
         }
 
@@ -16897,7 +16916,7 @@ class TablesPlugin extends Plugin {
         // this might be confusing to see listed with.
 
 
-        if (!noHeadings && !presentation) {
+        if (!noHeadings && !presentationError) {
           let $tableHead = $el.children("thead");
 
           if ($tableHead.length === 0) {
@@ -16933,7 +16952,7 @@ class TablesPlugin extends Plugin {
         if (problems > 0) {
           // Place an error label on the element and register it as an
           // error in the info panel
-          let entry = _this.error(title, $(_this.errorMessage($el, presentation, noHeadings, tooManyHeads, headInData, dataInHead, data)), $el);
+          let entry = _this.error(title, $(_this.errorMessage($el, presentationError, illegalHeaders, illegalCaption, noHeadings, tooManyHeads, headInData, dataInHead, data)), $el);
 
           annotate.errorLabel($el, "", title, entry);
         }
