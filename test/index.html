@@ -29,26 +29,6 @@
             height: 30px;
             overflow: hidden;
         }
-
-        .button {
-            display: block;
-            width: 140px;
-            text-align: center;
-            color: white;
-            background-color: #0d8294;
-            padding: 15px
-            border-radius: 10px;
-        }
-
-        .no-focus {
-            outline: none;
-            text-decoration: none;
-        }
-
-        .no-focus:focus {
-            outline: none;
-            text-decoration: none;
-        }
     </style>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -445,16 +425,6 @@
 
         <p class="fixed-size">
             Lorem ipsum dolor sit amet...
-        </p>
-
-        <p>
-            <span class="button" onclick="alert(1)">Button 1</span>
-            <div class="button" onclick="alert(1)" tabindex="-1">Button 2</div>
-            <span class="button" onclick="alert(1)" onkeydown="alert(1)">Button 3</span>
-            <div class="button" onclick="alert(1)" onkeydown="alert(1)" role="button">Button 4</div>
-            <a class="button" onclick="alert(1)">Button 5</a>
-            <a href="#" class="button" onclick="alert(1)">Button 5</a>
-            <a href="#foo" class="no-focus">A link</a>
         </p>
 
         <footer>
