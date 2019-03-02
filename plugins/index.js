@@ -10,7 +10,6 @@ let AltTextPlugin = require("./alt-text");
 let ContrastPlugin = require("./contrast");
 let DocumentPlugin = require("./document");
 let FormsPlugin = require("./forms");
-let FocusStylesPlugin = require("./focus");
 let HeadingsPlugin = require("./headings");
 let LandmarksPlugin = require("./landmarks");
 let LayoutPlugin = require("./layout");
@@ -35,6 +34,5 @@ module.exports = {
 
     experimental: [
         new A11yTextWand(),
-        new FocusStylesPlugin(),
     ],
 };
