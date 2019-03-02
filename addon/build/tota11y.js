@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-02-28
+ * Date: 2019-03-02
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13505,16 +13505,19 @@ const VISUAL_INDICATORS = [function outline(style, focusStyle) {
   let outlineDiff = false || style["outline-style"] !== focusStyle["outline-style"] || style["outline-width"] !== focusStyle["outline-width"] || style["outline-color"] !== focusStyle["outline-color"];
   return outlineDiff && hasFocusOutline;
 }, function border(style, focusStyle) {
-  // let hasFocusBorder = focusStyle["border-style"] !== "none" &&
-  //     parseFloat(focusStyle["border-width"]) !== "0";
+  let hasFocusBorder = false;
+
+  for (let side of ["left", "right", "top", "bottom"]) {
+    hasFocusBorder = hasFocusBorder || focusStyle[`border-${side}-style`] !== "none" && parseFloat(focusStyle[`border-${side}-width`]) !== "0";
+  }
+
   let borderDiff = false;
 
   for (let side of ["left", "right", "top", "bottom"]) {
     borderDiff = borderDiff || style[`border-${side}-style`] !== focusStyle[`border-${side}-style`] || style[`border-${side}-width`] !== focusStyle[`border-${side}-width`] || style[`border-${side}-color`] !== focusStyle[`border-${side}-color`];
   }
 
-  console.log(`Border diff: ${borderDiff}`);
-  return borderDiff; // && hasFocusBorder;
+  return borderDiff && hasFocusBorder;
 }, function textDecoration(style, focusStyle) {
   return style["text-decoration"] !== focusStyle["text-decoration"];
 }];
@@ -13538,6 +13541,8 @@ class FocusStylesPlugin extends Plugin {
 
   run() {
     let activeElement = document.activeElement;
+    let focusable = [];
+    let index = 0;
     $("*").each((i, el) => {
       if ($(el).parents(".tota11y").length) {
         return;
@@ -13547,22 +13552,48 @@ class FocusStylesPlugin extends Plugin {
         return;
       }
 
+      focusable.push(el);
+    });
+    focusable.forEach(el => {
+      // We assume none of these elements are already focused
       let style = deserialize(serialize(getComputedStyle(el)));
-      el.focus();
-      let focusStyle = deserialize(serialize(getComputedStyle(el)));
-      let passes = false;
-      VISUAL_INDICATORS.forEach(test => {
-        if (passes) return;
+      let $el = $(el);
+      console.log("Adding listener to focus");
+      $el.on("focus", function testFocus() {
+        console.log("Testing focus");
+        let focusStyle = deserialize(serialize(getComputedStyle(el)));
+        let passes = false;
+        VISUAL_INDICATORS.forEach(test => {
+          if (passes) return;
 
-        if (test(style, focusStyle)) {
-          passes = true;
+          if (test(style, focusStyle)) {
+            passes = true;
+          }
+        });
+
+        if (!passes) {
+          annotate.errorLabel($(el), "Um", "idk");
+        }
+
+        $el.off("focus", testFocus);
+        index += 1;
+
+        if (index < focusable.length) {
+          console.log(`Focusing next element: ${index}`);
+          focusable[index].focus({
+            preventScroll: true
+          });
         }
       });
-
-      if (!passes) {
-        annotate.errorLabel($(el), "Um", "idk");
-      }
     });
+
+    if (focusable.length > 0) {
+      console.log("Focusing first element");
+      focusable[index].focus({
+        preventScroll: true
+      });
+    }
+
     activeElement && activeElement.focus();
   }
 
