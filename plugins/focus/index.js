@@ -5,6 +5,10 @@ let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("no-focus");
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function deserialize(style) {
     return JSON.parse(style);
 }
@@ -88,9 +92,16 @@ class FocusStylesPlugin extends Plugin {
                 return;
             }
 
+            // Ignore elements we can't focus
             if (!el.hasAttribute("tabIndex") &&
                     !axs.utils.isElementImplicitlyFocusable(el)) {
                 return;
+            }
+
+            // Ignore invisible elements
+            if (axs.utils.elementIsTransparent(el) ||
+                axs.utils.elementHasZeroArea(el)) {
+                    return;
             }
 
             focusable.push(el);
@@ -121,22 +132,28 @@ class FocusStylesPlugin extends Plugin {
 
                 $el.off("focus", testFocus);
 
-                index += 1;
-                if (index < focusable.length) {
-                    console.log(`Focusing next element: ${index}`);
-                    focusable[index].focus({
-                        preventScroll: true,
-                    });
-                }
+                focusNext();
             });
         });
 
-        if (focusable.length > 0) {
-            console.log("Focusing first element");
-            focusable[index].focus({
-                preventScroll: true,
-            });
+        function focusNext() {
+            if ((focusable.length > 0) && (index < focusable.length)) {
+                let el = focusable[index];
+                console.log(`Focusing ${index}th element: ${el}`);
+                index += 1;
+                el.focus({
+                    preventScroll: true,
+                });
+                sleep(1000).then(() => {
+                    if (el === document.activeElement) {
+                        console.log(`Skipping ${index}th element`);
+                        index += 1;
+                        focusNext();
+                    }
+                });
+            }
         }
+        focusNext();
 
         activeElement && activeElement.focus();
     }
