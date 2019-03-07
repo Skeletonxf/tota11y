@@ -1,15 +1,15 @@
 /*!
- * tota11y v0.1.6
+ * Totally Automated Accessibility Scanner
+ * 
+ * Forked from tota11y v0.1.6
  * http://khan.github.io/tota11y
  * 
- * Includes Accessibility Developer Tools
- * http://github.com/GoogleChrome/accessibility-developer-tools
- * 
- * Copyright (c) 2015 Khan Academy
+ * tota11y Copyright (c) 2015 Khan Academy
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2019-03-07
+ * Includes Accessibility Developer Tools
+ * http://github.com/GoogleChrome/accessibility-developer-tools
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
