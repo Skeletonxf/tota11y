@@ -1,5 +1,3 @@
-image: alpine:latest
-
 # Github pages deployment
 pages:
   stage: deploy
