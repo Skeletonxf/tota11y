@@ -46,11 +46,11 @@ tota11y uses a variety of technologies, including [jQuery](https://jquery.com/),
 
 Totally adds:
 
-`settings/` for settings in a very similar style to plugins.
-`addon/` for the WebExtension code.
-`public/` for the publicly available [help page]((https://skeletonxf.gitlab.io/totally-automated-a11y-scanner/)) on Gitlab Pages.
-`toolbar.js` for enabling the plugins from the sidebar of the browser
-`plugins/shared/info-panel/controller.js` for interacting with plugins from the sidebar.
+`settings/` for settings in a very similar style to plugins.  
+`addon/` for the WebExtension code.  
+`public/` for the publicly available [help page]((https://skeletonxf.gitlab.io/totally-automated-a11y-scanner/)) on Gitlab Pages.  
+`toolbar.js` for enabling the plugins from the sidebar of the browser  
+`plugins/shared/info-panel/controller.js` for interacting with plugins from the sidebar.  
 and many more plugins testing accessibility criteria.
 
 Further elaboration on the addon architecture is in ARCHITECTURE.md.
