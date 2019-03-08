@@ -7,7 +7,7 @@
 var options = require("../utils/options");
 
 // Register all future "require"s with babel
-require("babel/register")({
+require("@babel/register")({
     pragma: options.pragma,
 });
 
