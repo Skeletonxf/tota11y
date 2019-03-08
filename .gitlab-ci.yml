@@ -1,4 +1,4 @@
-# Github pages deployment
+# GitLab pages deployment
 pages:
   stage: deploy
   script:
@@ -9,10 +9,10 @@ pages:
   only:
   - master
 
-# Pushing repo to Github
+# Auto push repo to GitHub
 # Adapted from https://docs.gitlab.com/ce/ci/yaml/README.html
 before_script:
-  - echo "Setting up SSH for sync to github script"
+  - echo "Setting up SSH for sync to GitHub"
 
   ## Install ssh-agent if not already installed, it is required by Docker.
   ## (change apt-get to yum if you use an RPM-based image)
@@ -25,7 +25,7 @@ before_script:
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
 
-  # Put github on known hosts list.
+  # Put GitHub on known hosts list.
   - 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
 
 sync:
