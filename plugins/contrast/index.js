@@ -84,7 +84,7 @@ class ContrastPlugin extends Plugin {
         // the WCAG so we use their recommended conversion factor of 1.333
         // https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle
         // https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html
-        return parseFloat(style.getPropertyValue('font-size')) / 1.333;
+        return parseFloat(style.getPropertyValue("font-size")) / 1.333;
     }
 
     run() {

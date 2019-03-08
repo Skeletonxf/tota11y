@@ -105,9 +105,9 @@ class TablesPlugin extends Plugin {
                     let $tableHead = $el.children("thead");
                     if ($tableHead.length === 0) {
                         let $rows;
-                        let $tableBody = $el.children('tbody');
+                        let $tableBody = $el.children("tbody");
                         if ($tableBody.length === 0) {
-                            $rows = $el.children('tr');
+                            $rows = $el.children("tr");
                         } else {
                             $rows = $tableBody.children("tr");
                         }

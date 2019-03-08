@@ -24,7 +24,7 @@ let stopWordsRE = new RegExp(`\\b(${stopWords.join("|")})\\b`, "ig");
  * As all we need to do is strip out any punctuation this
  * extremely long string matches all punctuation in a regex.
  */
-let punctuation = `\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_\`{|}~`;
+let punctuation = `\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_\`{|}~`; // eslint-disable-line quotes
 
 // This does not match numbers in the text.
 // Removing numbers creates false positives if a link text really is

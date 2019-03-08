@@ -509,7 +509,7 @@ class ActivePanel {
         this.$errorsTab.trigger("activate");
 
         // Scroll to the error entry smoothly
-        $('html, body').animate({
+        $("html, body").animate({
             scrollTop: error.$trigger.offset().top - 10
         }, 50);
     }

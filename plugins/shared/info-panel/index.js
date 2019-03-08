@@ -571,7 +571,7 @@ class InfoPanel {
         }
 
         // Scroll to the error annoatation on the page smoothly
-        $('html, body').animate({
+        $("html, body").animate({
             scrollTop: error.$el.offset().top - 80
         }, 300);
     }

@@ -97,7 +97,7 @@ class AltTextPlugin extends Plugin {
     run() {
         // Check elements for captions and/or text alternatives of any kind
         // (ie alt tags for images)
-        $(`audio, video, img, input[type="image"], object`).each((i, el) => {
+        $('audio, video, img, input[type="image"], object').each((i, el) => {
             let $el = $(el);
 
             if (axs.utils.isElementOrAncestorHidden(el)) {
@@ -133,8 +133,8 @@ class AltTextPlugin extends Plugin {
                 return;
             }
 
-            let hasCaptions = $el.find(`track[kind="captions"]`).length > 0;
-            let hasAudioDescription = $el.find(`track[kind="descriptions"]`).length > 0;
+            let hasCaptions = $el.find('track[kind="captions"]').length > 0;
+            let hasAudioDescription = $el.find('track[kind="descriptions"]').length > 0;
 
             if (noTextAlternatives && !hasCaptions && !hasAudioDescription) {
                 this.reportFallbackTextError(el, elementName);
