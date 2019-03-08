@@ -11,7 +11,7 @@ pages:
 
 # Auto push repo to GitHub
 # Adapted from https://docs.gitlab.com/ce/ci/yaml/README.html
-before_script:
+sync:
   - echo "Setting up SSH for sync to GitHub"
 
   ## Install ssh-agent if not already installed, it is required by Docker.
@@ -28,6 +28,5 @@ before_script:
   # Put GitHub on known hosts list.
   - 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
 
-sync:
   # Run the git sync script.
-  script: bash sync.sh
+  - bash sync.sh
