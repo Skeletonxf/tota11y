@@ -12,6 +12,7 @@
 @dismissFontSize: 25px;
 @chevornFontSize: 20px;
 @descriptionFontSize: 13px;
+@quoteFontSize: 11px;
 
 .tota11y-info {
     .tota11y-dark-color-scheme;
@@ -208,5 +209,122 @@
         display: inline;
         margin-left: 5px;
         padding: 1px 8px;
+    }
+
+    .tota11y-info-about-title {
+        padding-bottom: 10px;
+        display: block;
+    }
+
+    .tota11y-info-about-title-link {
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+    .tota11y-info-resources {
+        font-weight: bold;
+
+        li {
+            margin-left: 10px;
+        }
+    }
+
+    a.tota11y-info-link {
+        text-decoration: underline;
+    }
+
+    blockquote {
+        font-size: @quoteFontSize;
+        cite {
+            float: right;
+            margin: @quoteFontSize 0;
+            font-style: italic;
+        }
+    }
+
+    blockquote:before {
+        content: open-quote;
+        font-size: @quoteFontSize * 4;
+        vertical-align: -20px;
+        line-height: 1px;
+    }
+
+    blockquote:after {
+        content: close-quote;
+        font-size: @quoteFontSize * 4;
+        vertical-align: -10px;
+        line-height: 1px;
+        margin-left: calc(100% - 15px);
+    }
+
+    .tota11y-click-to-expand .tota11y-expandable {
+        max-height: @descriptionFontSize * 2;
+        cursor: pointer;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 100%;
+        text-overflow: ellipsis;
+
+        p {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .tota11y-click-to-expand.tota11y-expanded .tota11y-expandable {
+        max-height: none;
+        overflow: auto;
+        white-space: normal;
+        text-overflow: clip;
+
+        p {
+            overflow: auto;
+            text-overflow: clip;
+        }
+    }
+
+    /*
+     * Avoid scrollbars on code snippets that are expandable as clicking
+     * scrollbars is difficult if the entire block is click to expand/collapse
+     */
+    .tota11y-expandable code {
+        white-space: pre-wrap;
+    }
+}
+
+.tota11y-sidebar {
+    position: static;
+    .tota11y-info-sections {
+        width: auto;
+        height: auto;
+    }
+    .tota11y-info-section {
+        position: static;
+        overflow-y: auto;
+    }
+
+    .tota11y-info-body {
+        padding: 10px 0px 0;
+    }
+
+    .tota11y-info-title {
+        padding: 10px 10px 0;
+    }
+
+    .tota11y-info-error-inspect-element {
+        border: 3px solid @lighterGray;
+        border-radius: @borderRadius;
+        display: block;
+        margin-top: 10px;
+        padding: 3px 10px;
+        font-weight: bold;
+        background-color: @white;
+        cursor: pointer;
+    }
+
+    .tota11y-info-error-inspect-element:disabled {
+        cursor: auto;
+        background-color: @lighterGray;
+        border-color: @lightGray;
     }
 }

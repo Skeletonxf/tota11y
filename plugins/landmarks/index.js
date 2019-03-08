@@ -7,12 +7,20 @@ let Plugin = require("../base");
 let annotate = require("../shared/annotate")("landmarks");
 
 class LandmarksPlugin extends Plugin {
+    getName() {
+        return "landmarks";
+    }
+
     getTitle() {
         return "Landmarks";
     }
 
     getDescription() {
         return "Labels all ARIA landmarks";
+    }
+
+    getAnnotate() {
+        return annotate;
     }
 
     run() {

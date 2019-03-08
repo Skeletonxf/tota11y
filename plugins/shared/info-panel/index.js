@@ -23,6 +23,13 @@ require("./style.less");
 const INITIAL_PANEL_MARGIN_PX = 10;
 const COLLAPSED_CLASS_NAME = "tota11y-collapsed";
 const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
+const PORT_NAME = "info-panel";
+const FIRST_ERROR_ID = 0;
+
+// Automatically hide this InfoPanel if there is a browser
+// object (running as a WebExtension) and this is toggled on
+// We will want to toggle this auto hiding off for debugging.
+const WEBEXT_HIDE_IN_PAGE = true && !!browser;
 
 class InfoPanel {
     constructor(plugin) {
@@ -30,7 +37,9 @@ class InfoPanel {
 
         this.about = null;
         this.summary = null;
-        this.errors = [];
+
+        this.error_ids = FIRST_ERROR_ID;
+        this.errors = new Map();
 
         this.$el = null;
     }
@@ -38,15 +47,58 @@ class InfoPanel {
     /**
      * Sets the contents of the about section as HTML
      */
-    setAbout(about) {
-        this.about = about;
+    setAbout($html) {
+        this.about = $html;
+        if (browser && this.port) {
+            this.port.postMessage({
+                msg: "about",
+                setAbout: this.elToString($html),
+            });
+        }
     }
 
     /**
      * Sets the contents of the summary section as HTML
      */
-    setSummary(summary) {
-        this.summary = summary;
+    setSummary($html) {
+        this.summary = $html;
+        if (browser && this.port) {
+            this.port.postMessage({
+                msg: "summary",
+                setSummary: this.elToString($html),
+            });
+        }
+    }
+
+    /*
+     * Directly renders HTML/text to the info panel,
+     * replacing the active section.
+     *
+     * This is used for the screen reader tool where
+     * we need to update the info panel cheaply and often
+     * after initially rendering it rather than make
+     * it display error information or a summary.
+     */
+    directRender($html) {
+        if (typeof $html === "string") {
+            this.$el.find(".tota11y-info-section.active").text($html);
+        } else {
+            this.$el.find(".tota11y-info-section.active").html($html);
+        }
+        if (browser && this.port) {
+            // We provide no message as this will be sent very frequently
+            if (typeof $html === "string") {
+                this.port.postMessage({
+                    directRender: true,
+                    text: $html,
+                });
+            } else {
+                this.port.postMessage({
+                    directRender: true,
+                    html: this.elToString($html),
+                });
+            }
+        }
     }
 
     /**
@@ -55,7 +107,19 @@ class InfoPanel {
      */
     addError(title, $description, $el) {
         let error = {title, $description, $el};
-        this.errors.push(error);
+        let id = this.error_ids++;
+        error.id = id;
+        this.errors.set(id, error);
+        if (browser && this.port) {
+            this.port.postMessage({
+                msg: "error",
+                addError: true,
+                title: title,
+                description: this.elToString($description),
+                el: this.elToString($el),
+                id: id,
+            });
+        }
         return error;
     }
 
@@ -115,8 +179,10 @@ class InfoPanel {
             e.stopPropagation();
             this.$el.addClass(HIDDEN_CLASS_NAME);
 
-            // (a11y) Bring the focus back to the plugin's checkbox
-            this.plugin.$checkbox.focus();
+            if (!browser) {
+                // (a11y) Bring the focus back to the plugin's checkbox
+                this.plugin.$checkbox.focus();
+            }
         });
 
         // Append the info panel to the body. In reality we'll likely want
@@ -180,6 +246,13 @@ class InfoPanel {
     }
 
     render() {
+        if (browser && this.port) {
+            this.port.postMessage({
+                msg: "render",
+                render: true,
+            });
+        }
+
         // Destroy the existing info panel to prevent double-renders
         if (this.$el) {
             this.$el.remove();
@@ -188,7 +261,7 @@ class InfoPanel {
         let hasContent = false;
 
         this.$el = (
-            <div className="tota11y tota11y-info" tabindex="-1">
+            <div className={"tota11y tota11y-info " + this.plugin.getName()} tabindex="-1">
                 <header className="tota11y-info-title">
                     {this.plugin.getTitle()}
                     <span className="tota11y-info-controls">
@@ -227,21 +300,35 @@ class InfoPanel {
 
         // Wire annotation toggling
         this.$el.find(".toggle-annotation").click((e) => {
-            if ($(e.target).prop("checked")) {
-                annotate.show();
-            } else {
-                annotate.hide();
+            // We must use the plugin's annotate instead of
+            // the InfoPanel's as only the plugin's annotate
+            // is namespaced for its annotations.
+            if (this.plugin.getAnnotate()) {
+                if ($(e.target).prop("checked")) {
+                    this.plugin.getAnnotate().show();
+                } else {
+                    this.plugin.getAnnotate().hide();
+                }
             }
         });
 
-        if (this.errors.length > 0) {
+        // Wire click to expand text
+        this.$el.find(".tota11y-click-to-expand").click((e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            let $text = $(e.currentTarget);
+            $text.toggleClass("tota11y-expanded");
+            $text.attr("aria-expanded", $text.is(".tota11y-expanded"));
+        });
+
+        if (this.errors.size > 0) {
             let $errors = $("<ul>").addClass("tota11y-info-errors");
 
             // Store a reference to the "Errors" tab so we can switch to it
             // later
             let $errorsTab;
 
-            this.errors.forEach((error, i) => {
+            this.errors.forEach((error, id) => {
                 let $error = $(errorTemplate(error));
 
                 // Insert description jQuery object into template.
@@ -268,8 +355,21 @@ class InfoPanel {
                 // this error so it can be done externally. We'll use this to
                 // access error entries in the info panel from labels.
                 error.show = () => {
-                    // Make sure info panel is visible
-                    this.$el.removeClass(HIDDEN_CLASS_NAME);
+                    if (browser && this.port) {
+                        // Send the message to the Sidebar panel
+                        // to open the error.
+                        this.port.postMessage({
+                            msg: "Show error",
+                            showError: true,
+                            plugin: this.plugin.getName(),
+                            errorId: id,
+                        })
+                    }
+
+                    if (!WEBEXT_HIDE_IN_PAGE) {
+                        // Make sure info panel is visible
+                        this.$el.removeClass(HIDDEN_CLASS_NAME);
+                    }
 
                     // Open the error entry
                     $trigger.removeClass(COLLAPSED_CLASS_NAME);
@@ -288,6 +388,15 @@ class InfoPanel {
                 // We use this to highlight the trigger when hovering over
                 // inline error labels.
                 error.$trigger = $trigger;
+                if (browser) {
+                    // Also attatch functions to trigger a highlight
+                    // in the sidebar which we can call externally.
+                    error.highlightOn = () => this.sendHighlightOn(id);
+                    error.highlightOff = () => this.sendHighlightOff(id);
+                    // And attatch the `$desc` so we can access this when
+                    // syncing checkboxes over the Port.
+                    error.$desc = $desc;
+                }
 
                 // Wire up the scroll-to-error button
                 let $scroll = $error.find(".tota11y-info-error-scroll");
@@ -300,7 +409,7 @@ class InfoPanel {
                 });
 
                 // Expand the first violation
-                if (i === 0) {
+                if (id === FIRST_ERROR_ID) {
                     $desc.toggleClass(COLLAPSED_CLASS_NAME);
                     $trigger.toggleClass(COLLAPSED_CLASS_NAME);
                 }
@@ -329,7 +438,7 @@ class InfoPanel {
             // Add a small badge next to the tab title
             let $badge = $("<div>")
                 .addClass("tota11y-info-error-count")
-                .text(this.errors.length);
+                .text(this.errors.size);
 
             $activeTab.find(".tota11y-info-tab-anchor").append($badge);
         }
@@ -346,8 +455,12 @@ class InfoPanel {
             this.initAndPosition();
         }
 
-        // (a11y) Shift focus to the newly-opened info panel
-        this.$el.focus();
+        if (WEBEXT_HIDE_IN_PAGE) {
+            this.$el.addClass(HIDDEN_CLASS_NAME);
+        } else {
+            // (a11y) Shift focus to the newly-opened info panel
+            this.$el.focus();
+        }
 
         return this.$el;
     }
@@ -356,7 +469,8 @@ class InfoPanel {
         // Reset contents
         this.about = null;
         this.summary = null;
-        this.errors = [];
+        this.error_ids = FIRST_ERROR_ID;
+        this.errors = new Map();
 
         // Remove the element
         if (this.$el) {
@@ -366,7 +480,224 @@ class InfoPanel {
 
         // Remove the annotations
         annotate.removeAll();
+
+        // Remove inspection marks
+        $(".tota11y-inspected-element").removeClass("tota11y-inspected-element");
+
+        if (browser && this.port) {
+            this.port.disconnect();
+            this.port = null;
+        }
+    }
+
+    /**
+     * Opens a port to communicate to an InfoPanelController
+     * over the browser.runtime API.
+     */
+    delegate() {
+        if (browser) {
+            console.log(`Opening info panel port ${this.plugin.getName()}`);
+            let port = browser.runtime.connect({
+                name: PORT_NAME
+            });
+            this.port = port;
+            port.postMessage({
+                msg: "Opened port",
+                registerActive: true,
+                plugin: this.plugin.getName(),
+            });
+
+            port.onMessage.addListener((json) => {
+                if (json.msg) {
+                    console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
+                }
+
+                // Now handle plugin specific responses
+                if (json.plugin !== this.plugin.getName()) {
+                    return;
+                }
+                if (json.scrollToError) {
+                    this.scrollToError(json.errorId);
+                }
+                if (json.highlightOn) {
+                    this.doHighlightOn(json.errorId);
+                }
+                if (json.highlightOff) {
+                    this.doHighlightOff(json.errorId);
+                }
+                if (json.showAnnotations) {
+                    if (this.plugin.getAnnotate()) {
+                        this.plugin.getAnnotate().show();
+                    }
+                }
+                if (json.hideAnnotations) {
+                    if (this.plugin.getAnnotate()) {
+                        this.plugin.getAnnotate().hide();
+                    }
+                }
+                if (json.checkboxSync) {
+                    this.doCheckboxSync(
+                        json.errorId,
+                        json.about,
+                        json.checkboxIndex,
+                        json.checked
+                    );
+                }
+                if (json.inspectElement) {
+                    this.markElementForInspection(json.errorId);
+                    this.port.postMessage({
+                        msg: "Marked element for inspection",
+                        elementMarked: true,
+                        plugin: this.plugin.getName(),
+                    });
+                }
+                if (json.unmarkInspectedElement) {
+                    console.log("Unmarked element for inspection");
+                    $(".tota11y-inspected-element")
+                        .removeClass("tota11y-inspected-element");
+                }
+            });
+        }
+    }
+
+    /*
+     * Scrolls the page to an error annotation.
+     */
+    scrollToError(errorId) {
+        let error = this.errors.get(errorId);
+
+        if (error === undefined) {
+            return;
+        }
+
+        // Scroll to the error annoatation on the page smoothly
+        $('html, body').animate({
+            scrollTop: error.$el.offset().top - 80
+        }, 300);
+    }
+
+    /*
+     * Sends the highlight on/off instructions over the Port
+     * to allow the sidebar to highlight the trigger.
+     */
+    sendHighlightOn(errorId) {
+        // We provide no message as this will be sent very frequently
+        this.port.postMessage({
+            highlightOn: true,
+            errorId: errorId,
+            plugin: this.plugin.getName(),
+        });
+    }
+    sendHighlightOff(errorId) {
+        // We provide no message as this will be sent very frequently
+        this.port.postMessage({
+            highlightOff: true,
+            errorId: errorId,
+            plugin: this.plugin.getName(),
+        });
+    }
+
+    /*
+     * Applies highlighting to the page's annotations
+     */
+    doHighlightOn(errorId) {
+        let error = this.errors.get(errorId);
+
+        if (error === undefined) {
+            return;
+        }
+
+        if (error.$highlight) {
+            error.$highlight.remove();
+        }
+
+        error.$highlight = annotate.highlight(error.$el);
+    }
+
+    /*
+     * Removes highlighting from the page's annotations.
+     */
+    doHighlightOff(errorId) {
+        let error = this.errors.get(errorId);
+
+        if (error === undefined) {
+            return;
+        }
+
+        if (error.$highlight) {
+            error.$highlight.remove();
+            error.$highlight = null;
+        }
+    }
+
+    /*
+     * Syncs the state of a checkbox in the InfoPanel
+     * in the content script to the state of the checkbox in
+     * the sidebar of the corresponding panel, error/about and checkbox.
+     *
+     * We use this to make the contrast and layout preview checkboxes work from
+     * the sidebar.
+     */
+    doCheckboxSync(errorId, about, checkboxIndex, checked) {
+        let $parent;
+
+        if (about) {
+            $parent = this.about;
+        } else {
+            let error = this.errors.get(errorId);
+
+            if (error === undefined) {
+                return;
+            }
+            $parent = error.$desc;
+        }
+
+        let $checkboxes = $parent.find('input[type="checkbox"]');
+
+        let checkbox = $checkboxes.get(checkboxIndex);
+
+        if (checkbox === undefined) {
+            return;
+        }
+
+        let $checkbox = $(checkbox);
+        if ($checkbox.prop("checked") !== checked) {
+            // Sync the checkbox state
+            $checkbox.click();
+        }
+    }
+
+    markElementForInspection(errorId) {
+        let error = this.errors.get(errorId);
+
+        if (error === undefined) {
+            return;
+        }
+
+        $(".tota11y-inspected-element")
+            .removeClass("tota11y-inspected-element");
+        error.$el.addClass("tota11y-inspected-element");
+    }
+
+    elToString($el) {
+        if (typeof $el === "string") {
+            // already a string
+            return $el;
+        }
+        // Convert jQuery HTML object to HTML string
+        return $el.map(function() {
+            // `this` refers to the DOM element when function()
+            // is used but not => syntax
+            return this.outerHTML;
+        })
+        // retrieve the array
+        .get()
+        // convert into a single string
+        .join("");
     }
 }
 
-module.exports = InfoPanel;
+module.exports = {
+    panel: InfoPanel,
+    port: PORT_NAME,
+};

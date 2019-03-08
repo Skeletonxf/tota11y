@@ -1,0 +1,92 @@
+<div class="tota11y-info-about-title">
+    <a
+            href="https://www.w3.org/TR/WCAG21/#info-and-relationships"
+            target="_blank" class="tota11y-info-link">
+        <span class="tota11y-info-about-title-link">
+            WCAG &sect; 1.3.1 (Level A)
+        </span>
+    </a>
+</div>
+<p>
+    Forms and form elements used outside of forms need a programmatically
+    accessible label (also known as the accessible name) for assistive
+    technologies to identify their purpose and so that users of these
+    technologies (like screen readers or speech input navigation) can fill them
+    in correctly. For most elements the contained text or
+    a <code>label</code> element is the best way to provide this name. Labels
+    and text inside buttons are visible by default which will also
+    help sighted users to understand the purpose of the form elements.
+</p>
+<p>
+    In some situations it might not be appropriate to use
+    a <code>label</code> element but you should still ensure the information,
+    structure and relationships visually shown can be programmatically
+    determined by using other semantic markup such as ARIA.
+</p>
+<a class="tota11y-click-to-expand" aria-expanded="false" href="javascript:void(0)">
+    <div class="tota11y-expandable">
+        <p>
+            You should not use <code>p</code> elements to label inputs as they
+            have no association.
+        </p>
+<pre><code>&lt;p&gt;
+Name
+&lt;/p&gt;
+&lt;input id="my-input"&gt;&lt;/input&gt;</code></pre>
+        <p>
+            The </code>label</code> element will be read out by screen readers
+            when a user interacts with the input because they are
+            programmatically associated.
+        </p>
+<pre><code>&lt;label for="my-input"&gt;
+Name
+&lt;/label&gt;
+&lt;input id="my-input"&gt;&lt;/input&gt;</code></pre>
+        <p>
+            The <code>placeholder</code> attribute is not guaranteed to be read
+            by assistive technologies. It is better to include a proper label.
+        </p>
+<pre><code>&lt;input type="search" placeholder="search"&gt;&lt;/input&gt;</code></pre>
+        <p>
+            If a <label>label</label> element would not be appropriate due to
+            visual design the <code>aria-label</code> attribute can be used
+            instead to provide an accessible name to assistive tools without
+            affecting the visual presentation.
+        </p>
+<pre><code>&lt;input type="search" placeholder="search" aria-label="search"&gt;&lt;/input&gt;</code></pre>
+        <p>
+            ARIA takes priority over other ways of determining the accessible
+            name of an element so should be used with care to avoid the
+            accessible name being completely different to the visually
+            presented label/name.
+        </p>
+    </div>
+</a>
+<div class="tota11y-info-resources">
+    <p>
+        Resources
+    </p>
+    <ul>
+        <li>
+            <a
+                    href="https://www.w3.org/TR/WCAG21/#info-and-relationships"
+                    target="_blank" class="tota11y-info-link">
+                WCAG &sect; 1.3.1 (Level A)
+            </a>
+        </li>
+        <li>
+            <a
+                    href="https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships.html"
+                    target="_blank" class="tota11y-info-link">
+                Understanding Info and Relationships
+            </a>
+        </li>
+        <li>
+            <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA"
+                    target="_blank" class="tota11y-info-link">
+                ARIA
+            </a>
+        </li>
+    </ul>
+</div>

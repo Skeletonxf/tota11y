@@ -19,6 +19,16 @@
             font-size: 24px;
             font-weight: bold;
         }
+
+        input[type="image"] {
+            vertical-align: middle;
+        }
+
+        .fixed-size {
+            width: 200px;
+            height: 30px;
+            overflow: hidden;
+        }
     </style>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -60,11 +70,29 @@
 
             <p><a class="btn btn-primary btn-lg btn-success" href="#" role="button">Continue</a></p>
 
+            <p><a class="btn btn-primary btn-lg" href="#" role="button" aria-label="Learn More">Continue</a></p>
+
+            <p id="gravatarLabel">Jordan</p>
             <p>
                 <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" alt="jordan">
                 <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" alt="">
                 <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" role="presentation">
                 <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256">
+                |
+                <!-- Aria label instead of alt -->
+                <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" aria-label="jordan">
+                <!-- Aria labelled by instead of alt -->
+                <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" aria-labelledby="gravatarLabel">
+                |
+                <!-- Input images -->
+                <input type="image" width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256"></input>
+                <input type="image" width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" alt=""></input>
+                <input type="image" width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" alt="jordan"></input>
+                <input type="image" width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" role="presentation"></input>
+                <label>
+                    jordan
+                    <input type="image" width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256"></input>
+                </label>
             </p>
 
             <p>
@@ -170,7 +198,234 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Good: Table has header row -->
+                <table>
+                    <tr>
+                        <th>Header</th>
+                        <th>Header</th>
+                        <th>Header</th>
+                    </tr>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <caption>
+                        I have a proper layout of headers
+                    </caption>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <!-- Good: Table has header column -->
+                <table>
+                    <tr>
+                        <th>Header</th>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <th>Header</th>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <caption>
+                        I have a proper layout of headers
+                    </caption>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <!-- Good: Table has grid layout -->
+                <table>
+                    <tr>
+                        <td>Cell</td>
+                        <th>Header</th>
+                        <th>Header</th>
+                    </tr>
+                    <tr>
+                        <th>Header</th>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <th>Header</th>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <caption>
+                        I have a proper layout of headers
+                    </caption>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Bad: Table has incomplete header row -->
+                <table>
+                    <tr>
+                        <th>Header</th>
+                        <th>Header</th>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <caption>
+                        My headers aren't finished
+                    </caption>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <!-- Bad: Table has incomplete header column -->
+                <table>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <th>Header</th>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <caption>
+                        My headers aren't finished
+                    </caption>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <!-- Bad: Table has no headers -->
+                <table>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <caption>
+                        I'm tabulating data but have no headers
+                    </caption>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Good: Table has no headers -->
+                <table role="presentation">
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <!-- Bad: Table has headers -->
+                <table role="presentation">
+                    <tr>
+                        <th>Header</th>
+                        <th>Header</th>
+                        <th>Header</th>
+                    </tr>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <caption>
+                        I'm presentational but I have a caption and headers
+                    </caption>
+                </table>
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <p>Audio elements</p>
+                <div class="col-md-4">
+                    <!-- Audio element with no text alternatives at all -->
+                    <audio controls src="https://upload.wikimedia.org/wikipedia/commons/2/2e/En-us-Wikipedia.ogg"></audio>
+                </div>
+                <div class="col-md-4">
+                    <audio controls src="https://upload.wikimedia.org/wikipedia/commons/2/2e/En-us-Wikipedia.ogg">Wikipedia</audio>
+                </div>
+                <div class="col-md-4">
+                    <!-- Presentational element -->
+                    <audio controls role="presentation" src="https://upload.wikimedia.org/wikipedia/commons/2/2e/En-us-Wikipedia.ogg"></audio>
+                </div>
+                <div class="col-md-4">
+                    <!-- Autoplaying looped element -->
+                    <audio loop autoplay src="https://upload.wikimedia.org/wikipedia/commons/2/2e/En-us-Wikipedia.ogg"></audio>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <p>Object elements</p>
+                <div class="col-md-6">
+                    <object src="https://upload.wikimedia.org/wikipedia/commons/2/2e/En-us-Wikipedia.ogg"></object>
+                </div>
+                <div class="col-md-6">
+                    <object src="https://upload.wikimedia.org/wikipedia/commons/2/2e/En-us-Wikipedia.ogg">Wikipedia</object>
+                </div>
+            </div>
+        </div>
+
+        <video muted controls src="https://archive.org/download/dn2016-1109_vid/dn2016-1109_vid.ogv"></video>
+
+        <div class="container">
+            <h1>Some form</h1>
+            <form>
+                <input>
+                <select>
+                    <option>One</option>
+                    <option>Two</option>
+                    <option>Three</option>
+                </select>
+                <p>Progress:</p>
+                <progress max="100" value="70">
+                    <!-- 70% -->
+                </progress>
+                <label for="progress">Progress:</label>
+                <progress max="100" id="progress" value="70">
+                    70%
+                </progress>
+                <p>Fuel level:</p>
+                <meter min="0" max="100" low="33" high="66" optimum="80" value="50">
+                    <!-- at 50/100 -->
+                </meter>
+                <button type="button"></button>
+                <button type="submit">
+                    Submit
+                </button>
+            </form>
+            <meter min="0" max="100" low="33" high="66" optimum="80" value="50">
+                at 50/100
+            </meter>
+        </div>
+
         <hr>
+
+        <p class="fixed-size">
+            Lorem ipsum dolor sit amet...
+        </p>
 
         <footer>
             <p>&copy; Company 2014</p>

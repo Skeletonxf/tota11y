@@ -1,0 +1,18 @@
+<p>
+    Assistive technologies like screen readers will read the text contained
+    inside the {{tagName}} element. It is important to provide this text
+    and keep it up to date with the visual presentation of the element.
+</p>
+<p>
+    The simplest way to provide text to assistive technologies is by
+    including it inside the element like so:
+</p>
+{{#if type}}
+<pre><code>&lt;{{tagName}} type="{{type}}"&gt;
+    Descriptive text here...
+&lt;/{{tagName}}&gt;</code></pre>
+{{else}}
+<pre><code>&lt;{{tagName}}&gt;
+    Descriptive text here...
+&lt;/{{tagName}}&gt;</code></pre>
+{{/if}}

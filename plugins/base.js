@@ -2,14 +2,17 @@
  * Base class for plugins.
  *
  * This module defines methods to render and mount plugins to the toolbar.
- * Each plugin will define four methods:
+ * Each plugin will define six methods:
+ *     getName: name to use for messaging to communicate to sidebar
  *     getTitle: title to display in the toolbar
  *     getDescription: description to display in the toolbar
+ *     getAnnotate: gets the plugin's namespaced annotation module, if any
  *     run: code to run when the plugin is activated from the toolbar
  *     cleanup: code to run when the plugin is deactivated from the toolbar
  */
 
-let InfoPanel = require("./shared/info-panel");
+let infoPanel = require("./shared/info-panel");
+const InfoPanel = infoPanel.panel;
 
 require("./style.less");
 
@@ -19,12 +22,23 @@ class Plugin {
         this.$checkbox = null;
     }
 
+    // returns a unique identifier for this plugin with no spaces
+    // or any other invalid CSS identifier characters,
+    // ideally the directory name
+    getName() {
+        return getTitle().replace(" ", "-").toLowerCase();
+    }
+
     getTitle() {
         return "New plugin";
     }
 
     getDescription() {
         return "";
+    }
+
+    getAnnotate() {
+        return null;
     }
 
     /**
@@ -89,6 +103,9 @@ class Plugin {
      * Activate the plugin from the UI.
      */
     activate() {
+        if (browser) {
+            this.panel.delegate();
+        }
         this.run();
         this.panel.render();
     }
@@ -97,6 +114,7 @@ class Plugin {
      * Deactivate the plugin from the UI.
      */
     deactivate() {
+        console.log("Deactivating plugin");
         this.cleanup();
         this.panel.destroy();
 

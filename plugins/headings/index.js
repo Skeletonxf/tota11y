@@ -69,6 +69,10 @@ const ERRORS = {
 };
 
 class HeadingsPlugin extends Plugin {
+    getName() {
+        return "headings";
+    }
+
     getTitle() {
         return "Headings";
     }
@@ -78,6 +82,10 @@ class HeadingsPlugin extends Plugin {
             Highlights headings (&lt;h1&gt;, &lt;h2&gt;, etc) and
             order violations
         `;
+    }
+
+    getAnnotate() {
+        return annotate;
     }
 
     /**

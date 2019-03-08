@@ -1,0 +1,33 @@
+# Github pages deployment
+pages:
+  stage: deploy
+  script:
+  - echo 'Nothing to do...'
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+
+# Pushing repo to Github
+# Adapted from https://docs.gitlab.com/ce/ci/yaml/README.html
+before_script:
+  - echo "Setting up SSH for sync to github script"
+
+  ## Install ssh-agent if not already installed, it is required by Docker.
+  ## (change apt-get to yum if you use an RPM-based image)
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+
+  ## Run ssh-agent (inside the build environment)
+  - eval $(ssh-agent -s)
+
+  ## Create the SSH directory and give it the right permissions
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+
+  # Put github on known hosts list.
+  - 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
+
+sync:
+  # Run the git sync script.
+  script: bash sync.sh

@@ -1,0 +1,21 @@
+{
+  "description": "Tota11y prototype",
+  "manifest_version": 2,
+  "name": "Tota11y prototype",
+  "version": "1.0",
+
+  "permissions": ["tabs", "https://*/*", "http://*/*", "file://*/*", "activeTab", "storage"],
+
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+
+  "sidebar_action": {
+    "default_title": "Totally",
+    "default_panel": "sidebar/index.html"
+},
+
+  "devtools_page": "devtools/index.html"
+}

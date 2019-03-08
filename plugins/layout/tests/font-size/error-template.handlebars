@@ -1,0 +1,33 @@
+{{#if overflowX}}
+    {{#if overflowY}}
+        <p>
+            This element's text overflows horizontally and vertically when
+            enlarged and is likely partially hidden.
+        </p>
+    {{else}}
+        <p>
+            This element's text overflows horizontally when enlarged
+            and is likely partially hidden.
+        </p>
+    {{/if}}
+{{else}}
+    {{#if overflowY}}
+        <p>
+            This element's text overflows vertically when enlarged
+            and is likely partially hidden.
+        </p>
+    {{/if}}
+{{/if}}
+<p>
+    Users may modify the font size on webpages to help them read so it is
+    important to ensure all text is still legible when enlarged up to 200%.
+</p>
+<label>
+    Preview 200% font size:
+    <input class="preview-font-size" type="checkbox">
+</label>
+<p><a
+        href="https://www.w3.org/TR/WCAG21/#resize-text"
+        target="_blank" class="tota11y-info-link">
+    WCAG &sect; 1.4.4 (Level AA)
+</a></p>

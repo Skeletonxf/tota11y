@@ -1,0 +1,28 @@
+<p>
+    This <code>&lt;{{elementName}}&gt;</code> element has different visual text
+    from its programmaticly determined text. As speech input users navigate
+    by speaking the visual text of elements on the screen it is confusing
+    if the programmaticly determined text is different from the text shown
+    visually.
+</p>
+<p>
+    The programmaticly determined labelling text (accessible name) we found
+    for this element is: "<i>{{extractedText}}</i>"
+</p>
+<p>
+    The visual labelling text we found for this element
+    is: "<i>{{visibleText}}</i>"
+</p>
+<p>
+    <a
+            href="https://www.w3.org/TR/accname-1.1/#mapping_additional_nd_te"
+            target="_blank" class="tota11y-info-link">
+        The accessible name is computed according to the steps by the W3C.
+    </a>
+</p>
+<p>
+    In short the name is recursively built up with the element's <code>
+    aria-labelledby</code> taking priority, followed by <code>aria-label</code>
+    then other labelling from the markup such as a <code>title</code> attribute
+    or an HTML <code>&lt;label&gt;</code> element.
+</p>

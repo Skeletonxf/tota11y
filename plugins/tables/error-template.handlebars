@@ -1,0 +1,85 @@
+{{#if noHeadings}}
+    <p>
+        You can give this table headings with <code>th</code> like so
+    </p>
+    {{#if data.tableBodys}}
+        <pre><code>&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Header&lt;/th&gt;
+      &lt;th&gt;Header&lt;/th&gt;
+    &lt;tr/&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+...
+</code></pre>
+    {{else}}
+
+    <pre><code>&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th>Header&lt;/th&gt;
+    &lt;th>Header&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td>Cell&lt;/td&gt;
+    &lt;td>Cell&lt;/td&gt;
+...
+</code></pre>
+    {{/if}}
+
+    <p>Headings should be on the entire first column, row, or both</p>
+
+    <p>
+        If the table is purely presentational (not tabulating data) you can mark it like so:
+        <pre><code>&lt;table role="presentation"&gt;&lt;/table&gt;</code></pre>
+    </p>
+{{/if}}
+{{#if headInData}}
+    <p>
+        The first table body looks like a table head.
+        You can mark it as a head as <code>&lt;thead&gt;</code> instead of <code>&lt;tbody&gt;</code>
+    </p>
+{{/if}}
+{{#if tooManyHeads}}
+    <p>
+        Tables should have at most one &lt;thead&gt; This table has more than one.
+    </p>
+    <p>
+        You should move all the table rows (&lt;tr&gt;) into a single &lt;thead&gt; like so:
+    </p>
+
+    <pre><code>&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;First table header&lt;th/&gt;
+    &lt;tr/&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Second table header&lt;th/&gt;
+...
+</code></pre>
+{{/if}}
+{{#if presentationError}}
+    {{#if illegalCaption}}
+        <p>
+            Presentational tables should not have a caption (<code>&lt;caption&gt;</code>)
+        </p>
+    {{/if}}
+
+    {{#if illegalHeaders}}
+        <p>
+            Presentational tables should not have table headers (<code>&lt;th&gt;</code>) or heads (<code>&lt;thead&gt;</code>)
+        </p>
+    {{/if}}
+
+    <p>
+        If the table is not for presentation only you can remove the presentation
+        role like so:
+        <pre><code>&lt;table&gt;<del>role="presentation"</del>&lt;/table&gt;</code></pre>
+    </p>
+
+    <p>
+        Presentational tables are hidden from assistive technologies and
+        should only be marked as such when they are used for purposes other
+        than tabulating data such as controlling page layout.
+    </p>
+{{/if}}

@@ -6,6 +6,7 @@ let webpack = require("webpack");
 let autoprefixer = require("autoprefixer");
 
 let options = require("./utils/options");
+const FileManagerPlugin = require('filemanager-webpack-plugin');
 
 // PostCSS plugin to append !important to every CSS rule
 let veryimportant = postcss.plugin("veryimportant", function() {
@@ -22,55 +23,90 @@ let bannerTemplate = handlebars.compile(
 const plugins = [
     // Add a banner to our bundles with a version number, date, and
     // license info
-    new webpack.BannerPlugin(
-        bannerTemplate({
-            version: require("./package.json").version,
-            date: new Date().toISOString().slice(0, 10),
+    new webpack.BannerPlugin({
+          banner: bannerTemplate({
+              version: require("./package.json").version,
+              date: new Date().toISOString().slice(0, 10),
+          }),
+          entryOnly: true
         }),
-        {entryOnly: true}),
 
     // Make the JSX pragma function available everywhere without the need
     // to use "require"
     new webpack.ProvidePlugin({
-        [options.jsxPragma]: path.join(__dirname, "utils", "element"),
+        [options.pragma]: path.join(__dirname, "utils", "element"),
+    }),
+    // WebExtensions do not accept symlinking so copy
+    // everything built it into the web extension folder
+    new FileManagerPlugin({
+      // copy after building
+        onEnd: {
+            copy: [
+                {
+                    source: "./build/tota11y.js",
+                    destination: "./addon/build/",
+                },
+                {
+                    source: "./build/sidebar.js",
+                    destination: "./addon/build/",
+                },
+            ],
+        },
     }),
 ];
 
-if (process.env.NODE_ENV === "production") {
-    plugins.push(
-        // Suppress uglifyJS warnings from node_modules/
-        new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}})
-    )
-}
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: {
-        app: "./index.js",
+        "tota11y": "./index.js",
+        sidebar: "./addon/sidebar/index.js",
     },
+    mode: (process.env.NODE_ENV === "production") ? "production" : "development",
     output: {
         path: path.join(__dirname, "build"),
-        filename: "tota11y.min.js",
+        filename: "[name].min.js",
     },
     module: {
-        loaders: [
+        rules: [
             {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: "babel",
-                query: {
-                    jsxPragma: options.jsxPragma,
-                },
+              test: /\.js$/,
+              exclude: /node_modules/,
+              loader: 'babel-loader',
             },
-            { test: /\.handlebars$/, loader: "handlebars", },
             {
-                test: /\.less$/,
-                loader: "style!css!postcss!less",
+              test: /\.handlebars$/,
+              loader: "handlebars-loader",
+            },
+            {
+              test: /\.less$/,
+              use: [
+                "style-loader",
+                "css-loader",
+                {
+                  loader: "postcss-loader",
+                  options: {
+                    ident: "postcss",
+                    plugins: [
+                      veryimportant,
+                      autoprefixer({browsers: ["> 1%"]}),
+                    ],
+                  },
+                },
+                "less-loader",
+              ],
             },
         ],
     },
     plugins,
-    postcss: [
-        veryimportant,
-        autoprefixer({browsers: ["> 1%"]}),
-    ],
+    optimization: {
+        minimizer: [
+            // Suppress uglifyJS warnings from node_modules/
+            new UglifyJsPlugin({
+                uglifyOptions: {
+                    compress: false,
+                },
+            })
+        ]
+    }
 };

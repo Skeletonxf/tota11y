@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+    <title>tota11y testbed</title>
+    <style>
+.column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.column > * {
+    margin: 0.5rem 0;
+}
+
+main {
+    max-width: 20rem;
+    margin: auto;
+    text-align: center;
+    background-color: #ffffff80;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+body {
+    background-image: url("pixabay-stock-photo.jpg");
+    background-size: cover;
+}
+
+html {
+    height: 100vh;
+}
+
+input {
+    max-width: 10rem;
+}
+
+input[type="image"] {
+    border: 2px solid lightgrey;
+    padding: 0.2rem;
+    text-align: center;
+    border-radius: 5px;
+    background-color: #f7f7f7;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.label {
+    font-size: 1.5rem;
+}
+    </style>
+</head>
+<body>
+    <main>
+        <p class="title">Some Form</p>
+        <form class="column">
+            <div>
+                <input type="text" placeholder="Name"></input>
+            </div>
+            <div class="column">
+                <p class="label">Address</p>
+                <input type="text" placeholder="House Number"></input>
+                <input type="text" placeholder="Street"></input>
+                <input type="text" placeholder="Postcode"></input>
+            </div>
+            <div>
+                <input type="image" src="tick.svg"></input>
+            </div>
+        </form>
+    </main>
+</body>

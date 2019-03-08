@@ -46,6 +46,7 @@ module.exports = (namespace) => {
             .addClass("tota11y")    // tota11y base class for styling
             .addClass(ANNOTATION_CLASS)
             .addClass(className)
+            .addClass("tota11y-annotation")
             .css($el.position())
             .data({$el});
 
@@ -80,9 +81,8 @@ module.exports = (namespace) => {
         window.requestAnimationFrame(loop);
     })();
 
-    // Handle resizes by repositioning all annotations in bulk
-    $(window).resize(() => {
-        let $annotations = $("." + ANNOTATION_CLASS);
+    let reposition = (annotationClass) => {
+        let $annotations = $("." + annotationClass);
 
         // Record the position of each annotation's corresponding element to
         // batch measurements
@@ -97,7 +97,10 @@ module.exports = (namespace) => {
                 left: positions[i].left
             });
         });
-    });
+    };
+
+    // Handle resizes by repositioning all annotations in bulk
+    $(window).resize(() => reposition(ANNOTATION_CLASS));
 
     return {
         // Places a small label in the top left corner of a given jQuery
@@ -129,6 +132,13 @@ module.exports = (namespace) => {
                     errorEntry.show();
                 });
 
+                if (browser) {
+                    $innerHtml.hover(() => {
+                        errorEntry.highlightOn();
+                    }, () => {
+                        errorEntry.highlightOff();
+                    });
+                }
                 $innerHtml.hover(() => {
                     errorEntry.$trigger.addClass("trigger-highlight");
                 }, () => {
@@ -174,11 +184,17 @@ module.exports = (namespace) => {
         },
 
         hide() {
-            $(".tota11y.tota11y-label").hide();
+            $(`.tota11y.tota11y-label.${ANNOTATION_CLASS}`).hide();
         },
 
         show() {
-            $(".tota11y.tota11y-label").show();
+            $(`.tota11y.tota11y-label.${ANNOTATION_CLASS}`).show();
+        },
+
+        // Some plugins may alter the page and require us to reposition
+        // all annotations from all plugins
+        refreshAll() {
+            reposition("tota11y-annotation");
         },
 
         removeAll() {

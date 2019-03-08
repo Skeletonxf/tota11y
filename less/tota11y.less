@@ -50,3 +50,37 @@
     position: absolute;
     width: 1px;
 }
+
+.tota11y-sidebar {
+    position: static;
+
+    .tota11y-plugin {
+        &-description {
+            width: auto;
+        }
+
+        &-indicator {
+            margin: 0 10px;
+        }
+
+        &-switch {
+            padding: 9px 9px 9px 0;
+        }
+    }
+
+    .tota11y-help {
+        position: absolute;
+        right: 10px;
+        top: 5px;
+    }
+}
+
+.tota11y-sidebar.tota11y-toolbar {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.tota11y-disabled-toolbar {
+    pointer-events: none;
+    opacity: 0.5;
+}
