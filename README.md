@@ -28,7 +28,7 @@ All node package dependencies are for build time only. As the builds are committ
 
 ## Original notes
 
-The following sections are copied from tota11y's help page.
+The following sections are derived from tota11y's help page.
 
 ### Architecture Overview
 
@@ -57,7 +57,19 @@ Further elaboration on the addon architecture is in ARCHITECTURE.md.
 
 ### Testing
 
-FIXME
+You can run unit tests on totally (as a bookmarklet) with the following:
+
+```bash
+npm test
+```
+
+Or lint the source code with:
+
+```bash
+npm run lint
+```
+
+FIXME live testing the bookmarklet
 
 ## Special thanks
 

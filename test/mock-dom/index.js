@@ -39,6 +39,7 @@ exports.createDom = function(callback) {
             global.$ = window.jQuery;
             global.axs = window.axs;
             global.Node = window.Node;
+            global.browser = undefined; // test functionality as bookmarklet
 
             // Overwrite the default module loader.
             //
@@ -58,10 +59,12 @@ exports.createDom = function(callback) {
                     // Return this window's jQuery instance to plugins that
                     // require "jquery"
                     return window.jQuery;
-                } else if (!/(\.less|\.handlebars)$/.test(request)) {
+                } else if (/(\.handlebars)$/.test(request)) {
+                    // Stub the handlebars loader
+                    return () => () => "";
+                } else if (!/(\.less)$/.test(request)) {
                     // Defer to the original loader for everything else, with
-                    // the exception that we'll ignore webpack's less and
-                    // handlebars loaders
+                    // the exception that we'll ignore webpack's less loader
                     return originalLoader(request, parent, isMain);
                 }
             };

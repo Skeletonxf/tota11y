@@ -21,12 +21,10 @@ let bannerTemplate = handlebars.compile(
     fs.readFileSync("./templates/banner.handlebars", "utf-8"));
 
 const plugins = [
-    // Add a banner to our bundles with a version number, date, and
-    // license info
+    // Add a banner to our bundles with a version number and license info
     new webpack.BannerPlugin({
           banner: bannerTemplate({
               version: require("./package.json").version,
-              date: new Date().toISOString().slice(0, 10),
           }),
           entryOnly: true
         }),
@@ -37,7 +35,7 @@ const plugins = [
         [options.pragma]: path.join(__dirname, "utils", "element"),
     }),
     // WebExtensions do not accept symlinking so copy
-    // everything built it into the web extension folder
+    // everything built into the web extension folder
     new FileManagerPlugin({
       // copy after building
         onEnd: {

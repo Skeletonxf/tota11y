@@ -7,9 +7,7 @@
 var options = require("../utils/options");
 
 // Register all future "require"s with babel
-require("@babel/register")({
-    pragma: options.pragma,
-});
+require("@babel/register");
 
 // Store our custom JSX transpile target as a global
 global[options.pragma] = require("../utils/element.js");
