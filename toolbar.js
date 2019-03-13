@@ -11,6 +11,7 @@ let namedPlugins = allPlugins.map((p) => p.getName());
 let namedSettings = settings.map((p) => p.getName());
 
 const DISABLE_CSS = "tota11y-disabled-toolbar";
+const isBrowser = typeof browser !== 'undefined';
 
 /**
  * In a standalone script the toolbar is responsible for switching
@@ -102,7 +103,7 @@ class Toolbar {
         $el.append($toolbar);
         this.$el = $toolbar;
 
-        if (browser) {
+        if (isBrowser) {
             // Disable this toolbar as the sidebar will be controlling
             // the active plugins
 
@@ -124,7 +125,7 @@ class Toolbar {
      * over the browser.runtime API.
      */
     delegate() {
-        if (browser) {
+        if (isBrowser) {
             console.log("Opening toolbar port");
             let port = browser.runtime.connect({
                 name: PORT_NAME
@@ -215,7 +216,7 @@ class Toolbar {
  */
 class ToolbarController {
     constructor() {
-        if (browser) {
+        if (isBrowser) {
             this.activePlugins = new Set();
             this.activeSettings = new Set();
 

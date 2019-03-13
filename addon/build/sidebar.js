@@ -13116,6 +13116,7 @@ module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,"
 let infoPanel = __webpack_require__(/*! ./shared/info-panel */ "./plugins/shared/info-panel/index.js");
 
 const InfoPanel = infoPanel.panel;
+const isBrowser = typeof browser !== 'undefined';
 
 __webpack_require__(/*! ./style.less */ "./plugins/style.less");
 
@@ -13198,7 +13199,7 @@ class Plugin {
 
 
   activate() {
-    if (browser) {
+    if (isBrowser) {
       this.panel.delegate();
     }
 
@@ -15225,7 +15226,8 @@ __webpack_require__(/*! ./style.less */ "./plugins/shared/annotate/style.less");
 // and across.
 
 
-const MIN_HIGHLIGHT_SIZE = 25; // Polyfill fallback for IE < 10
+const MIN_HIGHLIGHT_SIZE = 25;
+const isBrowser = typeof browser !== 'undefined'; // Polyfill fallback for IE < 10
 
 window.requestAnimationFrame = window.requestAnimationFrame || function (callback) {
   window.setTimeout(callback, 16);
@@ -15325,7 +15327,7 @@ module.exports = namespace => {
           errorEntry.show();
         });
 
-        if (browser) {
+        if (isBrowser) {
           $innerHtml.hover(() => {
             errorEntry.highlightOn();
           }, () => {
@@ -15586,6 +15588,7 @@ const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
 const FIRST_ERROR_ID = 0;
 const PORT_NAME = infoPanel.port;
 const InfoPanel = infoPanel.panel;
+const isBrowser = typeof browser !== 'undefined';
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map(p => p.getName());
 
@@ -15617,7 +15620,7 @@ class InfoPanelController {
   constructor() {
     this.activePanels = new Set();
 
-    if (browser) {
+    if (isBrowser) {
       browser.runtime.onConnect.addListener(port => {
         if (port.name !== PORT_NAME) {
           return;
@@ -16173,7 +16176,8 @@ const FIRST_ERROR_ID = 0; // Automatically hide this InfoPanel if there is a bro
 // object (running as a WebExtension) and this is toggled on
 // We will want to toggle this auto hiding off for debugging.
 
-const WEBEXT_HIDE_IN_PAGE =  true && !!browser;
+const isBrowser = typeof browser !== 'undefined';
+const WEBEXT_HIDE_IN_PAGE =  true && isBrowser;
 
 class InfoPanel {
   constructor(plugin) {
@@ -16192,7 +16196,7 @@ class InfoPanel {
   setAbout($html) {
     this.about = $html;
 
-    if (browser && this.port) {
+    if (isBrowser && this.port) {
       this.port.postMessage({
         msg: "about",
         setAbout: this.elToString($html)
@@ -16207,7 +16211,7 @@ class InfoPanel {
   setSummary($html) {
     this.summary = $html;
 
-    if (browser && this.port) {
+    if (isBrowser && this.port) {
       this.port.postMessage({
         msg: "summary",
         setSummary: this.elToString($html)
@@ -16232,7 +16236,7 @@ class InfoPanel {
       this.$el.find(".tota11y-info-section.active").html($html);
     }
 
-    if (browser && this.port) {
+    if (isBrowser && this.port) {
       // We provide no message as this will be sent very frequently
       if (typeof $html === "string") {
         this.port.postMessage({
@@ -16263,7 +16267,7 @@ class InfoPanel {
     error.id = id;
     this.errors.set(id, error);
 
-    if (browser && this.port) {
+    if (isBrowser && this.port) {
       this.port.postMessage({
         msg: "error",
         addError: true,
@@ -16322,7 +16326,7 @@ class InfoPanel {
       e.stopPropagation();
       this.$el.addClass(HIDDEN_CLASS_NAME);
 
-      if (!browser) {
+      if (!isBrowser) {
         // (a11y) Bring the focus back to the plugin's checkbox
         this.plugin.$checkbox.focus();
       }
@@ -16374,7 +16378,7 @@ class InfoPanel {
   }
 
   render() {
-    if (browser && this.port) {
+    if (isBrowser && this.port) {
       this.port.postMessage({
         msg: "render",
         render: true
@@ -16471,7 +16475,7 @@ class InfoPanel {
         // access error entries in the info panel from labels.
 
         error.show = () => {
-          if (browser && this.port) {
+          if (isBrowser && this.port) {
             // Send the message to the Sidebar panel
             // to open the error.
             this.port.postMessage({
@@ -16502,7 +16506,7 @@ class InfoPanel {
 
         error.$trigger = $trigger;
 
-        if (browser) {
+        if (isBrowser) {
           // Also attatch functions to trigger a highlight
           // in the sidebar which we can call externally.
           error.highlightOn = () => this.sendHighlightOn(id);
@@ -16588,7 +16592,7 @@ class InfoPanel {
 
     $(".tota11y-inspected-element").removeClass("tota11y-inspected-element");
 
-    if (browser && this.port) {
+    if (isBrowser && this.port) {
       this.port.disconnect();
       this.port = null;
     }
@@ -16600,7 +16604,7 @@ class InfoPanel {
 
 
   delegate() {
-    if (browser) {
+    if (isBrowser) {
       console.log(`Opening info panel port ${this.plugin.getName()}`);
       let port = browser.runtime.connect({
         name: PORT_NAME
@@ -17292,6 +17296,7 @@ let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map(p => p.getName());
 let namedSettings = settings.map(p => p.getName());
 const DISABLE_CSS = "tota11y-disabled-toolbar";
+const isBrowser = typeof browser !== 'undefined';
 /**
  * In a standalone script the toolbar is responsible for switching
  * active plugins and drawing its UI.
@@ -17382,7 +17387,7 @@ class Toolbar {
     $el.append($toolbar);
     this.$el = $toolbar;
 
-    if (browser) {
+    if (isBrowser) {
       // Disable this toolbar as the sidebar will be controlling
       // the active plugins
       this.$el.addClass(DISABLE_CSS);
@@ -17402,7 +17407,7 @@ class Toolbar {
 
 
   delegate() {
-    if (browser) {
+    if (isBrowser) {
       console.log("Opening toolbar port");
       let port = browser.runtime.connect({
         name: PORT_NAME
@@ -17503,7 +17508,7 @@ class Toolbar {
 
 class ToolbarController {
   constructor() {
-    if (browser) {
+    if (isBrowser) {
       this.activePlugins = new Set();
       this.activeSettings = new Set();
       browser.runtime.onConnect.addListener(port => {

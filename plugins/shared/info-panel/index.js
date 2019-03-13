@@ -29,7 +29,8 @@ const FIRST_ERROR_ID = 0;
 // Automatically hide this InfoPanel if there is a browser
 // object (running as a WebExtension) and this is toggled on
 // We will want to toggle this auto hiding off for debugging.
-const WEBEXT_HIDE_IN_PAGE = true && !!browser;
+const isBrowser = typeof browser !== 'undefined';
+const WEBEXT_HIDE_IN_PAGE = true && isBrowser;
 
 class InfoPanel {
     constructor(plugin) {
@@ -49,7 +50,7 @@ class InfoPanel {
      */
     setAbout($html) {
         this.about = $html;
-        if (browser && this.port) {
+        if (isBrowser && this.port) {
             this.port.postMessage({
                 msg: "about",
                 setAbout: this.elToString($html),
@@ -62,7 +63,7 @@ class InfoPanel {
      */
     setSummary($html) {
         this.summary = $html;
-        if (browser && this.port) {
+        if (isBrowser && this.port) {
             this.port.postMessage({
                 msg: "summary",
                 setSummary: this.elToString($html),
@@ -85,7 +86,7 @@ class InfoPanel {
         } else {
             this.$el.find(".tota11y-info-section.active").html($html);
         }
-        if (browser && this.port) {
+        if (isBrowser && this.port) {
             // We provide no message as this will be sent very frequently
             if (typeof $html === "string") {
                 this.port.postMessage({
@@ -110,7 +111,7 @@ class InfoPanel {
         let id = this.error_ids++;
         error.id = id;
         this.errors.set(id, error);
-        if (browser && this.port) {
+        if (isBrowser && this.port) {
             this.port.postMessage({
                 msg: "error",
                 addError: true,
@@ -179,7 +180,7 @@ class InfoPanel {
             e.stopPropagation();
             this.$el.addClass(HIDDEN_CLASS_NAME);
 
-            if (!browser) {
+            if (!isBrowser) {
                 // (a11y) Bring the focus back to the plugin's checkbox
                 this.plugin.$checkbox.focus();
             }
@@ -246,7 +247,7 @@ class InfoPanel {
     }
 
     render() {
-        if (browser && this.port) {
+        if (isBrowser && this.port) {
             this.port.postMessage({
                 msg: "render",
                 render: true,
@@ -355,7 +356,7 @@ class InfoPanel {
                 // this error so it can be done externally. We'll use this to
                 // access error entries in the info panel from labels.
                 error.show = () => {
-                    if (browser && this.port) {
+                    if (isBrowser && this.port) {
                         // Send the message to the Sidebar panel
                         // to open the error.
                         this.port.postMessage({
@@ -388,7 +389,7 @@ class InfoPanel {
                 // We use this to highlight the trigger when hovering over
                 // inline error labels.
                 error.$trigger = $trigger;
-                if (browser) {
+                if (isBrowser) {
                     // Also attatch functions to trigger a highlight
                     // in the sidebar which we can call externally.
                     error.highlightOn = () => this.sendHighlightOn(id);
@@ -484,7 +485,7 @@ class InfoPanel {
         // Remove inspection marks
         $(".tota11y-inspected-element").removeClass("tota11y-inspected-element");
 
-        if (browser && this.port) {
+        if (isBrowser && this.port) {
             this.port.disconnect();
             this.port = null;
         }
@@ -495,7 +496,7 @@ class InfoPanel {
      * over the browser.runtime API.
      */
     delegate() {
-        if (browser) {
+        if (isBrowser) {
             console.log(`Opening info panel port ${this.plugin.getName()}`);
             let port = browser.runtime.connect({
                 name: PORT_NAME

@@ -13,6 +13,7 @@
 
 let infoPanel = require("./shared/info-panel");
 const InfoPanel = infoPanel.panel;
+const isBrowser = typeof browser !== 'undefined';
 
 require("./style.less");
 
@@ -103,7 +104,7 @@ class Plugin {
      * Activate the plugin from the UI.
      */
     activate() {
-        if (browser) {
+        if (isBrowser) {
             this.panel.delegate();
         }
         this.run();

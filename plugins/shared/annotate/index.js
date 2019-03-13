@@ -20,6 +20,8 @@ require("./style.less");
 // and across.
 const MIN_HIGHLIGHT_SIZE = 25;
 
+const isBrowser = typeof browser !== 'undefined';
+
 // Polyfill fallback for IE < 10
 window.requestAnimationFrame = window.requestAnimationFrame ||
     function(callback) {
@@ -132,7 +134,7 @@ module.exports = (namespace) => {
                     errorEntry.show();
                 });
 
-                if (browser) {
+                if (isBrowser) {
                     $innerHtml.hover(() => {
                         errorEntry.highlightOn();
                     }, () => {

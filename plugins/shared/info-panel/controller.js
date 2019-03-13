@@ -36,6 +36,7 @@ const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
 const FIRST_ERROR_ID = 0;
 const PORT_NAME = infoPanel.port;
 const InfoPanel = infoPanel.panel;
+const isBrowser = typeof browser !== 'undefined';
 
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map((p) => p.getName());
@@ -69,7 +70,7 @@ backgroundPort.onMessage.addListener((json) => {
 class InfoPanelController {
     constructor() {
         this.activePanels = new Set();
-        if (browser) {
+        if (isBrowser) {
             browser.runtime.onConnect.addListener((port) => {
                 if (port.name !== PORT_NAME) {
                     return;
