@@ -14811,6 +14811,17 @@ class LinkTextPlugin extends Plugin {
       if ($context[0]) {
         let _alts = {};
         extractedTextInContext = axs.properties.findTextAlternatives($context[0], _alts);
+      } else {
+        // try to get context from a parent div instead
+        $context = $el.closest("div");
+
+        if ($context[0]) {
+          let _alts = {};
+          extractedTextInContext = axs.properties.findTextAlternatives($context[0], _alts);
+        } else {
+          // no context found
+          $context = $el;
+        }
       }
 
       if (!this.isDescriptiveText(extractedTextInContext)) {
