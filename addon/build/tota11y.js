@@ -12317,7 +12317,7 @@ module.exports = g;
 var Handlebars = __webpack_require__(/*! ../../node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
 function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#label-in-name\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 2.5.3 (Level A)\n        </span>\n    </a>\n</div>\n<p>\n    Users that navigate by speech commands and / or text to speech will\n    have a better experience if the visual text that labels an element (not\n    just the <code>&lt;label&gt;</code> element) is the same as, or contained\n    in the programmatic label of the element. This programmatic label (also\n    known as the accessible name) includes text that is not presented visually\n    such as ARIA. Preferably the programmatic label should be the same as the\n    visual label or should start with the visual label.\n</p>\n<blockquote>\n    <a class=\"tota11y-click-to-expand\" aria-expanded=\"false\" href=\"javascript:void(0)\">\n        <p class=\"tota11y-expandable\">\n    Speech input users can navigate by speaking the visible text labels of\n    menus, links and buttons that appear on the screen. It’s confusing to\n    speech input users when they say a visible text label they see, but the\n    speech input does not work because the accessible name that is enabled as\n    a speech input command does not match the visible label.\n\n    In addition, when the accessible name is different from the visible label,\n    it essentially becomes an unknown hidden command for speech input users\n    that can be accidentally activated without the user knowing what has\n    happened.\n\n    Text-to-speech users will also have a better experience if the text they\n    hear matches the text they see on the screen.\n\n    This issue is even more important for speech input and text-to-speech users\n    who also have cognitive challenges. It’s an extra cognitive load for a\n    speech input user to remember and say a speech command that is different\n    from the visible label they see on a control. It’s also an extra cognitive\n    load for a text-to-speech user to absorb and understand speech output that\n    does not match the visible label.\n        <cite>\n            W3C\n        </cite>\n        </p>\n    </a>\n</blockquote>\n<p>\n    <a href=\"https://www.w3.org/WAI/WCAG21/Understanding/label-in-name.html\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        Further information from the Web Content Accessibility Guidelines\n    </a>\n</p>\n";
+    return "<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#label-in-name\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 2.5.3 (Level A)\n        </span>\n    </a>\n</div>\n<p>\n    Users that navigate by speech commands and / or text to speech will\n    have a better experience if the visual text that labels an element (not\n    just the <code>&lt;label&gt;</code> element) is the same as, or contained\n    in the programmatic label of the element. This programmatic label (also\n    known as the accessible name) includes text that is not presented visually\n    such as ARIA. Preferably the programmatic label should be the same as the\n    visual label or should start with the visual label.\n</p>\n<blockquote>\n    <a class=\"tota11y-click-to-expand\" aria-expanded=\"false\" href=\"javascript:void(0)\">\n        <p class=\"tota11y-expandable\">\n    Speech input users can navigate by speaking the visible text labels of\n    menus, links and buttons that appear on the screen. It’s confusing to\n    speech input users when they say a visible text label they see, but the\n    speech input does not work because the accessible name that is enabled as\n    a speech input command does not match the visible label.\n\n    In addition, when the accessible name is different from the visible label,\n    it essentially becomes an unknown hidden command for speech input users\n    that can be accidentally activated without the user knowing what has\n    happened.\n\n    Text-to-speech users will also have a better experience if the text they\n    hear matches the text they see on the screen.\n\n    This issue is even more important for speech input and text-to-speech users\n    who also have cognitive challenges. It’s an extra cognitive load for a\n    speech input user to remember and say a speech command that is different\n    from the visible label they see on a control. It’s also an extra cognitive\n    load for a text-to-speech user to absorb and understand speech output that\n    does not match the visible label.\n        <cite>\n            W3C\n        </cite>\n        </p>\n    </a>\n</blockquote>\n<p>\n    <a href=\"https://www.w3.org/WAI/WCAG21/Understanding/label-in-name.html\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        Understanding \"label in name\"\n    </a>\n</p>\n";
 },"useData":true});
 
 /***/ }),
@@ -12612,7 +12612,7 @@ if(false) {}
 var Handlebars = __webpack_require__(/*! ../../node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
 function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div>\n<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#text-alternatives\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.1.1 (Level A)\n        </span>\n    </a>\n</div>\n<p>\n    Visual and audio information is not accessible to all users. Text\n    alternatives to audiovisual information can provide blind, deaf, hard of\n    hearing, and other users with access to the same information.\n</p>\n<p>\n    The Web Content Accessibility Guidelines list this criteria at the lowest\n    level of conformance and as first in the guidelines.\n    Providing alt text on all images is a good starting place.\n</p>\n</div>\n";
+    return "<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#text-alternatives\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.1.1 (Level A)\n        </span>\n    </a>\n</div>\n<p>\n    Visual and audio information is not accessible to all users. Text\n    alternatives to audiovisual information can provide blind, deaf, hard of\n    hearing, and other users with access to the same information.\n</p>\n<p>\n    The Web Content Accessibility Guidelines list this criteria at the lowest\n    level of conformance and as first in the guidelines.\n    Providing alt text on all images is a good starting place.\n</p>\n<p>\n    <a\n            href=\"https://www.w3.org/WAI/WCAG21/Understanding/non-text-content.html\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        Understanding non text content\n    </a>\n</p>\n";
 },"useData":true});
 
 /***/ }),
@@ -13358,6 +13358,21 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./plugins/document/about.handlebars":
+/*!*******************************************!*\
+  !*** ./plugins/document/about.handlebars ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ../../node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<p>\n    Meta information in HTML documents that are not visually seen on a page\n    can still be important for navigation, favicons and page titles are shown\n    in tabs to assist browsing, and page languages should be specified\n    so screen readers know what language to read text in.\n</p>\n<blockquote>\n    <p>\n        For multilingual sites targeting Conformance Level A, the Working\n        Group [WCAG authors] strongly encourages developers to follow <a\n            href=\"https://www.w3.org/TR/WCAG21/#language-of-parts\"\n            target=\"_blank\"\n            class=\"tota11y-info-link\">Success\n        Criterion 3.1.2\n        </a> as well even though that is a Level AA Success Criterion.\n        <cite>\n            W3C\n        </cite>\n    </p>\n</blockquote>\n<p>\n    This tool does not audit for specifying the language on every part of a\n    multilingual webpage which changes language as in\n    WCAG &sect; 3.1.2 (Level AA).\n</p>\n<div class=\"tota11y-info-resources\">\n    <p>\n        Resources\n    </p>\n    <ul>\n        <li>\n            <a\n                    href=\"https://www.w3.org/TR/WCAG21/#page-titled\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                WCAG &sect; 2.4.2 (Level A)\n            </a>\n        </li>\n        <li>\n            <a\n                    href=\"https://www.w3.org/TR/WCAG21/#language-of-page\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                WCAG &sect; 3.1.1 (Level A)\n            </a>\n        </li>\n        <li>\n            <a\n                    href=\"https://www.w3.org/TR/WCAG21/#language-of-parts\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                WCAG &sect; 3.1.2 (Level AA)\n            </a>\n        </li>\n        <li>\n            <a\n                    href=\"https://www.w3.org/International/questions/qa-html-language-declarations\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                Declaring the language of the page\n            </a>\n        </li>\n    </ul>\n</div>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/document/index.js":
 /*!***********************************!*\
   !*** ./plugins/document/index.js ***!
@@ -13377,6 +13392,8 @@ let summaryTemplate = __webpack_require__(/*! ./summary-template.handlebars */ "
 let noLangErrorTemplate = __webpack_require__(/*! ./no-lang-error-template.handlebars */ "./plugins/document/no-lang-error-template.handlebars");
 
 let noPageTitleErrorTemplate = __webpack_require__(/*! ./no-page-title-error-template.handlebars */ "./plugins/document/no-page-title-error-template.handlebars");
+
+let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/document/about.handlebars");
 
 class DocumentPlugin extends Plugin {
   getName() {
@@ -13404,6 +13421,7 @@ class DocumentPlugin extends Plugin {
       language: $("html").attr("lang"),
       title: document.title
     }));
+    this.about($(aboutTemplate()));
   }
 
   cleanup() {}
@@ -13729,6 +13747,21 @@ module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,"
 
 /***/ }),
 
+/***/ "./plugins/headings/about.handlebars":
+/*!*******************************************!*\
+  !*** ./plugins/headings/about.handlebars ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ../../node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#info-and-relationships\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.3.1 (Level A)\n        </span>\n    </a>\n</div>\n<p>\n    Headings mark webpages with semantic information which not only orders\n    content into logical sections but also allows users of assistive tools\n    to jump through content.\n</p>\n<p>\n    This tool cannot identify if elements such as styled p tags are used\n    instead of headings (in which case they should be changed to headings of\n    the appropriate level) but can detect when headings are used incorrectly\n    such as the first heading not being <codde>h1</code> or nonconsecutive\n    heading numbers.\n</p>\n<p>\n    <a\n            href=\"https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships.html\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        Understanding Info and Relationships\n    </a>\n</p>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/headings/index.js":
 /*!***********************************!*\
   !*** ./plugins/headings/index.js ***!
@@ -13746,6 +13779,8 @@ let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("headings");
 
 let outlineItemTemplate = __webpack_require__(/*! ./outline-item.handlebars */ "./plugins/headings/outline-item.handlebars");
+
+let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/headings/about.handlebars");
 
 __webpack_require__(/*! ./style.less */ "./plugins/headings/style.less");
 
@@ -13889,6 +13924,8 @@ class HeadingsPlugin extends Plugin {
       }, $items);
       this.summary($outline);
     }
+
+    this.about($(aboutTemplate()));
   }
 
   cleanup() {
@@ -14599,6 +14636,21 @@ module.exports = TextSpacingLayoutTest;
 
 /***/ }),
 
+/***/ "./plugins/link-text/about.handlebars":
+/*!********************************************!*\
+  !*** ./plugins/link-text/about.handlebars ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ../../node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<p>\n    Screen readers can pull all links out of a page and present them\n    in a single list but this loses all context information so the links must be\n    understandable from their link text alone for this type of navigation.\n</p>\n<p>\n    Even when users navigate through content sequentially any context which\n    depends on visual presentation will be lost to a screen reader so it is\n    preferable to provide link text that makes links understandable with no\n    context, or at least with immediately surrounding context such as a parent\n    <code>&lt;p&gt;</code> element.\n</p>\n<p><a\n        href=\"https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-in-context.html\"\n        target=\"_blank\" class=\"tota11y-info-link\">\n    Understanding link purpose in context\n</a></p>\n<p><a\n        href=\"https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-link-only.html\"\n        target=\"_blank\" class=\"tota11y-info-link\">\n    Understanding link purpose with no context\n</a></p>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/link-text/in-context-error-template.handlebars":
 /*!****************************************************************!*\
   !*** ./plugins/link-text/in-context-error-template.handlebars ***!
@@ -14638,6 +14690,8 @@ let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"
 let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("link-text");
+
+let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/link-text/about.handlebars");
 
 let inContextErrorTemplate = __webpack_require__(/*! ./in-context-error-template.handlebars */ "./plugins/link-text/in-context-error-template.handlebars");
 
@@ -14779,6 +14833,7 @@ class LinkTextPlugin extends Plugin {
         }
       }
     });
+    this.about($(aboutTemplate()));
   }
 
   cleanup() {
@@ -14810,6 +14865,21 @@ module.exports = (Handlebars["default"] || Handlebars).template({"1":function(co
     + "</i>\" is unclear without context and may be\n    confusing to screen readers. Consider rearranging the <code>\n    &lt;a&gt;&lt;/a&gt;</code> tags or including special screen reader text\n    such as <code>aria-label=\"detailed description\"</code> or <code>\n    aria-labelledby=\"labeling element id\"</code> in the <code>\n    &lt;a&gt;</code> element to provide more context.\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.linkedImage : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "</p>\n<p>\n    Screen readers can pull all links out of a page and present them\n    in a single list but this loses all context information so the links must be\n    understandable from their link text alone for this type of navigation.\n</p>\n<p><a\n        href=\"https://www.w3.org/TR/WCAG21/#link-purpose-link-only\"\n        target=\"_blank\" class=\"tota11y-info-link\">\n    WCAG &sect; 2.4.9 (Level AAA)\n</a></p>\n";
+},"useData":true});
+
+/***/ }),
+
+/***/ "./plugins/navigation/about.handlebars":
+/*!*********************************************!*\
+  !*** ./plugins/navigation/about.handlebars ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ../../node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#audio-control\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.4.2 (Level A)\n        </span>\n    </a>\n</div>\n<p>\n    Screen readers enable users to interact with websites through speech\n    output, however this becomes difficult if the webpage is already playing\n    audio. The recommended approach is to design an action that starts playing\n    sound rather an action to stop sound that plays automatically.\n</p>\n<p>\n    Note: <a\n        href=\"https://hacks.mozilla.org/2019/02/firefox-66-to-block-automatically-playing-audible-video-and-audio/\"\n        target=\"_blank\"\n        class=\"tota11y-info-link\">Firefox 66+ blocks autoplay by default\n    </a>, as might some assistive tools\n</p>\n<p><a\n        href=\"https://www.w3.org/WAI/WCAG21/Understanding/audio-control.html\"\n        target=\"_blank\" class=\"tota11y-info-link\">\n    Understanding audio control\n</a></p>\n";
 },"useData":true});
 
 /***/ }),
@@ -14860,6 +14930,8 @@ let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/a
 
 let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/navigation/error-template.handlebars");
 
+let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/navigation/about.handlebars");
+
 class NavigationPlugin extends Plugin {
   getName() {
     return "navigation";
@@ -14898,6 +14970,7 @@ class NavigationPlugin extends Plugin {
     }).each((i, el) => {
       this.reportError($(el));
     });
+    this.about($(aboutTemplate()));
   }
 
   cleanup() {

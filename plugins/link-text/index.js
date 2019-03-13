@@ -7,6 +7,7 @@ let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("link-text");
 
+let aboutTemplate = require("./about.handlebars");
 let inContextErrorTemplate = require("./in-context-error-template.handlebars");
 let linkOnlyErrorTemplate = require("./link-only-error-template.handlebars");
 
@@ -164,6 +165,8 @@ class LinkTextPlugin extends Plugin {
                 }
             }
         });
+
+        this.about($(aboutTemplate()));
     }
 
     cleanup() {

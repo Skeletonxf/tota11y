@@ -8,6 +8,7 @@ let Plugin = require("../base");
 let summaryTemplate = require("./summary-template.handlebars");
 let noLangErrorTemplate = require("./no-lang-error-template.handlebars");
 let noPageTitleErrorTemplate = require("./no-page-title-error-template.handlebars");
+let aboutTemplate = require("./about.handlebars");
 
 class DocumentPlugin extends Plugin {
     getName() {
@@ -36,6 +37,8 @@ class DocumentPlugin extends Plugin {
             language: $("html").attr("lang"),
             title: document.title,
         }));
+
+        this.about($(aboutTemplate()));
     }
 
     cleanup() {

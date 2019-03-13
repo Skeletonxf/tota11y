@@ -7,6 +7,7 @@ let Plugin = require("../base");
 let annotate = require("../shared/annotate")("headings");
 
 let outlineItemTemplate = require("./outline-item.handlebars");
+let aboutTemplate = require("./about.handlebars");
 require("./style.less");
 
 const ERRORS = {
@@ -169,6 +170,8 @@ class HeadingsPlugin extends Plugin {
 
             this.summary($outline);
         }
+
+        this.about($(aboutTemplate()));
     }
 
     cleanup() {

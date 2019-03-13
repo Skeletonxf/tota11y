@@ -3,6 +3,7 @@ let Plugin = require("../base");
 let annotate = require("../shared/annotate")("navigation");
 
 let errorTemplate = require("./error-template.handlebars");
+let aboutTemplate = require("./about.handlebars");
 
 class NavigationPlugin extends Plugin {
     getName() {
@@ -48,6 +49,8 @@ class NavigationPlugin extends Plugin {
         .each((i, el) => {
             this.reportError($(el));
         });
+
+        this.about($(aboutTemplate()));
     }
 
     cleanup() {
