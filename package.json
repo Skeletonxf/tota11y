@@ -40,7 +40,7 @@
     "build": "npm run prod && npm run dev",
     "prod": "NODE_ENV=production webpack --config webpack.config.babel.js",
     "dev": "webpack --config webpack.config.babel.js -d --devtool hidden --output-filename=[name].js",
-    "lint": "eslint index.js plugins test utils",
+    "lint": "eslint index.js plugins test utils settings toolbar.js",
     "test": "mocha --require test/babel-hook test/*.js",
     "live-test": "webpack-dev-server --config webpack.config.babel.js --hot --inline"
   },
