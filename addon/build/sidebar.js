@@ -183,7 +183,6 @@ $("body").css({
 
 function updateSidebar(data, updateType) {
   if (insertingLock.locked()) {
-    console.log("Already inserting tota11y");
     return;
   }
 
@@ -198,10 +197,7 @@ function updateSidebar(data, updateType) {
     // Always update to stay in the active tab as long as
     // the active tab is in the same window.
     triggerUpdate =  true && activeTabId !== data.tabId && windowId === data.windowId;
-    console.log(`Updating if active tab different ${triggerUpdate}`); // Update the cache of the active tab and window ids
-
-    activeTabId = data.tabId;
-    activeTabWindowId = data.windowId;
+    console.log(`Updating if active tab different ${triggerUpdate}`);
   }
 
   if (updateType === 'new-page') {
@@ -212,14 +208,17 @@ function updateSidebar(data, updateType) {
     && windowId === data.tab.windowId // ignore incomplete loading
     && data.changeInfo.status === "complete";
     console.log(`Updating if new page loaded in active tab ${triggerUpdate}`);
-  }
+  } // Update the cache of the active tab and window ids
+
+
+  activeTabId = data.tabId;
+  activeTabWindowId = data.windowId;
 
   if (!triggerUpdate) {
     return;
   }
 
   if (insertingLock.locked()) {
-    console.log("Already inserting tota11y");
     return;
   }
 
@@ -250,7 +249,6 @@ function updateSidebar(data, updateType) {
       }
     }).then(() => {
       console.log(`Inserting tota11y into the page ${tab.url}`);
-      console.log(`Setting lock on tab id ${tab.id}`);
       insertingLock.lock(); // will throw error if already locked
 
       return browser.tabs.executeScript(tab.id, {
@@ -259,12 +257,10 @@ function updateSidebar(data, updateType) {
         currentTabId = tab.id;
       }).then(() => {
         insertingLock.unlock();
-        console.log("Freed lock");
       }).catch(() => {
         // catch errors relating to executing the script
         // but not errors thrown deliberately in prior checks
         insertingLock.unlock();
-        console.log("Error inserting, freed lock");
       });
     }); // allow any errors thrown deliberately in prior checks to propagate
 
@@ -293,6 +289,7 @@ browser.tabs.onActivated.addListener(activeInfo => {
 browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   updateSidebar({
     tabId: tabId,
+    windowId: tab.windowId,
     changeInfo: changeInfo,
     tab: tab
   }, "new-page");
@@ -306,10 +303,15 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 browser.windows.onFocusChanged.addListener(newWindowId => {
   if (windowId === newWindowId) {
-    console.log(`Switching to window ${windowId}`);
-    updateSidebar({
-      windowId: newWindowId
-    }, "new-window");
+    browser.tabs.query({
+      windowId: windowId,
+      active: true
+    }).then(tabs => {
+      updateSidebar({
+        tabId: tabs[0].id,
+        windowId: newWindowId
+      }, "new-window");
+    }).catch(propagateError("Querying active tab for window focus switch"));
   }
 });
 /*
@@ -321,10 +323,15 @@ browser.windows.getCurrent({
   populate: true
 }).then(windowInfo => {
   windowId = windowInfo.id;
-  console.log(`Sidebar window id: ${windowId}`);
-  updateSidebar({
-    windowId: windowId
-  }, "first-load");
+  browser.tabs.query({
+    windowId: windowId,
+    active: true
+  }).then(tabs => {
+    updateSidebar({
+      tabId: tabs[0].id,
+      windowId: windowId
+    }, "first-load");
+  }).catch(propagateError("Querying active tab for window focus switch"));
 });
 
 /***/ }),
