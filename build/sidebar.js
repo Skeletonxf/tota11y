@@ -163,6 +163,7 @@ let toolbarController = new ToolbarController();
 toolbarController.appendTo($("body"));
 let infoPanelController = new InfoPanelController();
 let activeTabId = -1;
+let activeTabWindowId = -1;
 let currentTabId = -1;
 let insertingLock = new Lock();
 
@@ -188,9 +189,8 @@ function updateSidebar(data, updateType) {
 
   let triggerUpdate = false;
 
-  if (updateType === "first-load") {
-    // Always update if just loaded.
-    console.log("Just loaded, going to update sidebar");
+  if (updateType === "first-load" || updateType === "new-window") {
+    // Always update if just loaded or switched window focus
     triggerUpdate = true;
   }
 
@@ -198,16 +198,17 @@ function updateSidebar(data, updateType) {
     // Always update to stay in the active tab as long as
     // the active tab is in the same window.
     triggerUpdate =  true && activeTabId !== data.tabId && windowId === data.windowId;
-    console.log(`Updating if active tab different ${triggerUpdate}`); // Update the cache of the active tab id
+    console.log(`Updating if active tab different ${triggerUpdate}`); // Update the cache of the active tab and window ids
 
     activeTabId = data.tabId;
+    activeTabWindowId = data.windowId;
   }
 
   if (updateType === 'new-page') {
     // Update if a new page is loaded into the active tab
     // (ie F5).
-    triggerUpdate =  true // ignore loading of non active tabs
-    && activeTabId === data.tabId // make sure this is the tab for our sidebar window
+    triggerUpdate =  true // ignore loading of non active tabs unless switching windows
+    && (activeTabId === data.tabId || activeTabWindowId !== data.tab.windowId) // make sure this is the tab for our sidebar window
     && windowId === data.tab.windowId // ignore incomplete loading
     && data.changeInfo.status === "complete";
     console.log(`Updating if new page loaded in active tab ${triggerUpdate}`);
@@ -300,6 +301,18 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 });
 /*
+ * Update content when we switch window focus.
+ */
+
+browser.windows.onFocusChanged.addListener(newWindowId => {
+  if (windowId === newWindowId) {
+    console.log(`Switching to window ${windowId}`);
+    updateSidebar({
+      windowId: newWindowId
+    }, "new-window");
+  }
+});
+/*
  * When the sidebar loads, get the ID of its window,
  * and update its content.
  */
@@ -308,7 +321,10 @@ browser.windows.getCurrent({
   populate: true
 }).then(windowInfo => {
   windowId = windowInfo.id;
-  updateSidebar({}, "first-load");
+  console.log(`Sidebar window id: ${windowId}`);
+  updateSidebar({
+    windowId: windowId
+  }, "first-load");
 });
 
 /***/ }),
