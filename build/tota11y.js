@@ -14025,6 +14025,21 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./plugins/landmarks/about.handlebars":
+/*!********************************************!*\
+  !*** ./plugins/landmarks/about.handlebars ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ../../node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<p>\n    ARIA stands for Accessible Rich Internet Applications. ARIA is a set\n    of attributes that can supplement the normal semantics of HTML elements\n    and pass rich information to assistive technologies.\n</p>\n<p>\n    ARIA landmarks can add semantic information to existing HTML elements\n    such as <code>&lt;div role=\"search\"&gt;</code> to provide richer navigation\n    to assistive technologies and machines, though HTML5 elements which\n    have this semantic information by default should be prefered when they\n    exist. Landmarks enable users of assistive tools to skip to relevant\n    content\n</p>\n<p><strong>\n    This plugin only visualises ARIA landmarks and does not report errors.\n</strong></p>\n<p>\n    Some advice on ARIA landmarks suggests using HTML5 semantic elements and\n    redundantly specifying their role to support older browsers and assistive\n    technologies. However the ARIA standard was completed by the WC3 in 2014\n    and <a\n            href=\"https://caniuse.com/#search=article\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        the HTML5 semantic elements are widely supported apart from IE\n    </a>.\n</p>\n<div class=\"tota11y-info-resources\">\n    <p>\n        Resources\n    </p>\n    <ul>\n        <li>\n            <a\n                    href=\"https://www.w3.org/TR/aria-in-html/#firstrule\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                Using ARIA\n            </a>\n        </li>\n        <li>\n            <a\n                    href=\"https://developer.mozilla.org/en-US/docs/Web/HTML/Element#Content_sectioning\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                HTML5 Semantic Sectioning Elements\n            </a>\n        </li>\n        <li>\n            <a\n                    href=\"https://a11yproject.com/posts/aria-landmark-roles/\"\n                    target=\"_blank\" class=\"tota11y-info-link\">\n                Mapping between ARIA Landmark roles &amp; HTML5 elements\n            </a>\n        </li>\n    </ul>\n</div>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/landmarks/index.js":
 /*!************************************!*\
   !*** ./plugins/landmarks/index.js ***!
@@ -14040,6 +14055,8 @@ let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"
 let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("landmarks");
+
+let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/landmarks/about.handlebars");
 
 class LandmarksPlugin extends Plugin {
   getName() {
@@ -14059,9 +14076,24 @@ class LandmarksPlugin extends Plugin {
   }
 
   run() {
+    let seen = new Set();
     $("[role]:not(.tota11y-toolbar,.tota11y-plugin)").each(function () {
       annotate.label($(this), $(this).attr("role"));
+      seen.add(this);
     });
+    $(`aside:not(.tota11y-toolbar,.tota11y-plugin),
+            footer:not(.tota11y-toolbar,.tota11y-plugin),
+            form:not(.tota11y-toolbar,.tota11y-plugin),
+            header:not(.tota11y-toolbar,.tota11y-plugin),
+            main:not(.tota11y-toolbar,.tota11y-plugin),
+            nav:not(.tota11y-toolbar,.tota11y-plugin),
+            section:not(.tota11y-toolbar,.tota11y-plugin)`).each(function () {
+      if (!seen.has(this)) {
+        // don't label HTML5 sectioning element if element has a role
+        annotate.label($(this), `&lt;${$(this).prop("tagName").toLowerCase()}&gt;`);
+      }
+    });
+    this.about($(aboutTemplate()));
   }
 
   cleanup() {
