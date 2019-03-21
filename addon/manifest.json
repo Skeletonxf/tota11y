@@ -1,10 +1,17 @@
 {
-  "description": "Tota11y prototype",
+  "name": "Tota11y Automated Accessibility Scanner",
+  "description": "free accessibility auditing/testing tool",
   "manifest_version": 2,
-  "name": "Tota11y prototype",
   "version": "1.0",
 
-  "permissions": ["tabs", "https://*/*", "http://*/*", "file://*/*", "activeTab", "storage"],
+  "permissions": [
+    "tabs",
+    "https://*/*",
+    "http://*/*",
+    "file://*/*",
+    "activeTab",
+    "storage"
+  ],
 
   "background": {
     "scripts": [
@@ -13,9 +20,10 @@
   },
 
   "sidebar_action": {
-    "default_title": "Totally",
-    "default_panel": "sidebar/index.html"
-},
+    "default_title": "Totally Automated A11y Scanner",
+    "default_panel": "sidebar/index.html",
+    "default_icon": "icons/logo.svg"
+  },
 
   "devtools_page": "devtools/index.html"
 }
