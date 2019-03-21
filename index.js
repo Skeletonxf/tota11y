@@ -23,5 +23,4 @@ $(function() {
 
     // TODO: Make this customizable
     bar.appendTo($("body"));
-    console.log("Tota11y started");
 });

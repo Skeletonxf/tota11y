@@ -30,12 +30,10 @@ browser.runtime.onConnect.addListener((port) => {
     if (port.name.startsWith("devtools-")) {
         // Extract the tabId from the port name suffix
         let tabId = parseInt(port.name.slice("devtools-".length));
-        console.log(`Opened dev tools on tab: ${tabId}`);
 
         openDevTools.set(tabId, port);
         notifyActiveDevTools();
         port.onDisconnect.addListener((port) => {
-            console.log(`Closed dev tools on tab: ${tabId}`);
             openDevTools.delete(tabId);
             notifyActiveDevTools();
         });
@@ -53,7 +51,6 @@ browser.runtime.onConnect.addListener((port) => {
                 console.log(`Background received msg: ${json.msg}, ${json}`);
             }
             if (json.inspectMarkedElement) {
-                console.log("Checking for open dev tools in active tab");
                 browser.tabs.query({
                     active: true,
                     currentWindow: true,
@@ -66,7 +63,6 @@ browser.runtime.onConnect.addListener((port) => {
                         });
                         return;
                     }
-                    console.log("Found open dev tools in active tab");
                     // Forward on inspect instructions to only the
                     // dev tools for the active tab, using
                     // the Port that is already open

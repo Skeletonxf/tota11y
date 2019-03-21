@@ -27,7 +27,6 @@ port.onMessage.addListener((json) => {
         console.log(`Devtools page ${browser.devtools.inspectedWindow.tabId} received msg: ${json.msg}, ${json}`);
     }
     if (json.inspectMarkedElement) {
-        console.log("Opening marked element in dev tools inspector");
         doInspectMarkedElement();
         port.postMessage({
             msg: "Opened dev tools inspector",

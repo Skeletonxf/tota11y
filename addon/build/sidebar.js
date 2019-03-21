@@ -13252,7 +13252,6 @@ class Plugin {
 
 
   deactivate() {
-    console.log("Deactivating plugin");
     this.cleanup();
     this.panel.destroy();
     this.$checkbox.prop("checked", false);
@@ -15802,13 +15801,11 @@ class ActivePanel {
       }
 
       if (json.setAbout) {
-        //console.log(`About ${json.setAbout}`);
         // convert HTML string back to jQuery HTML object
         this.about = $(json.setAbout);
       }
 
       if (json.setSummary) {
-        //console.log(`Summary ${json.setSummary}`);
         // convert HTML string back to jQuery HTML object
         this.summary = $(json.setSummary);
       }
@@ -15933,7 +15930,6 @@ class ActivePanel {
     }
 
     if (this.summary) {
-      console.log("Adding summary tab");
       $activeTab = this._addTab("Summary", this.summary);
     } // Wire annotation toggling to go through Port as the annotate
     // module is managed by the InfoPanel running in the content script.
@@ -17409,8 +17405,7 @@ class Toolbar {
 
 
   handlePluginClick(plugin) {
-    console.log(`Handling plugin click ${plugin}`); // If the plugin was already selected, toggle it off
-
+    // If the plugin was already selected, toggle it off
     if (this.activePlugins.has(plugin)) {
       plugin.deactivate();
       this.activePlugins.delete(plugin);
@@ -17430,8 +17425,6 @@ class Toolbar {
       // skip
       return;
     }
-
-    console.log(`Handling setting click ${setting}`);
 
     if (this.activeSettings.has(setting)) {
       setting.deactivate();
@@ -17499,7 +17492,6 @@ class Toolbar {
 
   delegate() {
     if (isBrowser) {
-      console.log("Opening toolbar port");
       let port = browser.runtime.connect({
         name: PORT_NAME
       });
@@ -17578,9 +17570,8 @@ class Toolbar {
         for (let plugin of this.activePlugins) {
           // toggle all plugins off
           this.handlePluginClick(plugin);
-        }
+        } // Remove this toobar element
 
-        console.log("Destroying toolbar"); // Remove this toobar element
 
         if (this.$el) {
           this.$el.remove();

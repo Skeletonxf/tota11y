@@ -115,7 +115,6 @@ class Plugin {
      * Deactivate the plugin from the UI.
      */
     deactivate() {
-        console.log("Deactivating plugin");
         this.cleanup();
         this.panel.destroy();
 

@@ -130,7 +130,6 @@ $(function () {
   bar.delegate(); // TODO: Make this customizable
 
   bar.appendTo($("body"));
-  console.log("Tota11y started");
 });
 
 /***/ }),
@@ -13050,7 +13049,6 @@ class Plugin {
 
 
   deactivate() {
-    console.log("Deactivating plugin");
     this.cleanup();
     this.panel.destroy();
     this.$checkbox.prop("checked", false);
@@ -16630,8 +16628,7 @@ class Toolbar {
 
 
   handlePluginClick(plugin) {
-    console.log(`Handling plugin click ${plugin}`); // If the plugin was already selected, toggle it off
-
+    // If the plugin was already selected, toggle it off
     if (this.activePlugins.has(plugin)) {
       plugin.deactivate();
       this.activePlugins.delete(plugin);
@@ -16651,8 +16648,6 @@ class Toolbar {
       // skip
       return;
     }
-
-    console.log(`Handling setting click ${setting}`);
 
     if (this.activeSettings.has(setting)) {
       setting.deactivate();
@@ -16720,7 +16715,6 @@ class Toolbar {
 
   delegate() {
     if (isBrowser) {
-      console.log("Opening toolbar port");
       let port = browser.runtime.connect({
         name: PORT_NAME
       });
@@ -16799,9 +16793,8 @@ class Toolbar {
         for (let plugin of this.activePlugins) {
           // toggle all plugins off
           this.handlePluginClick(plugin);
-        }
+        } // Remove this toobar element
 
-        console.log("Destroying toolbar"); // Remove this toobar element
 
         if (this.$el) {
           this.$el.remove();

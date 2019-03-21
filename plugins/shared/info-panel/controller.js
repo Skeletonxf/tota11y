@@ -178,12 +178,10 @@ class ActivePanel {
                 console.log(`ActivePanel received msg: ${json.msg}, ${json}`);
             }
             if (json.setAbout) {
-                //console.log(`About ${json.setAbout}`);
                 // convert HTML string back to jQuery HTML object
                 this.about = $(json.setAbout);
             }
             if (json.setSummary) {
-                //console.log(`Summary ${json.setSummary}`);
                 // convert HTML string back to jQuery HTML object
                 this.summary = $(json.setSummary);
             }
@@ -303,7 +301,6 @@ class ActivePanel {
         }
 
         if (this.summary) {
-            console.log("Adding summary tab");
             $activeTab = this._addTab("Summary", this.summary);
         }
 

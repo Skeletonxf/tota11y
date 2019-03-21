@@ -32,7 +32,6 @@ class Toolbar {
      * the appropriate plugins on and off.
      */
     handlePluginClick(plugin) {
-        console.log(`Handling plugin click ${plugin}`);
         // If the plugin was already selected, toggle it off
         if (this.activePlugins.has(plugin)) {
             plugin.deactivate();
@@ -52,7 +51,6 @@ class Toolbar {
             // skip
             return;
         }
-        console.log(`Handling setting click ${setting}`);
         if (this.activeSettings.has(setting)) {
             setting.deactivate();
             this.activeSettings.delete(setting);
@@ -126,7 +124,6 @@ class Toolbar {
      */
     delegate() {
         if (isBrowser) {
-            console.log("Opening toolbar port");
             let port = browser.runtime.connect({
                 name: PORT_NAME
             });
@@ -199,7 +196,6 @@ class Toolbar {
                     // toggle all plugins off
                     this.handlePluginClick(plugin);
                 }
-                console.log("Destroying toolbar");
                 // Remove this toobar element
                 if (this.$el) {
                     this.$el.remove();
