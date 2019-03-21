@@ -1,3 +1,11 @@
+# Changelog
+
+## 1.0.0
+
+First release as WebExtension to AMO
+
+# Tota11y changelog
+
 ## 0.1.6
 
 * Ignore hidden links for LinkText plugin ([30dc0fd](https://github.com/Khan/tota11y/commit/30dc0fd))
