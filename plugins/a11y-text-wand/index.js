@@ -5,6 +5,8 @@
 let $ = require("jquery");
 let Plugin = require("../base");
 
+let aboutTemplate = require("./about.handlebars");
+
 require("./style.less");
 
 class A11yTextWand extends Plugin {
@@ -21,9 +23,9 @@ class A11yTextWand extends Plugin {
     }
 
     run() {
-        // HACK(jordan): We provide a fake summary to force the info panel to
-        //     render.
-        this.summary(" ");
+        // We provide a temporary about to force the info panel to
+        // render.
+        this.about($(aboutTemplate()));
         this.panel.render();
 
         let panel = this.panel;

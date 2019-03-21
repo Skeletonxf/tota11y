@@ -12520,6 +12520,21 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./plugins/a11y-text-wand/about.handlebars":
+/*!*************************************************!*\
+  !*** ./plugins/a11y-text-wand/about.handlebars ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ../../node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<p>Screen reader wand</p>\n<p>Hover over elements to view them as a screen reader would</p>\n<p>\n    Note that real screen readers have a concept of focus (much like keyboard\n    focus) which users might navigate with by jumping to different headings,\n    links or input fields rather than in a mouse like way.\n</p>\n<p>\n    Firefox can enable Caret Browsing with F7 which is closer to the type of\n    navigation a screen reader might use.\n</p>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/a11y-text-wand/index.js":
 /*!*****************************************!*\
   !*** ./plugins/a11y-text-wand/index.js ***!
@@ -12533,6 +12548,8 @@ if(false) {}
 let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 
 let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
+
+let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/a11y-text-wand/about.handlebars");
 
 __webpack_require__(/*! ./style.less */ "./plugins/a11y-text-wand/style.less");
 
@@ -12550,9 +12567,9 @@ class A11yTextWand extends Plugin {
   }
 
   run() {
-    // HACK(jordan): We provide a fake summary to force the info panel to
-    //     render.
-    this.summary(" ");
+    // We provide a temporary about to force the info panel to
+    // render.
+    this.about($(aboutTemplate()));
     this.panel.render();
     let panel = this.panel;
     $(document).on("mousemove.wand", function (e) {
@@ -16135,6 +16152,21 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./plugins/tables/about.handlebars":
+/*!*****************************************!*\
+  !*** ./plugins/tables/about.handlebars ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Handlebars = __webpack_require__(/*! ../../node_modules/handlebars/runtime.js */ "./node_modules/handlebars/runtime.js");
+function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div class=\"tota11y-info-about-title\">\n    <a\n            href=\"https://www.w3.org/TR/WCAG21/#info-and-relationships\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        <span class=\"tota11y-info-about-title-link\">\n            WCAG &sect; 1.3.1 (Level A)\n        </span>\n    </a>\n</div>\n<p>\n    Tables can provide a lot of information and relationships from\n    correctly used markup that might otherwise only be available from visual\n    presentation.\n</p>\n<p>\n    This tool checks for a number of table markup errors and ommisions such as\n    providing headers for each cell which allows screen readers to vocalise the\n    headers of each cell as a user navigates through a table.\n</p>\n<p>\n    <a\n            href=\"https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships.html\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        Understanding Info and Relationships\n    </a>\n</p>\n<p>\n    <a\n            href=\"https://www.w3.org/WAI/WCAG21/Techniques/html/H51\"\n            target=\"_blank\" class=\"tota11y-info-link\">\n        Using table markup to present tabular information\n    </a>\n</p>\n";
+},"useData":true});
+
+/***/ }),
+
 /***/ "./plugins/tables/error-template.handlebars":
 /*!**************************************************!*\
   !*** ./plugins/tables/error-template.handlebars ***!
@@ -16197,6 +16229,8 @@ let Plugin = __webpack_require__(/*! ../base */ "./plugins/base.js");
 let annotate = __webpack_require__(/*! ../shared/annotate */ "./plugins/shared/annotate/index.js")("tables");
 
 let audit = __webpack_require__(/*! ../shared/audit */ "./plugins/shared/audit.js");
+
+let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/tables/about.handlebars");
 
 let errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ "./plugins/tables/error-template.handlebars");
 
@@ -16323,6 +16357,8 @@ class TablesPlugin extends Plugin {
         }
       });
     }
+
+    this.about($(aboutTemplate()));
   }
 
   cleanup() {

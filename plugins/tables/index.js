@@ -7,6 +7,7 @@ let Plugin = require("../base");
 let annotate = require("../shared/annotate")("tables");
 let audit = require("../shared/audit");
 
+let aboutTemplate = require("./about.handlebars");
 let errorTemplate = require("./error-template.handlebars");
 
 class TablesPlugin extends Plugin {
@@ -152,6 +153,8 @@ class TablesPlugin extends Plugin {
                 }
             });
         }
+
+        this.about($(aboutTemplate()));
     }
 
     cleanup() {
