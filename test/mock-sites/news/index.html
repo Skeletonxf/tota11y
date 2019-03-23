@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <style>
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: yellow;
+}
+
+main {
+    max-width: 60rem;
+    margin: auto;
+    margin-top: 0;
+    padding: 1rem;
+    flex: 1;
+    background-color: #ffff80;
+}
+
+nav {
+    background-color: #e2e706;
+    padding: 1rem;
+    font-size: 120%;
+}
+
+nav ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+nav ul li {
+    display: block;
+    margin: 0.5rem;
+}
+
+nav ul li a {
+    color: #798600;
+}
+
+figure, img {
+    max-width: 100%;
+}
+
+figure {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+img {
+    object-fit: contain;
+    max-height: 300px;
+    padding: 0.5rem;
+}
+
+footer {
+    padding: 1rem;
+    background-color: #e2e706;
+}
+
+h1 {
+    font-size: 100%;
+}
+
+h2 {
+    font-size: 120%;
+}
+
+h3 {
+    font-size: 140%;
+}
+
+h4 {
+    font-size: 160%;
+}
+
+.videoContainer {
+    display: flex;
+    justify-content: center;
+}
+    </style>
+</head>
+<body>
+    <nav>
+        <h2>Some News Site</h2>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">World</a></li>
+            <li><a href="#">Politics</a></li>
+            <li><a href="#">Science</a></li>
+            <li><a href="#">Tech</a></li>
+            <li><a href="#">Business</a></li>
+            <li><a href="#">Sport</a></li>
+        </ul>
+    </nav>
+    <main>
+        <article>
+            <h4>Something Something</h4>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <figure>
+                <img src="cheeta.JPG" aria-describedby="figureDescription" alt="cheeta"></img>
+                <figcaption id="figureDescription">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </figcaption>
+            </figure>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <div class="videoContainer">
+                <!--
+                    Author: Christopher Michel
+                    Date: 28 September 2013
+                    License: CC BY 2.0 https://creativecommons.org/licenses/by/2.0/deed.en
+                -->
+                <video controls autoplay loop src="https://upload.wikimedia.org/wikipedia/commons/0/00/Leopard_%28Panthera_pardus%29_with_its_kill_in_Masai_Mara.webm"></video>
+            </div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum!</p>
+        </article>
+    </main>
+    <footer>
+        <h3>&#169; Some News Site</h3>
+    </footer>
+</body>
