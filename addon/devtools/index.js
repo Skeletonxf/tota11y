@@ -2,12 +2,27 @@
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/devtools.inspectedWindow/eval#Helpers
 const inspectMarkedElement = "inspect(document.querySelector('.tota11y-inspected-element'))"
 
+// No imports for this file because Webpack doesn't build it
+const DEBUGGING = false;
+let debug = null;
+if (DEBUGGING) {
+    debug = {
+        log: (message) => console.log(message),
+        error: (message) => console.error(message),
+    }
+} else {
+    debug = {
+        log: (message) => null,
+        error: (message) => null,
+    }
+}
+
 function doInspectMarkedElement() {
     browser.devtools.inspectedWindow.eval(inspectMarkedElement)
     .then((results) => {
         // element 2 of the array holds any errors
         if (results[1]) {
-            console.log(
+            debug.log(
                 `Error opening dev tools inspector: ${JSON.stringify(results[1])}`
             );
         }
@@ -24,7 +39,7 @@ let port = browser.runtime.connect({
 // and immediately reply to the background script to signal success
 port.onMessage.addListener((json) => {
     if (json.msg) {
-        console.log(`Devtools page ${browser.devtools.inspectedWindow.tabId} received msg: ${json.msg}, ${json}`);
+        debug.log(`Devtools page ${browser.devtools.inspectedWindow.tabId} received msg: ${json.msg}, ${json}`);
     }
     if (json.inspectMarkedElement) {
         doInspectMarkedElement();

@@ -4,6 +4,8 @@ let plugins = require("./plugins");
 let settings = require("./settings");
 let logoTemplate = require("./templates/logo.handlebars");
 
+const debug = require("./utils/debugging.js");
+
 const PORT_NAME = "toolbar";
 const INIT_PORT = "init";
 
@@ -151,13 +153,13 @@ class Toolbar {
         port.postMessage({msg: `Opened port for window ${this.windowId}`});
 
         port.onMessage.addListener((json) => {
-            console.log(`Toolbar received msg: ${json.msg}, ${json}`);
+            debug.log(`Toolbar received msg: ${json.msg}, ${json}`);
             if (json.pluginClick) {
                 // retrieve the plugin instance from the name
                 let index = namedPlugins.findIndex(p => p === json.pluginClick);
                 if (index !== -1) {
                     let plugin = allPlugins[index];
-                    console.log(`Plugin click sent through port ${plugin.getName()}`);
+                    debug.log(`Plugin click sent through port ${plugin.getName()}`);
                     let doToggle = (
                         this.activePlugins.has(plugin) !==
                         json.active
@@ -175,7 +177,7 @@ class Toolbar {
                 let index = namedSettings.findIndex(s => s === json.settingClick);
                 if (index !== -1) {
                     let setting = settings[index];
-                    console.log(`Setting click sent through port ${setting.getName()}`);
+                    debug.log(`Setting click sent through port ${setting.getName()}`);
                     let doToggle = (
                         this.activeSettings.has(setting) !==
                         json.active
@@ -189,8 +191,7 @@ class Toolbar {
                 }
             }
             if (json.sync) {
-                console.log("Syncing active plugins and settings");
-                console.log(`Switching to: ${JSON.stringify(json.activePlugins)}`);
+                debug.log("Syncing active plugins and settings");
                 let activePlugins = new Set(json.activePlugins);
                 for (let plugin of allPlugins) {
                     let activate = activePlugins.has(plugin.getName());
@@ -242,12 +243,12 @@ class ToolbarController {
                     return;
                 }
                 if (this.port) {
-                    console.log("Disconnecting old Port");
+                    debug.log("Disconnecting old Port");
                     this.port.disconnect();
                 }
                 this.port = port;
                 this.port.onMessage.addListener((json) => {
-                    console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
+                    debug.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
                 });
                 this.syncActive();
             })

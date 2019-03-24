@@ -17,6 +17,8 @@
 let $ = require("jquery");
 let annotate = require("../annotate")("info-panel");
 
+const debug = require("../../../utils/debugging.js");
+
 let errorTemplate = require("./error.handlebars");
 require("./style.less");
 
@@ -497,7 +499,7 @@ class InfoPanel {
      */
     delegate(windowId) {
         if (isBrowser) {
-            console.log(`Opening info panel port ${this.plugin.getName()}`);
+            debug.log(`Opening info panel port ${this.plugin.getName()}`);
             let port = browser.runtime.connect({
                 name: `${PORT_NAME}${windowId}`
             });
@@ -510,7 +512,7 @@ class InfoPanel {
 
             port.onMessage.addListener((json) => {
                 if (json.msg) {
-                    console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
+                    debug.log(`InfoPanel received msg: ${json.msg}, ${json}`);
                 }
 
                 // Now handle plugin specific responses
@@ -553,7 +555,7 @@ class InfoPanel {
                     });
                 }
                 if (json.unmarkInspectedElement) {
-                    console.log("Unmarked element for inspection");
+                    debug.log("Unmarked element for inspection");
                     $(".tota11y-inspected-element")
                         .removeClass("tota11y-inspected-element");
                 }

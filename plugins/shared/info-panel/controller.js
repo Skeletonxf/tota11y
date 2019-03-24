@@ -28,6 +28,8 @@ let $ = require("jquery");
 let plugins = require("../../../plugins");
 let infoPanel = require("./index.js");
 
+const debug = require("../../../utils/debugging.js");
+
 let errorTemplate = require("./error.handlebars");
 require("./style.less");
 
@@ -74,14 +76,13 @@ class InfoPanelController {
         if (isBrowser) {
             browser.runtime.onConnect.addListener((port) => {
                 if (port.name !== `${PORT_NAME}${this.windowId}`) {
-                    console.log(`Ignoring ${port.name}, window id: ${this.windowId}`);
                     return;
                 }
                 this.port = port;
 
                 port.onMessage.addListener((json) => {
                     if (json.msg) {
-                        console.log(`InfoPanel controller received msg: ${json.msg}, ${json}`);
+                        debug.log(`InfoPanel controller received msg: ${json.msg}, ${json}`);
                     }
                     if (json.registerActive) {
                         // retrieve the plugin instance from the name
@@ -113,7 +114,7 @@ class InfoPanelController {
                     let activePanels = new Set();
                     for (let ap of this.activePanels) {
                         if (ap.port === port) {
-                            console.log(
+                            debug.log(
                                 `Discarding active panel ${ap.plugin.getName()}`
                             );
                             // discard the active panel with the port
@@ -141,7 +142,7 @@ class InfoPanelController {
         let _this = this;
         backgroundPort.onMessage.addListener(function receiver(json) {
             if (json.msg) {
-                console.log(`Info panel controller received msg: ${json.msg}, ${json}`);
+                debug.log(`Info panel controller received msg: ${json.msg}, ${json}`);
             }
             if (json.inspectedElement || json.failed) {
                 backgroundPort.onMessage.removeListener(receiver);
@@ -182,7 +183,7 @@ class ActivePanel {
 
         port.onMessage.addListener((json) => {
             if (json.msg) {
-                console.log(`ActivePanel received msg: ${json.msg}, ${json}`);
+                debug.log(`ActivePanel received msg: ${json.msg}, ${json}`);
             }
             if (json.setAbout) {
                 // convert HTML string back to jQuery HTML object

@@ -11,6 +11,21 @@ let openDevTools = new Map();
 
 let backgroundPort;
 
+// No imports for this file because Webpack doesn't build it
+const DEBUGGING = false;
+let debug = null;
+if (DEBUGGING) {
+    debug = {
+        log: (message) => console.log(message),
+        error: (message) => console.error(message),
+    }
+} else {
+    debug = {
+        log: (message) => null,
+        error: (message) => null,
+    }
+}
+
 function notifyActiveDevTools() {
     if (backgroundPort) {
         browser.tabs.query({
@@ -48,7 +63,7 @@ browser.runtime.onConnect.addListener((port) => {
 
         port.onMessage.addListener((json) => {
             if (json.msg) {
-                console.log(`Background received msg: ${json.msg}, ${json}`);
+                debug.log(`Background received msg: ${json.msg}, ${json}`);
             }
             if (json.inspectMarkedElement) {
                 browser.tabs.query({
@@ -71,7 +86,7 @@ browser.runtime.onConnect.addListener((port) => {
                     let devToolsPort = openDevTools.get(activeTab.id);
                     devToolsPort.onMessage.addListener(function receiver(json) {
                         if (json.msg) {
-                            console.log(`Background received msg: ${json.msg}, ${json}`);
+                            debug.log(`Background received msg: ${json.msg}, ${json}`);
                         }
                         if (json.inspectedElement) {
                             devToolsPort.onMessage.removeListener(receiver);

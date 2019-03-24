@@ -15455,6 +15455,8 @@ let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"
 
 let annotate = __webpack_require__(/*! ../annotate */ "./plugins/shared/annotate/index.js")("info-panel");
 
+const debug = __webpack_require__(/*! ../../../utils/debugging.js */ "./utils/debugging.js");
+
 let errorTemplate = __webpack_require__(/*! ./error.handlebars */ "./plugins/shared/info-panel/error.handlebars");
 
 __webpack_require__(/*! ./style.less */ "./plugins/shared/info-panel/style.less");
@@ -15896,7 +15898,7 @@ class InfoPanel {
 
   delegate(windowId) {
     if (isBrowser) {
-      console.log(`Opening info panel port ${this.plugin.getName()}`);
+      debug.log(`Opening info panel port ${this.plugin.getName()}`);
       let port = browser.runtime.connect({
         name: `${PORT_NAME}${windowId}`
       });
@@ -15908,7 +15910,7 @@ class InfoPanel {
       });
       port.onMessage.addListener(json => {
         if (json.msg) {
-          console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
+          debug.log(`InfoPanel received msg: ${json.msg}, ${json}`);
         } // Now handle plugin specific responses
 
 
@@ -15954,7 +15956,7 @@ class InfoPanel {
         }
 
         if (json.unmarkInspectedElement) {
-          console.log("Unmarked element for inspection");
+          debug.log("Unmarked element for inspection");
           $(".tota11y-inspected-element").removeClass("tota11y-inspected-element");
         }
       });
@@ -16601,6 +16603,8 @@ let settings = __webpack_require__(/*! ./settings */ "./settings/index.js");
 
 let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./templates/logo.handlebars");
 
+const debug = __webpack_require__(/*! ./utils/debugging.js */ "./utils/debugging.js");
+
 const PORT_NAME = "toolbar";
 const INIT_PORT = "init";
 let allPlugins = [...plugins.default, ...plugins.experimental];
@@ -16745,7 +16749,7 @@ class Toolbar {
       msg: `Opened port for window ${this.windowId}`
     });
     port.onMessage.addListener(json => {
-      console.log(`Toolbar received msg: ${json.msg}, ${json}`);
+      debug.log(`Toolbar received msg: ${json.msg}, ${json}`);
 
       if (json.pluginClick) {
         // retrieve the plugin instance from the name
@@ -16753,7 +16757,7 @@ class Toolbar {
 
         if (index !== -1) {
           let plugin = allPlugins[index];
-          console.log(`Plugin click sent through port ${plugin.getName()}`);
+          debug.log(`Plugin click sent through port ${plugin.getName()}`);
           let doToggle = this.activePlugins.has(plugin) !== json.active;
 
           if (doToggle) {
@@ -16771,7 +16775,7 @@ class Toolbar {
 
         if (index !== -1) {
           let setting = settings[index];
-          console.log(`Setting click sent through port ${setting.getName()}`);
+          debug.log(`Setting click sent through port ${setting.getName()}`);
           let doToggle = this.activeSettings.has(setting) !== json.active;
 
           if (doToggle) {
@@ -16784,8 +16788,7 @@ class Toolbar {
       }
 
       if (json.sync) {
-        console.log("Syncing active plugins and settings");
-        console.log(`Switching to: ${JSON.stringify(json.activePlugins)}`);
+        debug.log("Syncing active plugins and settings");
         let activePlugins = new Set(json.activePlugins);
 
         for (let plugin of allPlugins) {
@@ -16845,13 +16848,13 @@ class ToolbarController {
         }
 
         if (this.port) {
-          console.log("Disconnecting old Port");
+          debug.log("Disconnecting old Port");
           this.port.disconnect();
         }
 
         this.port = port;
         this.port.onMessage.addListener(json => {
-          console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
+          debug.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
         });
         this.syncActive();
       });
@@ -17013,6 +17016,36 @@ module.exports = {
   controller: ToolbarController
 };
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./utils/element */ "./utils/element.js")))
+
+/***/ }),
+
+/***/ "./utils/debugging.js":
+/*!****************************!*\
+  !*** ./utils/debugging.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+const DEBUGGING = false;
+/*
+ * A console logging wrapper that can be turned on and off easily.
+ *
+ * Note: files not built by Webpack can't access this flag and need
+ * to be configured seperately. This affects the devtools and background
+ * javascripts.
+ */
+
+if (DEBUGGING) {
+  module.exports = {
+    log: message => console.log(message),
+    error: message => console.error(message)
+  };
+} else {
+  module.exports = {
+    log: message => null,
+    error: message => null
+  };
+}
 
 /***/ }),
 

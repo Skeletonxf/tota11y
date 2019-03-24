@@ -158,8 +158,6 @@ const INIT_PORT = "init";
 
 const debug = __webpack_require__(/*! ../../utils/debugging.js */ "./utils/debugging.js");
 
-const DEBUGGING = false; // FIXME
-
 let propagateError = errors.propagateError;
 let windowId; // We only need 1 of each controller for n content scripts
 // and info panels
@@ -173,7 +171,6 @@ let infoPanelController = new InfoPanelController();
  */
 
 let activeTabId = -1;
-let activeTabWindowId = -1;
 let currentTabId = -1;
 let insertingLock = new Lock();
 
@@ -207,7 +204,7 @@ function updateSidebar(data, updateType) {
     // Always update to stay in the active tab as long as
     // the active tab is in the same window.
     triggerUpdate =  true && activeTabId !== data.tabId && windowId === data.windowId;
-    console.log(`Updating if active tab different ${triggerUpdate}`);
+    debug.log(`Updating if active tab different ${triggerUpdate}`);
   }
 
   if (updateType === 'new-page') {
@@ -217,7 +214,7 @@ function updateSidebar(data, updateType) {
     && activeTabId === data.tabId // make sure this is the tab for our sidebar window
     && windowId === data.tab.windowId // ignore incomplete loading
     && data.changeInfo.status === "complete";
-    console.log(`Updating if new page loaded in active tab ${triggerUpdate}`);
+    debug.log(`Updating if new page loaded in active tab ${triggerUpdate}`);
   } // Update the cache of the active tab and window ids
 
 
@@ -257,7 +254,7 @@ function updateSidebar(data, updateType) {
         }
       }
     }).then(() => {
-      console.log(`Inserting totally into the page ${tab.url}`);
+      debug.log(`Inserting totally into the page ${tab.url}`);
       insertingLock.lock(); // will throw error if already locked
 
       return browser.tabs.executeScript(tab.id, {
@@ -283,10 +280,7 @@ function updateSidebar(data, updateType) {
     }); // allow any errors thrown deliberately in prior checks to propagate
 
     return executing;
-  }).catch(error => {
-    if (DEBUGGING) {
-      propagateError("Executing script")(error);
-    }
+  }).catch(error => {// don't want to print these errors because we deliberately throw them
   });
 }
 /*
@@ -316,30 +310,6 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 });
 /*
- * Cache for tracking the most recentely focused window, excluding
- * non browser windows, and not dependent on this sidebar inserting the
- * content script into any window.
- */
-// let mostRecentWindowId = -1;
-// /*
-//  * Update content when we switch window focus.
-//  */
-// browser.windows.onFocusChanged.addListener((newWindowId) => {
-//     if ((windowId === newWindowId) && (mostRecentWindowId !== windowId)) {
-//         browser.tabs.query({windowId: windowId, active: true})
-//         .then((tabs) => {
-//             updateSidebar({
-//                 tabId: tabs[0].id,
-//                 windowId: newWindowId,
-//             }, "new-window");
-//         }).catch(propagateError("Querying active tab for window focus switch"))
-//     }
-//     if (newWindowId !== browser.windows.WINDOW_ID_NONE) {
-//         mostRecentWindowId = newWindowId;
-//     }
-// });
-
-/*
  * When the sidebar loads, get the ID of its window,
  * and update its content.
  */
@@ -347,11 +317,10 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 browser.windows.getCurrent({
   populate: true
 }).then(windowInfo => {
-  windowId = windowInfo.id; // mostRecentWindowId = windowId;
-
+  windowId = windowInfo.id;
   toolbarController.setWindowId(windowId);
   infoPanelController.setWindowId(windowId);
-  console.log(`Sidebar for window: ${windowId} loaded`);
+  debug.log(`Sidebar for window: ${windowId} loaded`);
   browser.tabs.query({
     windowId: windowId,
     active: true
@@ -15679,6 +15648,8 @@ let plugins = __webpack_require__(/*! ../../../plugins */ "./plugins/index.js");
 
 let infoPanel = __webpack_require__(/*! ./index.js */ "./plugins/shared/info-panel/index.js");
 
+const debug = __webpack_require__(/*! ../../../utils/debugging.js */ "./utils/debugging.js");
+
 let errorTemplate = __webpack_require__(/*! ./error.handlebars */ "./plugins/shared/info-panel/error.handlebars");
 
 __webpack_require__(/*! ./style.less */ "./plugins/shared/info-panel/style.less");
@@ -15724,14 +15695,13 @@ class InfoPanelController {
     if (isBrowser) {
       browser.runtime.onConnect.addListener(port => {
         if (port.name !== `${PORT_NAME}${this.windowId}`) {
-          console.log(`Ignoring ${port.name}, window id: ${this.windowId}`);
           return;
         }
 
         this.port = port;
         port.onMessage.addListener(json => {
           if (json.msg) {
-            console.log(`InfoPanel controller received msg: ${json.msg}, ${json}`);
+            debug.log(`InfoPanel controller received msg: ${json.msg}, ${json}`);
           }
 
           if (json.registerActive) {
@@ -15764,7 +15734,7 @@ class InfoPanelController {
 
           for (let ap of this.activePanels) {
             if (ap.port === port) {
-              console.log(`Discarding active panel ${ap.plugin.getName()}`); // discard the active panel with the port
+              debug.log(`Discarding active panel ${ap.plugin.getName()}`); // discard the active panel with the port
 
               ap.destroy();
             } else {
@@ -15793,7 +15763,7 @@ class InfoPanelController {
 
     backgroundPort.onMessage.addListener(function receiver(json) {
       if (json.msg) {
-        console.log(`Info panel controller received msg: ${json.msg}, ${json}`);
+        debug.log(`Info panel controller received msg: ${json.msg}, ${json}`);
       }
 
       if (json.inspectedElement || json.failed) {
@@ -15832,7 +15802,7 @@ class ActivePanel {
     this.$el = null;
     port.onMessage.addListener(json => {
       if (json.msg) {
-        console.log(`ActivePanel received msg: ${json.msg}, ${json}`);
+        debug.log(`ActivePanel received msg: ${json.msg}, ${json}`);
       }
 
       if (json.setAbout) {
@@ -16266,6 +16236,8 @@ module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,"
 let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 
 let annotate = __webpack_require__(/*! ../annotate */ "./plugins/shared/annotate/index.js")("info-panel");
+
+const debug = __webpack_require__(/*! ../../../utils/debugging.js */ "./utils/debugging.js");
 
 let errorTemplate = __webpack_require__(/*! ./error.handlebars */ "./plugins/shared/info-panel/error.handlebars");
 
@@ -16708,7 +16680,7 @@ class InfoPanel {
 
   delegate(windowId) {
     if (isBrowser) {
-      console.log(`Opening info panel port ${this.plugin.getName()}`);
+      debug.log(`Opening info panel port ${this.plugin.getName()}`);
       let port = browser.runtime.connect({
         name: `${PORT_NAME}${windowId}`
       });
@@ -16720,7 +16692,7 @@ class InfoPanel {
       });
       port.onMessage.addListener(json => {
         if (json.msg) {
-          console.log(`InfoPanel received msg: ${json.msg}, ${json}`);
+          debug.log(`InfoPanel received msg: ${json.msg}, ${json}`);
         } // Now handle plugin specific responses
 
 
@@ -16766,7 +16738,7 @@ class InfoPanel {
         }
 
         if (json.unmarkInspectedElement) {
-          console.log("Unmarked element for inspection");
+          debug.log("Unmarked element for inspection");
           $(".tota11y-inspected-element").removeClass("tota11y-inspected-element");
         }
       });
@@ -17413,6 +17385,8 @@ let settings = __webpack_require__(/*! ./settings */ "./settings/index.js");
 
 let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./templates/logo.handlebars");
 
+const debug = __webpack_require__(/*! ./utils/debugging.js */ "./utils/debugging.js");
+
 const PORT_NAME = "toolbar";
 const INIT_PORT = "init";
 let allPlugins = [...plugins.default, ...plugins.experimental];
@@ -17557,7 +17531,7 @@ class Toolbar {
       msg: `Opened port for window ${this.windowId}`
     });
     port.onMessage.addListener(json => {
-      console.log(`Toolbar received msg: ${json.msg}, ${json}`);
+      debug.log(`Toolbar received msg: ${json.msg}, ${json}`);
 
       if (json.pluginClick) {
         // retrieve the plugin instance from the name
@@ -17565,7 +17539,7 @@ class Toolbar {
 
         if (index !== -1) {
           let plugin = allPlugins[index];
-          console.log(`Plugin click sent through port ${plugin.getName()}`);
+          debug.log(`Plugin click sent through port ${plugin.getName()}`);
           let doToggle = this.activePlugins.has(plugin) !== json.active;
 
           if (doToggle) {
@@ -17583,7 +17557,7 @@ class Toolbar {
 
         if (index !== -1) {
           let setting = settings[index];
-          console.log(`Setting click sent through port ${setting.getName()}`);
+          debug.log(`Setting click sent through port ${setting.getName()}`);
           let doToggle = this.activeSettings.has(setting) !== json.active;
 
           if (doToggle) {
@@ -17596,8 +17570,7 @@ class Toolbar {
       }
 
       if (json.sync) {
-        console.log("Syncing active plugins and settings");
-        console.log(`Switching to: ${JSON.stringify(json.activePlugins)}`);
+        debug.log("Syncing active plugins and settings");
         let activePlugins = new Set(json.activePlugins);
 
         for (let plugin of allPlugins) {
@@ -17657,13 +17630,13 @@ class ToolbarController {
         }
 
         if (this.port) {
-          console.log("Disconnecting old Port");
+          debug.log("Disconnecting old Port");
           this.port.disconnect();
         }
 
         this.port = port;
         this.port.onMessage.addListener(json => {
-          console.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
+          debug.log(`Toolbar controller received msg: ${json.msg}, ${json}`);
         });
         this.syncActive();
       });
@@ -17835,7 +17808,14 @@ module.exports = {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-const DEBUGGING = true;
+const DEBUGGING = false;
+/*
+ * A console logging wrapper that can be turned on and off easily.
+ *
+ * Note: files not built by Webpack can't access this flag and need
+ * to be configured seperately. This affects the devtools and background
+ * javascripts.
+ */
 
 if (DEBUGGING) {
   module.exports = {

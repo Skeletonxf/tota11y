@@ -19,7 +19,6 @@ const ToolbarController = toolbar.controller;
 const INIT_PORT = "init";
 
 const debug = require("../../utils/debugging.js");
-const DEBUGGING = false; // FIXME
 
 let propagateError = errors.propagateError;
 let windowId;
@@ -35,7 +34,6 @@ let infoPanelController = new InfoPanelController();
  * when it is already in the page.
  */
 let activeTabId = -1;
-let activeTabWindowId = -1;
 let currentTabId = -1;
 
 let insertingLock = new Lock();
@@ -75,7 +73,7 @@ function updateSidebar(data, updateType) {
                 && (activeTabId !== data.tabId)
                 && (windowId === data.windowId);
 
-        console.log(`Updating if active tab different ${triggerUpdate}`);
+        debug.log(`Updating if active tab different ${triggerUpdate}`);
     }
 
     if (updateType === 'new-page') {
@@ -89,7 +87,7 @@ function updateSidebar(data, updateType) {
             // ignore incomplete loading
             && (data.changeInfo.status === "complete");
 
-        console.log(`Updating if new page loaded in active tab ${triggerUpdate}`);
+        debug.log(`Updating if new page loaded in active tab ${triggerUpdate}`);
     }
 
     // Update the cache of the active tab and window ids
@@ -130,7 +128,7 @@ function updateSidebar(data, updateType) {
                 }
             }
         }).then(() => {
-            console.log(`Inserting totally into the page ${tab.url}`);
+            debug.log(`Inserting totally into the page ${tab.url}`);
             insertingLock.lock(); // will throw error if already locked
 
             return browser.tabs.executeScript(tab.id, {
@@ -159,9 +157,7 @@ function updateSidebar(data, updateType) {
         return executing;
     })
     .catch((error) => {
-        if (DEBUGGING) {
-            propagateError("Executing script")(error);
-        }
+        // don't want to print these errors because we deliberately throw them
     });
 }
 
@@ -190,41 +186,15 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 /*
- * Cache for tracking the most recentely focused window, excluding
- * non browser windows, and not dependent on this sidebar inserting the
- * content script into any window.
- */
-// let mostRecentWindowId = -1;
-
-// /*
-//  * Update content when we switch window focus.
-//  */
-// browser.windows.onFocusChanged.addListener((newWindowId) => {
-//     if ((windowId === newWindowId) && (mostRecentWindowId !== windowId)) {
-//         browser.tabs.query({windowId: windowId, active: true})
-//         .then((tabs) => {
-//             updateSidebar({
-//                 tabId: tabs[0].id,
-//                 windowId: newWindowId,
-//             }, "new-window");
-//         }).catch(propagateError("Querying active tab for window focus switch"))
-//     }
-//     if (newWindowId !== browser.windows.WINDOW_ID_NONE) {
-//         mostRecentWindowId = newWindowId;
-//     }
-// });
-
-/*
  * When the sidebar loads, get the ID of its window,
  * and update its content.
  */
 browser.windows.getCurrent({populate: true}).then((windowInfo) => {
     windowId = windowInfo.id;
-    // mostRecentWindowId = windowId;
     toolbarController.setWindowId(windowId);
     infoPanelController.setWindowId(windowId);
 
-    console.log(`Sidebar for window: ${windowId} loaded`);
+    debug.log(`Sidebar for window: ${windowId} loaded`);
     browser.tabs.query({windowId: windowId, active: true})
     .then((tabs) => {
         updateSidebar({
