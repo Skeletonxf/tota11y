@@ -103,9 +103,9 @@ class Plugin {
     /**
      * Activate the plugin from the UI.
      */
-    activate() {
+    activate(windowId) {
         if (isBrowser) {
-            this.panel.delegate();
+            this.panel.delegate(windowId);
         }
         this.run();
         this.panel.render();

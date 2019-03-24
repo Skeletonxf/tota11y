@@ -495,15 +495,15 @@ class InfoPanel {
      * Opens a port to communicate to an InfoPanelController
      * over the browser.runtime API.
      */
-    delegate() {
+    delegate(windowId) {
         if (isBrowser) {
             console.log(`Opening info panel port ${this.plugin.getName()}`);
             let port = browser.runtime.connect({
-                name: PORT_NAME
+                name: `${PORT_NAME}${windowId}`
             });
             this.port = port;
             port.postMessage({
-                msg: "Opened port",
+                msg: `Opened port for window ${windowId}`,
                 registerActive: true,
                 plugin: this.plugin.getName(),
             });

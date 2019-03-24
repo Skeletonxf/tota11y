@@ -70,12 +70,15 @@ backgroundPort.onMessage.addListener((json) => {
 class InfoPanelController {
     constructor() {
         this.activePanels = new Set();
+        this.windowId = -1;
         if (isBrowser) {
             browser.runtime.onConnect.addListener((port) => {
-                if (port.name !== PORT_NAME) {
+                if (port.name !== `${PORT_NAME}${this.windowId}`) {
+                    console.log(`Ignoring ${port.name}, window id: ${this.windowId}`);
                     return;
                 }
                 this.port = port;
+
                 port.onMessage.addListener((json) => {
                     if (json.msg) {
                         console.log(`InfoPanel controller received msg: ${json.msg}, ${json}`);
@@ -116,13 +119,17 @@ class InfoPanelController {
                             // discard the active panel with the port
                             ap.destroy();
                         } else {
-                            activePanels.add(ap);
+                           activePanels.add(ap);
                         }
                     }
                     this.activePanels = activePanels;
                 });
             });
         }
+    }
+
+    setWindowId(windowId) {
+        this.windowId = windowId;
     }
 
     /*

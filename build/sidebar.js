@@ -154,7 +154,12 @@ const Lock = __webpack_require__(/*! ./lock.js */ "./addon/sidebar/lock.js");
 const InfoPanelController = __webpack_require__(/*! ../../plugins/shared/info-panel/controller.js */ "./plugins/shared/info-panel/controller.js");
 
 const ToolbarController = toolbar.controller;
-const DEBUGGING = false;
+const INIT_PORT = "init";
+
+const debug = __webpack_require__(/*! ../../utils/debugging.js */ "./utils/debugging.js");
+
+const DEBUGGING = false; // FIXME
+
 let propagateError = errors.propagateError;
 let windowId; // We only need 1 of each controller for n content scripts
 // and info panels
@@ -162,12 +167,17 @@ let windowId; // We only need 1 of each controller for n content scripts
 let toolbarController = new ToolbarController();
 toolbarController.appendTo($("body"));
 let infoPanelController = new InfoPanelController();
+/*
+ * Cached ids for insert logic to avoid inserting the content script
+ * when it is already in the page.
+ */
+
 let activeTabId = -1;
 let activeTabWindowId = -1;
 let currentTabId = -1;
 let insertingLock = new Lock();
 
-function developmentTab(url) {
+function isDevTab(url) {
   if (url === "https://skeletonxf.gitlab.io/totally-automated-a11y-scanner/") {
     return true;
   }
@@ -188,7 +198,7 @@ function updateSidebar(data, updateType) {
 
   let triggerUpdate = false;
 
-  if (updateType === "first-load" || updateType === "new-window") {
+  if (updateType === "first-load") {
     // Always update if just loaded or switched window focus
     triggerUpdate = true;
   }
@@ -203,8 +213,8 @@ function updateSidebar(data, updateType) {
   if (updateType === 'new-page') {
     // Update if a new page is loaded into the active tab
     // (ie F5).
-    triggerUpdate =  true // ignore loading of non active tabs unless switching windows
-    && (activeTabId === data.tabId || activeTabWindowId !== data.tab.windowId) // make sure this is the tab for our sidebar window
+    triggerUpdate =  true // ignore loading of non active tabs
+    && activeTabId === data.tabId // make sure this is the tab for our sidebar window
     && windowId === data.tab.windowId // ignore incomplete loading
     && data.changeInfo.status === "complete";
     console.log(`Updating if new page loaded in active tab ${triggerUpdate}`);
@@ -212,7 +222,6 @@ function updateSidebar(data, updateType) {
 
 
   activeTabId = data.tabId;
-  activeTabWindowId = data.windowId;
 
   if (!triggerUpdate) {
     return;
@@ -243,18 +252,27 @@ function updateSidebar(data, updateType) {
     let executing = browser.storage.local.get("audit-dev-only");
     executing.then(storage => {
       if (storage["audit-dev-only"]) {
-        if (!developmentTab(tab.url)) {
+        if (!isDevTab(tab.url)) {
           throw new Error("Not development tab");
         }
       }
     }).then(() => {
-      console.log(`Inserting tota11y into the page ${tab.url}`);
+      console.log(`Inserting totally into the page ${tab.url}`);
       insertingLock.lock(); // will throw error if already locked
 
       return browser.tabs.executeScript(tab.id, {
         file: "/build/tota11y.js"
       }).then(() => {
-        currentTabId = tab.id;
+        currentTabId = tab.id; // We need to tell the content script which window it is in
+        // so it can talk to the correct sidebar
+
+        let port = browser.tabs.connect(tab.id, {
+          name: INIT_PORT
+        });
+        port.postMessage({
+          msg: "Init",
+          windowId: windowId
+        });
       }).then(() => {
         insertingLock.unlock();
       }).catch(() => {
@@ -298,22 +316,29 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 });
 /*
- * Update content when we switch window focus.
+ * Cache for tracking the most recentely focused window, excluding
+ * non browser windows, and not dependent on this sidebar inserting the
+ * content script into any window.
  */
+// let mostRecentWindowId = -1;
+// /*
+//  * Update content when we switch window focus.
+//  */
+// browser.windows.onFocusChanged.addListener((newWindowId) => {
+//     if ((windowId === newWindowId) && (mostRecentWindowId !== windowId)) {
+//         browser.tabs.query({windowId: windowId, active: true})
+//         .then((tabs) => {
+//             updateSidebar({
+//                 tabId: tabs[0].id,
+//                 windowId: newWindowId,
+//             }, "new-window");
+//         }).catch(propagateError("Querying active tab for window focus switch"))
+//     }
+//     if (newWindowId !== browser.windows.WINDOW_ID_NONE) {
+//         mostRecentWindowId = newWindowId;
+//     }
+// });
 
-browser.windows.onFocusChanged.addListener(newWindowId => {
-  if (windowId === newWindowId) {
-    browser.tabs.query({
-      windowId: windowId,
-      active: true
-    }).then(tabs => {
-      updateSidebar({
-        tabId: tabs[0].id,
-        windowId: newWindowId
-      }, "new-window");
-    }).catch(propagateError("Querying active tab for window focus switch"));
-  }
-});
 /*
  * When the sidebar loads, get the ID of its window,
  * and update its content.
@@ -322,7 +347,11 @@ browser.windows.onFocusChanged.addListener(newWindowId => {
 browser.windows.getCurrent({
   populate: true
 }).then(windowInfo => {
-  windowId = windowInfo.id;
+  windowId = windowInfo.id; // mostRecentWindowId = windowId;
+
+  toolbarController.setWindowId(windowId);
+  infoPanelController.setWindowId(windowId);
+  console.log(`Sidebar for window: ${windowId} loaded`);
   browser.tabs.query({
     windowId: windowId,
     active: true
@@ -13238,9 +13267,9 @@ class Plugin {
    */
 
 
-  activate() {
+  activate(windowId) {
     if (isBrowser) {
-      this.panel.delegate();
+      this.panel.delegate(windowId);
     }
 
     this.run();
@@ -15690,10 +15719,12 @@ backgroundPort.onMessage.addListener(json => {
 class InfoPanelController {
   constructor() {
     this.activePanels = new Set();
+    this.windowId = -1;
 
     if (isBrowser) {
       browser.runtime.onConnect.addListener(port => {
-        if (port.name !== PORT_NAME) {
+        if (port.name !== `${PORT_NAME}${this.windowId}`) {
+          console.log(`Ignoring ${port.name}, window id: ${this.windowId}`);
           return;
         }
 
@@ -15745,6 +15776,10 @@ class InfoPanelController {
         });
       });
     }
+  }
+
+  setWindowId(windowId) {
+    this.windowId = windowId;
   }
   /*
    * Sends a message to the background port to attempt to inspect
@@ -16671,15 +16706,15 @@ class InfoPanel {
    */
 
 
-  delegate() {
+  delegate(windowId) {
     if (isBrowser) {
       console.log(`Opening info panel port ${this.plugin.getName()}`);
       let port = browser.runtime.connect({
-        name: PORT_NAME
+        name: `${PORT_NAME}${windowId}`
       });
       this.port = port;
       port.postMessage({
-        msg: "Opened port",
+        msg: `Opened port for window ${windowId}`,
         registerActive: true,
         plugin: this.plugin.getName()
       });
@@ -17379,6 +17414,7 @@ let settings = __webpack_require__(/*! ./settings */ "./settings/index.js");
 let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./templates/logo.handlebars");
 
 const PORT_NAME = "toolbar";
+const INIT_PORT = "init";
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map(p => p.getName());
 let namedSettings = settings.map(p => p.getName());
@@ -17397,6 +17433,7 @@ class Toolbar {
   constructor() {
     this.activePlugins = new Set();
     this.activeSettings = new Set();
+    this.windowId = -1;
   }
   /**
    * Manages the state of the toolbar when a plugin is clicked, and toggles
@@ -17411,7 +17448,7 @@ class Toolbar {
       this.activePlugins.delete(plugin);
     } else {
       // Activate the selected plugin
-      plugin.activate();
+      plugin.activate(this.windowId);
       this.activePlugins.add(plugin);
     }
   }
@@ -17492,93 +17529,113 @@ class Toolbar {
 
   delegate() {
     if (isBrowser) {
-      let port = browser.runtime.connect({
-        name: PORT_NAME
-      });
-      this.port = port;
-      port.postMessage({
-        msg: "Opened port"
-      });
-      port.onMessage.addListener(json => {
-        console.log(`Toolbar received msg: ${json.msg}, ${json}`);
+      // We need to establish what window we are in so
+      // first listen to the INIT_PORT
+      browser.runtime.onConnect.addListener(port => {
+        port.onMessage.addListener(json => {
+          if (json.windowId) {
+            this.windowId = json.windowId;
 
-        if (json.pluginClick) {
-          // retrieve the plugin instance from the name
-          let index = namedPlugins.findIndex(p => p === json.pluginClick);
-
-          if (index !== -1) {
-            let plugin = allPlugins[index];
-            console.log(`Plugin click sent through port ${plugin.getName()}`);
-            let doToggle = this.activePlugins.has(plugin) !== json.active;
-
-            if (doToggle) {
-              // only toggle if not in sync with controller
-              this.handlePluginClick(plugin);
-            }
-          } else {
-            port.postMessage("Unrecognised plugin");
+            this._delegate();
           }
-        }
-
-        if (json.settingClick) {
-          // retrieve the setting instance from the name
-          let index = namedSettings.findIndex(s => s === json.settingClick);
-
-          if (index !== -1) {
-            let setting = settings[index];
-            console.log(`Setting click sent through port ${setting.getName()}`);
-            let doToggle = this.activeSettings.has(setting) !== json.active;
-
-            if (doToggle) {
-              // only toggle if not in sync with controller
-              this.handleSettingClick(setting);
-            }
-          } else {
-            port.postMessage("Unrecognised setting");
-          }
-        }
-
-        if (json.sync) {
-          console.log("Syncing active plugins and settings");
-          let activePlugins = new Set(json.activePlugins);
-
-          for (let plugin of allPlugins) {
-            let activate = activePlugins.has(plugin.getName());
-            let active = this.activePlugins.has(plugin);
-
-            if (activate !== active) {
-              // only toggle if not in sync with controller
-              this.handlePluginClick(plugin);
-            }
-          }
-
-          let activeSettings = new Set(json.activeSettings);
-
-          for (let setting of settings) {
-            let activate = activeSettings.has(setting.getName());
-            let active = this.activeSettings.has(setting);
-
-            if (activate !== active) {
-              // only toggle if not in sync with controller
-              this.handleSettingClick(setting);
-            }
-          }
-        }
-      });
-      port.onDisconnect.addListener(() => {
-        // clean up
-        for (let plugin of this.activePlugins) {
-          // toggle all plugins off
-          this.handlePluginClick(plugin);
-        } // Remove this toobar element
-
-
-        if (this.$el) {
-          this.$el.remove();
-          this.$el = null;
-        }
+        });
       });
     }
+  }
+  /*
+   * Performs the actual task of delegating to the ToolbarController
+   * once we know what our window id is.
+   */
+
+
+  _delegate() {
+    let port = browser.runtime.connect({
+      name: `${PORT_NAME}${this.windowId}`
+    });
+    this.port = port;
+    port.postMessage({
+      msg: `Opened port for window ${this.windowId}`
+    });
+    port.onMessage.addListener(json => {
+      console.log(`Toolbar received msg: ${json.msg}, ${json}`);
+
+      if (json.pluginClick) {
+        // retrieve the plugin instance from the name
+        let index = namedPlugins.findIndex(p => p === json.pluginClick);
+
+        if (index !== -1) {
+          let plugin = allPlugins[index];
+          console.log(`Plugin click sent through port ${plugin.getName()}`);
+          let doToggle = this.activePlugins.has(plugin) !== json.active;
+
+          if (doToggle) {
+            // only toggle if not in sync with controller
+            this.handlePluginClick(plugin);
+          }
+        } else {
+          port.postMessage("Unrecognised plugin");
+        }
+      }
+
+      if (json.settingClick) {
+        // retrieve the setting instance from the name
+        let index = namedSettings.findIndex(s => s === json.settingClick);
+
+        if (index !== -1) {
+          let setting = settings[index];
+          console.log(`Setting click sent through port ${setting.getName()}`);
+          let doToggle = this.activeSettings.has(setting) !== json.active;
+
+          if (doToggle) {
+            // only toggle if not in sync with controller
+            this.handleSettingClick(setting);
+          }
+        } else {
+          port.postMessage("Unrecognised setting");
+        }
+      }
+
+      if (json.sync) {
+        console.log("Syncing active plugins and settings");
+        console.log(`Switching to: ${JSON.stringify(json.activePlugins)}`);
+        let activePlugins = new Set(json.activePlugins);
+
+        for (let plugin of allPlugins) {
+          let activate = activePlugins.has(plugin.getName());
+          let active = this.activePlugins.has(plugin);
+
+          if (activate !== active) {
+            // only toggle if not in sync with controller
+            this.handlePluginClick(plugin);
+          }
+        }
+
+        let activeSettings = new Set(json.activeSettings);
+
+        for (let setting of settings) {
+          let activate = activeSettings.has(setting.getName());
+          let active = this.activeSettings.has(setting);
+
+          if (activate !== active) {
+            // only toggle if not in sync with controller
+            this.handleSettingClick(setting);
+          }
+        }
+      }
+    });
+    port.onDisconnect.addListener(() => {
+      // clean up
+      for (let plugin of this.activePlugins) {
+        // toggle all plugins off
+        this.handlePluginClick(plugin);
+      } // Remove this toobar element
+
+
+      if (this.$el) {
+        this.$el.remove();
+        this.$el = null;
+      }
+    });
   }
 
 }
@@ -17593,8 +17650,9 @@ class ToolbarController {
     if (isBrowser) {
       this.activePlugins = new Set();
       this.activeSettings = new Set();
+      this.windowId = -1;
       browser.runtime.onConnect.addListener(port => {
-        if (port.name !== PORT_NAME) {
+        if (port.name !== `${PORT_NAME}${this.windowId}`) {
           return;
         }
 
@@ -17681,6 +17739,10 @@ class ToolbarController {
       });
     }
   }
+
+  setWindowId(windowId) {
+    this.windowId = windowId;
+  }
   /**
    * Renders the toolbar and appends it to the specified element.
    */
@@ -17763,6 +17825,29 @@ module.exports = {
   controller: ToolbarController
 };
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./utils/element */ "./utils/element.js")))
+
+/***/ }),
+
+/***/ "./utils/debugging.js":
+/*!****************************!*\
+  !*** ./utils/debugging.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+const DEBUGGING = true;
+
+if (DEBUGGING) {
+  module.exports = {
+    log: message => console.log(message),
+    error: message => console.error(message)
+  };
+} else {
+  module.exports = {
+    log: message => null,
+    error: message => null
+  };
+}
 
 /***/ }),
 

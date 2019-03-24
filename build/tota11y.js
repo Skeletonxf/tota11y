@@ -13035,9 +13035,9 @@ class Plugin {
    */
 
 
-  activate() {
+  activate(windowId) {
     if (isBrowser) {
-      this.panel.delegate();
+      this.panel.delegate(windowId);
     }
 
     this.run();
@@ -15894,15 +15894,15 @@ class InfoPanel {
    */
 
 
-  delegate() {
+  delegate(windowId) {
     if (isBrowser) {
       console.log(`Opening info panel port ${this.plugin.getName()}`);
       let port = browser.runtime.connect({
-        name: PORT_NAME
+        name: `${PORT_NAME}${windowId}`
       });
       this.port = port;
       port.postMessage({
-        msg: "Opened port",
+        msg: `Opened port for window ${windowId}`,
         registerActive: true,
         plugin: this.plugin.getName()
       });
@@ -16602,6 +16602,7 @@ let settings = __webpack_require__(/*! ./settings */ "./settings/index.js");
 let logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ "./templates/logo.handlebars");
 
 const PORT_NAME = "toolbar";
+const INIT_PORT = "init";
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map(p => p.getName());
 let namedSettings = settings.map(p => p.getName());
@@ -16620,6 +16621,7 @@ class Toolbar {
   constructor() {
     this.activePlugins = new Set();
     this.activeSettings = new Set();
+    this.windowId = -1;
   }
   /**
    * Manages the state of the toolbar when a plugin is clicked, and toggles
@@ -16634,7 +16636,7 @@ class Toolbar {
       this.activePlugins.delete(plugin);
     } else {
       // Activate the selected plugin
-      plugin.activate();
+      plugin.activate(this.windowId);
       this.activePlugins.add(plugin);
     }
   }
@@ -16715,93 +16717,113 @@ class Toolbar {
 
   delegate() {
     if (isBrowser) {
-      let port = browser.runtime.connect({
-        name: PORT_NAME
-      });
-      this.port = port;
-      port.postMessage({
-        msg: "Opened port"
-      });
-      port.onMessage.addListener(json => {
-        console.log(`Toolbar received msg: ${json.msg}, ${json}`);
+      // We need to establish what window we are in so
+      // first listen to the INIT_PORT
+      browser.runtime.onConnect.addListener(port => {
+        port.onMessage.addListener(json => {
+          if (json.windowId) {
+            this.windowId = json.windowId;
 
-        if (json.pluginClick) {
-          // retrieve the plugin instance from the name
-          let index = namedPlugins.findIndex(p => p === json.pluginClick);
-
-          if (index !== -1) {
-            let plugin = allPlugins[index];
-            console.log(`Plugin click sent through port ${plugin.getName()}`);
-            let doToggle = this.activePlugins.has(plugin) !== json.active;
-
-            if (doToggle) {
-              // only toggle if not in sync with controller
-              this.handlePluginClick(plugin);
-            }
-          } else {
-            port.postMessage("Unrecognised plugin");
+            this._delegate();
           }
-        }
-
-        if (json.settingClick) {
-          // retrieve the setting instance from the name
-          let index = namedSettings.findIndex(s => s === json.settingClick);
-
-          if (index !== -1) {
-            let setting = settings[index];
-            console.log(`Setting click sent through port ${setting.getName()}`);
-            let doToggle = this.activeSettings.has(setting) !== json.active;
-
-            if (doToggle) {
-              // only toggle if not in sync with controller
-              this.handleSettingClick(setting);
-            }
-          } else {
-            port.postMessage("Unrecognised setting");
-          }
-        }
-
-        if (json.sync) {
-          console.log("Syncing active plugins and settings");
-          let activePlugins = new Set(json.activePlugins);
-
-          for (let plugin of allPlugins) {
-            let activate = activePlugins.has(plugin.getName());
-            let active = this.activePlugins.has(plugin);
-
-            if (activate !== active) {
-              // only toggle if not in sync with controller
-              this.handlePluginClick(plugin);
-            }
-          }
-
-          let activeSettings = new Set(json.activeSettings);
-
-          for (let setting of settings) {
-            let activate = activeSettings.has(setting.getName());
-            let active = this.activeSettings.has(setting);
-
-            if (activate !== active) {
-              // only toggle if not in sync with controller
-              this.handleSettingClick(setting);
-            }
-          }
-        }
-      });
-      port.onDisconnect.addListener(() => {
-        // clean up
-        for (let plugin of this.activePlugins) {
-          // toggle all plugins off
-          this.handlePluginClick(plugin);
-        } // Remove this toobar element
-
-
-        if (this.$el) {
-          this.$el.remove();
-          this.$el = null;
-        }
+        });
       });
     }
+  }
+  /*
+   * Performs the actual task of delegating to the ToolbarController
+   * once we know what our window id is.
+   */
+
+
+  _delegate() {
+    let port = browser.runtime.connect({
+      name: `${PORT_NAME}${this.windowId}`
+    });
+    this.port = port;
+    port.postMessage({
+      msg: `Opened port for window ${this.windowId}`
+    });
+    port.onMessage.addListener(json => {
+      console.log(`Toolbar received msg: ${json.msg}, ${json}`);
+
+      if (json.pluginClick) {
+        // retrieve the plugin instance from the name
+        let index = namedPlugins.findIndex(p => p === json.pluginClick);
+
+        if (index !== -1) {
+          let plugin = allPlugins[index];
+          console.log(`Plugin click sent through port ${plugin.getName()}`);
+          let doToggle = this.activePlugins.has(plugin) !== json.active;
+
+          if (doToggle) {
+            // only toggle if not in sync with controller
+            this.handlePluginClick(plugin);
+          }
+        } else {
+          port.postMessage("Unrecognised plugin");
+        }
+      }
+
+      if (json.settingClick) {
+        // retrieve the setting instance from the name
+        let index = namedSettings.findIndex(s => s === json.settingClick);
+
+        if (index !== -1) {
+          let setting = settings[index];
+          console.log(`Setting click sent through port ${setting.getName()}`);
+          let doToggle = this.activeSettings.has(setting) !== json.active;
+
+          if (doToggle) {
+            // only toggle if not in sync with controller
+            this.handleSettingClick(setting);
+          }
+        } else {
+          port.postMessage("Unrecognised setting");
+        }
+      }
+
+      if (json.sync) {
+        console.log("Syncing active plugins and settings");
+        console.log(`Switching to: ${JSON.stringify(json.activePlugins)}`);
+        let activePlugins = new Set(json.activePlugins);
+
+        for (let plugin of allPlugins) {
+          let activate = activePlugins.has(plugin.getName());
+          let active = this.activePlugins.has(plugin);
+
+          if (activate !== active) {
+            // only toggle if not in sync with controller
+            this.handlePluginClick(plugin);
+          }
+        }
+
+        let activeSettings = new Set(json.activeSettings);
+
+        for (let setting of settings) {
+          let activate = activeSettings.has(setting.getName());
+          let active = this.activeSettings.has(setting);
+
+          if (activate !== active) {
+            // only toggle if not in sync with controller
+            this.handleSettingClick(setting);
+          }
+        }
+      }
+    });
+    port.onDisconnect.addListener(() => {
+      // clean up
+      for (let plugin of this.activePlugins) {
+        // toggle all plugins off
+        this.handlePluginClick(plugin);
+      } // Remove this toobar element
+
+
+      if (this.$el) {
+        this.$el.remove();
+        this.$el = null;
+      }
+    });
   }
 
 }
@@ -16816,8 +16838,9 @@ class ToolbarController {
     if (isBrowser) {
       this.activePlugins = new Set();
       this.activeSettings = new Set();
+      this.windowId = -1;
       browser.runtime.onConnect.addListener(port => {
-        if (port.name !== PORT_NAME) {
+        if (port.name !== `${PORT_NAME}${this.windowId}`) {
           return;
         }
 
@@ -16903,6 +16926,10 @@ class ToolbarController {
         active: this.activeSettings.has(setting)
       });
     }
+  }
+
+  setWindowId(windowId) {
+    this.windowId = windowId;
   }
   /**
    * Renders the toolbar and appends it to the specified element.

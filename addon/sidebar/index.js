@@ -16,7 +16,10 @@ const Lock = require("./lock.js");
 const InfoPanelController = require("../../plugins/shared/info-panel/controller.js")
 const ToolbarController = toolbar.controller;
 
-const DEBUGGING = false;
+const INIT_PORT = "init";
+
+const debug = require("../../utils/debugging.js");
+const DEBUGGING = false; // FIXME
 
 let propagateError = errors.propagateError;
 let windowId;
@@ -27,12 +30,17 @@ let toolbarController = new ToolbarController();
 toolbarController.appendTo($("body"));
 let infoPanelController = new InfoPanelController();
 
+/*
+ * Cached ids for insert logic to avoid inserting the content script
+ * when it is already in the page.
+ */
 let activeTabId = -1;
 let activeTabWindowId = -1;
 let currentTabId = -1;
+
 let insertingLock = new Lock();
 
-function developmentTab(url) {
+function isDevTab(url) {
     if (url === "https://skeletonxf.gitlab.io/totally-automated-a11y-scanner/") {
         return true;
     }
@@ -55,7 +63,7 @@ function updateSidebar(data, updateType) {
 
     let triggerUpdate = false;
 
-    if (updateType === "first-load" || updateType === "new-window") {
+    if (updateType === "first-load") {
         // Always update if just loaded or switched window focus
         triggerUpdate = true;
     }
@@ -74,9 +82,8 @@ function updateSidebar(data, updateType) {
         // Update if a new page is loaded into the active tab
         // (ie F5).
         triggerUpdate = true
-            // ignore loading of non active tabs unless switching windows
-            && ((activeTabId === data.tabId)
-                    || (activeTabWindowId !== data.tab.windowId))
+            // ignore loading of non active tabs
+            && ((activeTabId === data.tabId))
             // make sure this is the tab for our sidebar window
             && (windowId === data.tab.windowId)
             // ignore incomplete loading
@@ -87,7 +94,6 @@ function updateSidebar(data, updateType) {
 
     // Update the cache of the active tab and window ids
     activeTabId = data.tabId;
-    activeTabWindowId = data.windowId;
 
     if (!triggerUpdate) {
         return;
@@ -119,18 +125,27 @@ function updateSidebar(data, updateType) {
         let executing = browser.storage.local.get("audit-dev-only")
         executing.then((storage) => {
             if (storage["audit-dev-only"]) {
-                if (!developmentTab(tab.url)) {
+                if (!isDevTab(tab.url)) {
                     throw new Error("Not development tab");
                 }
             }
         }).then(() => {
-            console.log(`Inserting tota11y into the page ${tab.url}`);
+            console.log(`Inserting totally into the page ${tab.url}`);
             insertingLock.lock(); // will throw error if already locked
 
             return browser.tabs.executeScript(tab.id, {
                 file: "/build/tota11y.js"
             }).then(() => {
                 currentTabId = tab.id
+                // We need to tell the content script which window it is in
+                // so it can talk to the correct sidebar
+                let port = browser.tabs.connect(tab.id, {
+                    name: INIT_PORT
+                });
+                port.postMessage({
+                    msg: "Init",
+                    windowId: windowId,
+                });
             }).then(() => {
                 insertingLock.unlock();
             }).catch(() => {
@@ -175,19 +190,29 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 /*
- * Update content when we switch window focus.
+ * Cache for tracking the most recentely focused window, excluding
+ * non browser windows, and not dependent on this sidebar inserting the
+ * content script into any window.
  */
-browser.windows.onFocusChanged.addListener((newWindowId) => {
-    if (windowId === newWindowId) {
-        browser.tabs.query({windowId: windowId, active: true})
-        .then((tabs) => {
-            updateSidebar({
-                tabId: tabs[0].id,
-                windowId: newWindowId,
-            }, "new-window");
-        }).catch(propagateError("Querying active tab for window focus switch"))
-    }
-});
+// let mostRecentWindowId = -1;
+
+// /*
+//  * Update content when we switch window focus.
+//  */
+// browser.windows.onFocusChanged.addListener((newWindowId) => {
+//     if ((windowId === newWindowId) && (mostRecentWindowId !== windowId)) {
+//         browser.tabs.query({windowId: windowId, active: true})
+//         .then((tabs) => {
+//             updateSidebar({
+//                 tabId: tabs[0].id,
+//                 windowId: newWindowId,
+//             }, "new-window");
+//         }).catch(propagateError("Querying active tab for window focus switch"))
+//     }
+//     if (newWindowId !== browser.windows.WINDOW_ID_NONE) {
+//         mostRecentWindowId = newWindowId;
+//     }
+// });
 
 /*
  * When the sidebar loads, get the ID of its window,
@@ -195,6 +220,11 @@ browser.windows.onFocusChanged.addListener((newWindowId) => {
  */
 browser.windows.getCurrent({populate: true}).then((windowInfo) => {
     windowId = windowInfo.id;
+    // mostRecentWindowId = windowId;
+    toolbarController.setWindowId(windowId);
+    infoPanelController.setWindowId(windowId);
+
+    console.log(`Sidebar for window: ${windowId} loaded`);
     browser.tabs.query({windowId: windowId, active: true})
     .then((tabs) => {
         updateSidebar({
