@@ -4,11 +4,13 @@ Totally Automated Accessibility Scanner, or Totally for short (a play on this pr
 
 [The help page](https://skeletonxf.gitlab.io/totally-automated-a11y-scanner/)
 
+[Install](https://addons.mozilla.org/en-GB/firefox/addon/totally-automated-a11y-scanner/)
+
 Totally was built as part of a 3rd year Computer Science Dissertation project on Web Accessibility testing.
 
 ## Installation
 
-Totally is a WebExtension for Mozilla Firefox built from the [bookmarklet tota11y created by Khan Academy](https://github.com/Khan/tota11y).
+Totally is a [WebExtension for Mozilla Firefox](https://addons.mozilla.org/en-GB/firefox/addon/totally-automated-a11y-scanner/) built from the [bookmarklet tota11y created by Khan Academy](https://github.com/Khan/tota11y).
 Due to keeping plugin compatibility Totally should also still function as a bookmarklet in the same way as the original, but this is not the intended use.
 
 ## Development
