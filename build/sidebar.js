@@ -296,11 +296,12 @@ function updateSidebar(data, updateType) {
       }).then(() => {
         insertingLock.unlock();
       }).catch(error => {
-        console.error(`Error: ${error}`); // catch errors relating to executing the script
+        // catch errors relating to executing the script
         // but not errors thrown deliberately in prior checks
-
         insertingLock.unlock();
       });
+    }).catch(error => {// don't want to print these errors because we deliberately throw
+      // them
     }); // allow any errors thrown deliberately in prior checks to propagate
 
     return executing;
