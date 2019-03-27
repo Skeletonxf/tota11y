@@ -135,18 +135,43 @@ function updateSidebar(data, updateType) {
                 file: "/build/tota11y.js"
             }).then(() => {
                 currentTabId = tab.id
+
+                let tries = 3;
+                let success = false;
+
                 // We need to tell the content script which window it is in
                 // so it can talk to the correct sidebar
-                let port = browser.tabs.connect(tab.id, {
-                    name: INIT_PORT
-                });
-                port.postMessage({
-                    msg: "Init",
-                    windowId: windowId,
-                });
+                let giveWindowId = () => {
+                    let port = browser.tabs.connect(tab.id, {
+                        name: INIT_PORT
+                    });
+                    port.onMessage.addListener((json) => {
+                        if (json.getWindowId) {
+                            port.postMessage({
+                                msg: "Window id for initialisation",
+                                windowId: windowId,
+                            });
+                            success = true;
+                        }
+                    });
+                    port.onDisconnect.addListener((port) => {
+                        // HACK: Ports will close automatically if there are
+                        // no listeners which can happen due to the content
+                        // script not immediately adding a listener to
+                        // this connection. We try multiple times for a
+                        // successful connection to ensure that we connect
+                        // if the content script is trying to listen.
+                        if (tries > 0 && !success) {
+                            tries -= 1;
+                            giveWindowId();
+                        }
+                    });
+                };
+                giveWindowId();
             }).then(() => {
                 insertingLock.unlock();
-            }).catch(() => {
+            }).catch((error) => {
+                console.error(`Error: ${error}`);
                 // catch errors relating to executing the script
                 // but not errors thrown deliberately in prior checks
                 insertingLock.unlock();

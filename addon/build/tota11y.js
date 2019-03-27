@@ -16722,16 +16722,25 @@ class Toolbar {
   delegate() {
     if (isBrowser) {
       // We need to establish what window we are in so
-      // first listen to the INIT_PORT
-      browser.runtime.onConnect.addListener(port => {
+      // first listen to window id from the Port communication
+      let getWindowId = port => {
         port.onMessage.addListener(json => {
           if (json.windowId) {
             this.windowId = json.windowId;
 
             this._delegate();
+
+            port.disconnect();
           }
         });
-      });
+        port.postMessage({
+          msg: "Need window id for initialisation",
+          getWindowId: true
+        });
+        browser.runtime.onConnect.removeListener(getWindowId);
+      };
+
+      browser.runtime.onConnect.addListener(getWindowId);
     }
   }
   /*
