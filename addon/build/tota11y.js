@@ -1,7 +1,9 @@
 /*!
  * Totally Automated Accessibility Scanner
  * 
- * Forked from tota11y v1.1.0
+ * Totally v1.1.1
+ * 
+ * Forked from tota11y v0.1.6
  * http://khan.github.io/tota11y
  * 
  * tota11y Copyright (c) 2015 Khan Academy
