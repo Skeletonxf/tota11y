@@ -13,4 +13,4 @@ echo "$SSH_GITHUB_PUSH_SYNC" | tr -d '\r' | ssh-add - > /dev/null
 # now add the remotes for the GitHub repo using SSH
 git remote add github git@github.com:Skeletonxf/totally-automated-a11y-scanner.git
 # Push onto GitHub
-git push github master
+git push github master --follow-tags
