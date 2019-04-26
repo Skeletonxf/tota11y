@@ -2,7 +2,7 @@
 
 @pluginPadding: 12px;
 
-.tota11y-plugin {
+.tota11y-plugin, .tota11y-setting {
     .tota11y-no-select;
     border-bottom: 1px solid @darkBorderColor;
     list-style: none;
@@ -28,6 +28,8 @@
         line-height: @indicatorSize;
         padding: 0 0 0 1px;
         width: @indicatorSize;
+        min-width: @indicatorSize;
+        min-height: @indicatorSize;
     }
 
     // Focus styles for the fake checkboxes

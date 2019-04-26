@@ -360,7 +360,7 @@ class ToolbarController {
                     setting.$checkbox.click();
                 }
             })
-        })
+        });
 
         $el.append($toolbar);
     }

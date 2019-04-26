@@ -35,26 +35,26 @@ class Setting {
     render(clickHandler) {
         this.$checkbox = (
             <input
-                className="tota11y-plugin-checkbox tota11y-sr-only"
+                className="tota11y-setting-checkbox tota11y-sr-only"
                 type="checkbox"
                 onClick={() => clickHandler(this)} />
         );
 
         let $switch = (
-            <label className="tota11y-plugin-switch">
+            <label className="tota11y-setting-switch">
                 {this.$checkbox}
                 <div aria-hidden="true"
-                     className="tota11y-plugin-indicator">
+                     className="tota11y-setting-indicator">
                     &#x2713;
                 </div>
-                <div className="tota11y-plugin-info-setting">
+                <div className="tota11y-setting-info-setting">
                         {this.getDescription()}
                 </div>
             </label>
         );
 
         let $el = (
-            <li role="menuitem" className="tota11y-plugin">
+            <li role="menuitem" className="tota11y-setting">
                 {$switch}
             </li>
         );

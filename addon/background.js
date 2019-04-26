@@ -105,3 +105,19 @@ browser.runtime.onConnect.addListener((port) => {
         });
     }
 });
+
+// Onboard new users with the help page
+browser.runtime.onInstalled.addListener((details) => {
+    if (details.temporary) {
+        return;
+    }
+    if (details.reason === "install") {
+        browser.tabs.create({
+            url: "https://skeletonxf.gitlab.io/totally-automated-a11y-scanner/"
+        }).then((tab) => {
+            debug.log('Opened onboarding help page');
+        }).catch((error) => {
+            debug.error(`Error opening help page: ${error}`);
+        })
+    }
+});
