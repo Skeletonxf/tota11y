@@ -1,0 +1,60 @@
+@startuml
+InfoPanel *-- annotate
+InfoPanel *-- Plugin
+Plugin *-- InfoPanel
+Plugin <|-- A11yName
+A11yName *-- annotate
+A11yName -- accessibility_developer_tools : uses
+Plugin <|-- A11yTextWand
+A11yTextWand -- accessibility_developer_tools : uses
+Plugin <|-- AltTextPlugin
+AltTextPlugin *-- annotate
+AltTextPlugin -- accessibility_developer_tools : uses
+Plugin <|-- ContrastPlugin
+ContrastPlugin *-- annotate
+ContrastPlugin -- accessibility_developer_tools : uses
+Plugin <|-- DocumentPlugin
+Plugin <|-- FormsPlugin
+FormsPlugin *-- annotate
+FormsPlugin -- accessibility_developer_tools : uses
+Plugin <|-- HeadingsPlugin
+HeadingsPlugin *-- annotate
+Plugin <|-- LandmarksPlugin
+LandmarksPlugin *-- annotate
+Plugin <|-- LayoutPlugin
+LayoutPlugin *-- annotate
+LayoutPlugin *-- "many" LayoutTest
+LayoutTest <|-- TextSpacingLayoutTest
+TextSpacingLayoutTest -- accessibility_developer_tools : uses
+LayoutTest <|-- FontSizeLayoutTest
+FontSizeLayoutTest -- accessibility_developer_tools : uses
+Plugin <|-- LinkTextPlugin
+LinkTextPlugin *-- annotate
+LinkTextPlugin -- accessibility_developer_tools : uses
+Plugin <|-- NavigationPlugin
+NavigationPlugin *-- annotate
+Plugin <|-- TablesPlugin
+TablesPlugin *-- annotate
+Toolbar *-- "all" Plugin
+Toolbar *-- "all" Setting
+Toolbar *-- toolbar_Port
+Toolbar *-- init_Port
+ToolbarController *-- "all" Plugin
+ToolbarController *-- toolbar_Port
+sidebar *-- "all" Plugin
+sidebar *-- InfoPanelController
+sidebar *-- ToolbarController
+sidebar *-- init_Port
+devtools *-- devtools_Port
+background_script *-- devtools_Port
+background_script *-- background_Port
+InfoPanelController  *-- "all" Plugin
+InfoPanelController *-- background_Port
+InfoPanelController  *-- "many" ActivePanel
+ActivePanel *-- infopanel_Port
+InfoPanel *-- infopanel_Port
+ActivePanel *-- Plugin
+Setting <|-- TranslucentAnnotations
+Setting <|-- AuditDevOnly
+@enduml
+Last updated: commit 9065355a3e73e5b82abd65b5d805e15edf10fb5b
