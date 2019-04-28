@@ -23,7 +23,7 @@ Plugin <|-- LandmarksPlugin
 LandmarksPlugin *-- annotate
 Plugin <|-- LayoutPlugin
 LayoutPlugin *-- annotate
-LayoutPlugin *-- "many" LayoutTest
+LayoutPlugin *-- "all" LayoutTest
 LayoutTest <|-- TextSpacingLayoutTest
 TextSpacingLayoutTest -- accessibility_developer_tools : uses
 LayoutTest <|-- FontSizeLayoutTest

@@ -24,7 +24,7 @@ Defined in `plugins/*/index.js` these follow the same interface from `plugins/ba
 2 - This sends a JSON message over the Port between the `ActivePanel` and the its corresponding `InfoPanel`. The message includes the id given to this error
 3 - The `InfoPanel` identifies the element in the DOM that corresponds to this error id. The element is marked with a special class for later use.
 4 - The `InfoPanel` sends a message back to the `ActivePanel` indicating that the element in the page is marked.
-5 - The `InfoPaenlController` which has the same Port as the `ActivePanel` that started this chain receives the message and sends a message to the background script.
+5 - The `InfoPanelController` which has the same Port as the `ActivePanel` that started this chain receives the message and sends a message to the background script.
 6 - The background script receives this message and has been maintaing a list of opened Developer Tools. If the Developer Tools are open for this tab it sends a message to the `devtools/index.js`.
 7 - The dev tools code receives this message and runs `browser.devtools.inspectedWindow.eval("inspect(document.querySelector('.tota11y-inspected-element'))")` which identifies the marked element in the DOM and with the `inspect()` helper causes the browser to open this element in the Inspector tab of the Developer Tools.
 8 - The dev tools code sends a message back to the background script indicating that it inspected the element.
