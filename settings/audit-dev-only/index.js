@@ -1,12 +1,12 @@
 let $ = require("jquery");
-let Plugin = require("../base");
+let Setting = require("../base");
 
 /*
  * The audit-dev-only is automatically synced with
  * the browser.storage.local area as the setting value
  * itself is what we check in the sidebar code.
  */
-class AuditDevOnly extends Plugin {
+class AuditDevOnly extends Setting {
     getName() {
         return "audit-dev-only";
     }

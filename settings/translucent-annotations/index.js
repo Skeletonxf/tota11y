@@ -1,9 +1,9 @@
 let $ = require("jquery");
-let Plugin = require("../base");
+let Setting = require("../base");
 
 const STYLE_CLASS = "tota11y-setting-translucentAnnotations";
 
-class TranslucentAnnotations extends Plugin {
+class TranslucentAnnotations extends Setting {
     getName() {
         return "translucent-annotations";
     }
