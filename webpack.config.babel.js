@@ -106,5 +106,10 @@ module.exports = {
                 },
             })
         ]
-    }
+    },
+    performance: {
+        // ignore asset size limit warnings which are irrelevant for
+        // WebExtensions
+        hints: false,
+    },
 };
