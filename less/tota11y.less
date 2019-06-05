@@ -73,6 +73,12 @@
         right: 10px;
         top: 5px;
     }
+
+    .tota11y-info {
+        &-title:hover {
+            cursor: default;
+        }
+    }
 }
 
 .tota11y-sidebar.tota11y-toolbar {
@@ -83,4 +89,8 @@
 .tota11y-disabled-toolbar {
     pointer-events: none;
     opacity: 0.5;
+}
+
+.tota11y.tota11y-info.tota11y-sidebar:nth-child(2n+1) {
+    background-color: @mutedGreen;
 }

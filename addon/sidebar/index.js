@@ -2,8 +2,11 @@
  * Entry point for the sidebar to control tota11y from
  * the WebExtension.
  */
- // Require the base tota11y styles right away so they can be overwritten
+
+// Require the base tota11y styles right away so they can be overwritten
 require("../../less/tota11y.less");
+
+require("./style.less");
 
 let $ = require("jquery");
 
@@ -47,12 +50,6 @@ function isDevTab(url) {
         "https://localhost",
         "file://"].some(prefix => url.startsWith(prefix));
 }
-
-// Style the body so the sidebar is always filled
-$("body").css({
-    "height": "auto",
-    "background-color": "#333",
-});
 
 function updateSidebar(data, updateType) {
     if (insertingLock.locked()) {
