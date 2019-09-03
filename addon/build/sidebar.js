@@ -506,7 +506,7 @@ exports.push([module.i, ".tota11y-swatches {\n  margin-left: 5px !important;\n  
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")();
-exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-heading-outline {\n  color: #333 !important;\n}\n.tota11y-heading-outline-entry {\n  margin-bottom: 8px !important;\n}\n.tota11y-heading-outline-entry.heading-level-1 {\n  margin-left: 0 !important;\n}\n.tota11y-heading-outline-entry.heading-level-2 {\n  margin-left: 20px !important;\n}\n.tota11y-heading-outline-entry.heading-level-3 {\n  margin-left: 40px !important;\n}\n.tota11y-heading-outline-entry.heading-level-4 {\n  margin-left: 60px !important;\n}\n.tota11y-heading-outline-entry.heading-level-5 {\n  margin-left: 80px !important;\n}\n.tota11y-heading-outline-entry.heading-level-6 {\n  margin-left: 100px !important;\n}\n.tota11y-heading-outline-level {\n  position: relative !important;\n  top: -2px !important;\n  right: auto !important;\n  bottom: auto !important;\n  left: auto !important;\n  margin-right: 5px !important;\n  padding: 2px 3px !important;\n  pointer-events: none !important;\n}\n", ""]);
+exports.push([module.i, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-heading-outline {\n  color: #333 !important;\n}\n.tota11y-heading-outline-entry {\n  margin-bottom: 8px !important;\n}\n.tota11y-heading-outline-entry.heading-level-1 {\n  margin-left: 0 !important;\n}\n.tota11y-heading-outline-entry.heading-level-2 {\n  margin-left: 20px !important;\n}\n.tota11y-heading-outline-entry.heading-level-3 {\n  margin-left: 40px !important;\n}\n.tota11y-heading-outline-entry.heading-level-4 {\n  margin-left: 60px !important;\n}\n.tota11y-heading-outline-entry.heading-level-5 {\n  margin-left: 80px !important;\n}\n.tota11y-heading-outline-entry.heading-level-6 {\n  margin-left: 100px !important;\n}\n.tota11y-heading-outline-entry.heading-level-higher {\n  margin-left: 100px !important;\n}\n.tota11y-heading-outline-level {\n  position: relative !important;\n  top: -2px !important;\n  right: auto !important;\n  bottom: auto !important;\n  left: auto !important;\n  margin-right: 5px !important;\n  padding: 2px 3px !important;\n  pointer-events: none !important;\n}\n", ""]);
 
 /***/ }),
 
@@ -14055,6 +14055,33 @@ let aboutTemplate = __webpack_require__(/*! ./about.handlebars */ "./plugins/hea
 
 __webpack_require__(/*! ./style.less */ "./plugins/headings/style.less");
 
+class HeadingLevel {
+  /*
+   * Constructs a heading level from a heading element (h1 - h6) or
+   * any element with a heading role and an aria level (potentially >6).
+   */
+  constructor($el) {
+    let tagName = $el.prop("tagName").toLowerCase();
+
+    if ($el.attr("role") === "heading" && typeof $el.attr("aria-level") !== "undefined") {
+      this._level = +$el.attr("aria-level");
+      this._tag = `&lt;${tagName} role="heading" aria-level="${this._level}"&gt;`;
+    } else {
+      this._level = +tagName.slice(1);
+      this._tag = `&lt;${tagName}&gt;`;
+    }
+  }
+
+  tag() {
+    return this._tag;
+  }
+
+  value() {
+    return this._level;
+  }
+
+}
+
 const ERRORS = {
   FIRST_NOT_H1(level) {
     return {
@@ -14064,7 +14091,7 @@ const ERRORS = {
                     To give your document a proper structure for assistive
                     technologies, it is important to lay out your headings
                     beginning with an <code>&lt;h1&gt;</code>. We found an
-                    <code>&lt;h${level}&gt;</code> instead.
+                    <code>${level.tag()}</code> instead.
                 </div>
             `
     };
@@ -14087,7 +14114,15 @@ const ERRORS = {
 
   // This error accepts two arguments to display a relevant error message
   NONCONSECUTIVE_HEADER(prevLevel, currLevel) {
-    let _tag = level => `<code>&lt;h${level}&gt;</code>`;
+    let levelToTagCode = level => {
+      if (level <= 6) {
+        return `<code>&lt;h${level}&gt;</code>`;
+      }
+
+      return `<code>&lt;div role="heading" aria-level="${level}"&gt;>`;
+    };
+
+    let _tag = level => `<code>${level.tag()}</code>`;
 
     let description = `
             <div>
@@ -14095,18 +14130,20 @@ const ERRORS = {
                 following an ${_tag(prevLevel)}. In order to maintain a consistent
                 outline of the page for assistive technologies, reduce the gap in
                 the heading level by upgrading this tag to an
-                ${_tag(prevLevel + 1)}`; // Suggest upgrading the tag to the same level as `prevLevel` iff
+                ${levelToTagCode(prevLevel.value() + 1)}`; // Suggest upgrading the tag to the same level as `prevLevel` iff
     // `prevLevel` is not 1
 
-    if (prevLevel !== 1) {
-      description += ` or ${_tag(prevLevel)}`;
+    if (prevLevel.value() !== 1) {
+      description += ` or ${levelToTagCode(prevLevel.value())}`;
     }
 
     description += ".</div>";
     return {
+      // just convert to hX for title as space is constrained even
+      // if actual tag is not h1-h6
       title: `
-                Nonconsecutive heading level used (h${prevLevel} &rarr;
-                h${currLevel})
+                Nonconsecutive heading level used (h${prevLevel.value()} &rarr;
+                h${currLevel.value()})
             `,
       description: description
     };
@@ -14143,22 +14180,26 @@ class HeadingsPlugin extends Plugin {
     let prevLevel;
     $headings.each((i, el) => {
       let $el = $(el);
-      let level = +$el.prop("tagName").slice(1);
+      let level = new HeadingLevel($el);
       let error; // Check for any violations
       // NOTE: These violations do not overlap, but as we add more, we
       // may want to separate the conditionals here to report multiple
       // errors on the same tag.
 
-      if (i === 0 && level !== 1) {
+      if (i === 0 && level.value() !== 1) {
         error = ERRORS.FIRST_NOT_H1(level); // eslint-disable-line new-cap
-      } else if (prevLevel && level - prevLevel > 1) {
+      } else if (prevLevel.value() && level.value() - prevLevel.value() > 1) {
         error = ERRORS.NONCONSECUTIVE_HEADER(prevLevel, level); // eslint-disable-line new-cap
       }
 
       prevLevel = level; // Render the entry in the outline for the "Summary" tab
 
       let $item = $(outlineItemTemplate({
-        level: level,
+        // provide a numerical level which can go arbitarily high
+        // and a capped level which we use for styling the element
+        // that stops after 6.
+        level: level.value(),
+        _level: level.value() <= 6 ? level.value() : "higher",
         text: $el.text()
       }));
       $items.push($item); // Highlight the heading element on hover
@@ -14169,14 +14210,16 @@ class HeadingsPlugin extends Plugin {
         // Register an error to the info panel
         let infoPanelError = this.error(error.title, $(error.description), $el); // Place an error label on the heading tag
 
-        annotate.errorLabel($el, $el.prop("tagName").toLowerCase(), error.title, infoPanelError); // Mark the summary item as red
+        annotate.errorLabel($el, // just convert to hX for title as space is constrained even
+        // if actual tag is not h1-h6
+        `h${level.value()}`, error.title, infoPanelError); // Mark the summary item as red
         // Pretty hacky, since we're borrowing label styles for this
         // summary tab
 
         $item.find(".tota11y-heading-outline-level").addClass("tota11y-label-error");
       } else {
         // Label the heading tag
-        annotate.label($el).addClass("tota11y-label-success"); // Mark the summary item as green
+        annotate.label($el, `h${level.value()}`).addClass("tota11y-label-success"); // Mark the summary item as green
 
         $item.find(".tota11y-heading-outline-level").addClass("tota11y-label-success");
       }
@@ -14185,7 +14228,17 @@ class HeadingsPlugin extends Plugin {
   }
 
   run() {
-    let $headings = $("h1, h2, h3, h4, h5, h6"); // `this.outline` has the side-effect of also reporting violations
+    let $headings = $(`h1, [role="heading"][aria-level="1"],
+             h2, [role="heading"][aria-level="2"],
+             h3, [role="heading"][aria-level="3"],
+             h4, [role="heading"][aria-level="4"],
+             h5, [role="heading"][aria-level="5"],
+             h6, [role="heading"][aria-level="6"],
+             [role="heading"][aria-level="7"],
+             [role="heading"][aria-level="8"],
+             [role="heading"][aria-level="9"]
+             `); // TODO support arbitary aria-levels
+    // `this.outline` has the side-effect of also reporting violations
 
     let $items = this.outline($headings);
 
@@ -14223,7 +14276,7 @@ module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,"
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "<div class=\"tota11y-heading-outline-entry heading-level-"
-    + alias4(((helper = (helper = helpers.level || (depth0 != null ? depth0.level : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"level","hash":{},"data":data}) : helper)))
+    + alias4(((helper = (helper = helpers._level || (depth0 != null ? depth0._level : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_level","hash":{},"data":data}) : helper)))
     + "\">\n    <span class=\"tota11y-heading-outline-level tota11y-label\">"
     + alias4(((helper = (helper = helpers.level || (depth0 != null ? depth0.level : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"level","hash":{},"data":data}) : helper)))
     + "</span>\n    <span class=\"tota11y-heading-outline-heading-text\">"
