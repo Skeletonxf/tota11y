@@ -13,7 +13,7 @@ let linkOnlyErrorTemplate = require("./link-only-error-template.handlebars");
 
 let stopWords = [
     "click", "tap", "go", "here", "learn", "more", "this", "page",
-    "link", "about"
+    "link"
 ];
 // Generate a regex to match each of the stopWords
 let stopWordsRE = new RegExp(`\\b(${stopWords.join("|")})\\b`, "ig");

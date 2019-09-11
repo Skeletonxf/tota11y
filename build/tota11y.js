@@ -14800,7 +14800,7 @@ let inContextErrorTemplate = __webpack_require__(/*! ./in-context-error-template
 
 let linkOnlyErrorTemplate = __webpack_require__(/*! ./link-only-error-template.handlebars */ "./plugins/link-text/link-only-error-template.handlebars");
 
-let stopWords = ["click", "tap", "go", "here", "learn", "more", "this", "page", "link", "about"]; // Generate a regex to match each of the stopWords
+let stopWords = ["click", "tap", "go", "here", "learn", "more", "this", "page", "link"]; // Generate a regex to match each of the stopWords
 
 let stopWordsRE = new RegExp(`\\b(${stopWords.join("|")})\\b`, "ig");
 /*
