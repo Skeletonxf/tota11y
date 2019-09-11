@@ -1,7 +1,7 @@
 /*!
  * Totally Automated Accessibility Scanner
  * 
- * Totally v1.1.3
+ * Totally v1.1.4
  * 
  * Forked from tota11y v0.1.6
  * http://khan.github.io/tota11y
