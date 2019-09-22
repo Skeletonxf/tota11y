@@ -133,7 +133,7 @@ class HeadingsPlugin extends Plugin {
         let prevLevel;
         $headings.each((i, el) => {
             let $el = $(el);
-            let level = new HeadingLevel($el)
+            let level = new HeadingLevel($el);
             let error;
 
             // Check for any violations
@@ -200,16 +200,8 @@ class HeadingsPlugin extends Plugin {
 
     run() {
         let $headings = $(
-            `h1, [role="heading"][aria-level="1"],
-             h2, [role="heading"][aria-level="2"],
-             h3, [role="heading"][aria-level="3"],
-             h4, [role="heading"][aria-level="4"],
-             h5, [role="heading"][aria-level="5"],
-             h6, [role="heading"][aria-level="6"],
-             [role="heading"][aria-level="7"],
-             [role="heading"][aria-level="8"],
-             [role="heading"][aria-level="9"]
-             `); // TODO support arbitary aria-levels
+            `h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]`
+        );
         // `this.outline` has the side-effect of also reporting violations
         let $items = this.outline($headings);
 
