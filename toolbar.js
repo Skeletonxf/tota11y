@@ -12,7 +12,6 @@ const INIT_PORT = "init";
 let allPlugins = [...plugins.default, ...plugins.experimental];
 let namedPlugins = allPlugins.map((p) => p.getName());
 let namedSettings = settings.map((p) => p.getName());
-
 const DISABLE_CSS = "tota11y-disabled-toolbar";
 const isBrowser = typeof browser !== 'undefined';
 

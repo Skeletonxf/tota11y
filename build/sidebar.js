@@ -14177,7 +14177,7 @@ class HeadingsPlugin extends Plugin {
 
   outline($headings) {
     let $items = [];
-    let prevLevel;
+    let prevLevel = null;
     $headings.each((i, el) => {
       let $el = $(el);
       let level = new HeadingLevel($el);
@@ -14188,7 +14188,7 @@ class HeadingsPlugin extends Plugin {
 
       if (i === 0 && level.value() !== 1) {
         error = ERRORS.FIRST_NOT_H1(level); // eslint-disable-line new-cap
-      } else if (prevLevel.value() && level.value() - prevLevel.value() > 1) {
+      } else if (prevLevel !== null && prevLevel.value() && level.value() - prevLevel.value() > 1) {
         error = ERRORS.NONCONSECUTIVE_HEADER(prevLevel, level); // eslint-disable-line new-cap
       }
 
@@ -14228,17 +14228,7 @@ class HeadingsPlugin extends Plugin {
   }
 
   run() {
-    let $headings = $(`h1, [role="heading"][aria-level="1"],
-             h2, [role="heading"][aria-level="2"],
-             h3, [role="heading"][aria-level="3"],
-             h4, [role="heading"][aria-level="4"],
-             h5, [role="heading"][aria-level="5"],
-             h6, [role="heading"][aria-level="6"],
-             [role="heading"][aria-level="7"],
-             [role="heading"][aria-level="8"],
-             [role="heading"][aria-level="9"]
-             `); // TODO support arbitary aria-levels
-    // `this.outline` has the side-effect of also reporting violations
+    let $headings = $(`h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]`); // `this.outline` has the side-effect of also reporting violations
 
     let $items = this.outline($headings);
 
@@ -17924,7 +17914,7 @@ module.exports = {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-const DEBUGGING = false;
+const DEBUGGING = true;
 /*
  * A console logging wrapper that can be turned on and off easily.
  *

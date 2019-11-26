@@ -130,7 +130,7 @@ class HeadingsPlugin extends Plugin {
     outline($headings) {
         let $items = [];
 
-        let prevLevel;
+        let prevLevel = null;
         $headings.each((i, el) => {
             let $el = $(el);
             let level = new HeadingLevel($el);
@@ -142,7 +142,7 @@ class HeadingsPlugin extends Plugin {
             // errors on the same tag.
             if (i === 0 && level.value() !== 1) {
                 error = ERRORS.FIRST_NOT_H1(level);                         // eslint-disable-line new-cap
-            } else if (prevLevel.value() && level.value() - prevLevel.value() > 1) {
+            } else if ((prevLevel !== null) && (prevLevel.value() && level.value() - prevLevel.value() > 1)) {
                 error = ERRORS.NONCONSECUTIVE_HEADER(prevLevel, level);     // eslint-disable-line new-cap
             }
 
