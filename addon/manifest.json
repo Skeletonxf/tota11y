@@ -2,7 +2,7 @@
   "name": "Totally Automated Accessibility Scanner",
   "description": "free accessibility auditing/testing tool",
   "manifest_version": 2,
-  "version": "1.1.4",
+  "version": "1.1.5",
 
   "permissions": [
     "tabs",
