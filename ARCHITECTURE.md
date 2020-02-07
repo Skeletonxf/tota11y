@@ -20,17 +20,17 @@ Initially the only script, this is where most of `tota11y` remains and performs 
 Defined in `plugins/*/index.js` these follow the same interface from `plugins/base.js` as when everything was running and presenting in the Web page. The plugins are actually compiled into both the content script and the sidebar script but when writing them you can ignore most of the architecture of this project because they do not communicate directly to anything except their superclass and the code in `plugins/shared`.
 
 ## A walk through using Ports
-1 - The user clicks Inspect Element in an `ActivePanel` on an error reported by the Contrast plugin.
-2 - This sends a JSON message over the Port between the `ActivePanel` and the its corresponding `InfoPanel`. The message includes the id given to this error
-3 - The `InfoPanel` identifies the element in the DOM that corresponds to this error id. The element is marked with a special class for later use.
-4 - The `InfoPanel` sends a message back to the `ActivePanel` indicating that the element in the page is marked.
-5 - The `InfoPanelController` which has the same Port as the `ActivePanel` that started this chain receives the message and sends a message to the background script.
-6 - The background script receives this message and has been maintaing a list of opened Developer Tools. If the Developer Tools are open for this tab it sends a message to the `devtools/index.js`.
-7 - The dev tools code receives this message and runs `browser.devtools.inspectedWindow.eval("inspect(document.querySelector('.tota11y-inspected-element'))")` which identifies the marked element in the DOM and with the `inspect()` helper causes the browser to open this element in the Inspector tab of the Developer Tools.
-8 - The dev tools code sends a message back to the background script indicating that it inspected the element.
-9 - The background script forwards this message to the `InfoPaenlController`
-10 - The `InfoPanelController` tells the `InfoPanel` to remove the mark on the element in the DOM
-11 - The `InfoPanel` receives this message and removes the class from the element in the DOM that corresponded to the error.
-12 - The user sees the element inspected by the browser, and possibly the brief flash as a class is added and removed from the element.
+1 - The user clicks Inspect Element in an `ActivePanel` on an error reported by the Contrast plugin.  
+2 - This sends a JSON message over the Port between the `ActivePanel` and the its corresponding `InfoPanel`. The message includes the id given to this error  
+3 - The `InfoPanel` identifies the element in the DOM that corresponds to this error id. The element is marked with a special class for later use.  
+4 - The `InfoPanel` sends a message back to the `ActivePanel` indicating that the element in the page is marked.  
+5 - The `InfoPanelController` which has the same Port as the `ActivePanel` that started this chain receives the message and sends a message to the background script.  
+6 - The background script receives this message and has been maintaing a list of opened Developer Tools. If the Developer Tools are open for this tab it sends a message to the `devtools/index.js`.  
+7 - The dev tools code receives this message and runs `browser.devtools.inspectedWindow.eval("inspect(document.querySelector('.tota11y-inspected-element'))")` which identifies the marked element in the DOM and with the `inspect()` helper causes the browser to open this element in the Inspector tab of the Developer Tools.  
+8 - The dev tools code sends a message back to the background script indicating that it inspected the element.  
+9 - The background script forwards this message to the `InfoPaenlController`  
+10 - The `InfoPanelController` tells the `InfoPanel` to remove the mark on the element in the DOM  
+11 - The `InfoPanel` receives this message and removes the class from the element in the DOM that corresponded to the error.  
+12 - The user sees the element inspected by the browser, and possibly the brief flash as a class is added and removed from the element.  
 
 Most messages passed around with Ports between the JavaScript processes are not this complex, and most are 1 way.
