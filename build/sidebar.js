@@ -1,7 +1,7 @@
 /*!
  * Totally Automated Accessibility Scanner
  * 
- * Totally v1.1.4
+ * Totally v1.1.6
  * 
  * Forked from tota11y v0.1.6
  * http://khan.github.io/tota11y
@@ -17914,7 +17914,7 @@ module.exports = {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-const DEBUGGING = true;
+const DEBUGGING = false;
 /*
  * A console logging wrapper that can be turned on and off easily.
  *
