@@ -3,6 +3,9 @@ npm ci
 rm addon.zip
 rm totally.zip
 echo "Zipping addon"
-zip -r addon.zip addon/* -x .arcconfig .arclint bower.json .directory .eslintrc .git/\* .gitignore .gitlab-ci.yml node_modules/\* sync.sh .travis.yml public/\* screenshots/\*
+cd addon/
+zip -r addon.zip . -x .arcconfig .arclint bower.json .directory .eslintrc .git/\* .gitignore .gitlab-ci.yml node_modules/\* sync.sh .travis.yml public/\* screenshots/\*
+cd ..
+mv addon/addon.zip addon.zip
 echo "Zipping source code"
 zip -r totally.zip . -x .arcconfig .arclint bower.json .directory .eslintrc .git/\* .gitignore .gitlab-ci.yml node_modules/\* sync.sh .travis.yml public/\* screenshots/\*
