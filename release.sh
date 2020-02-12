@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 npm ci
+npm run dev
 rm addon.zip
 rm totally.zip
 echo "Zipping addon"
