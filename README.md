@@ -26,7 +26,7 @@ npm run dev
 # load addon/manifest.json
 ```
 
-All node package dependencies are for build time only. As the builds are committed to enable bookmarklets you only need to run npm if you start editing the code.
+All node package dependencies are for build time only. As the builds are committed to enable bookmarklets you only need to run npm if you start editing the code. This project also includes a `release.sh` script for reproducible builds and creation of zip files for submission to the Firefox addons site.
 
 ## Original notes
 
@@ -72,6 +72,18 @@ npm run lint
 ```
 
 FIXME live testing the bookmarklet
+
+## Use as a bookmarklet
+
+If you include the `tota11y.js` or `tota11y.min.js` file into a webpage it will still function with limited functionality as a single script. If you do this you may also want to add additional scrolling styling to the toolbar as the script has far more categories than when tota11y was developed and consequently takes up a lot of vertical screen space you may not have.
+
+```css
+#tota11y-toolbar .tota11y-toolbar-body ul.tota11y-plugins {
+    max-height: 90vh;
+    overflow-y: auto;
+    scrollbar-color: #555 #f2f2f2;
+}
+```
 
 ## Special thanks
 
