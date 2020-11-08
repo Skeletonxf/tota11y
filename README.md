@@ -4,6 +4,8 @@ Totally Automated Accessibility Scanner, or Totally for short (a play on this pr
 
 [The help page](https://skeletonxf.gitlab.io/totally-automated-a11y-scanner/)
 
+[Test suite reference](https://skeletonxf.gitlab.io/totally-automated-a11y-scanner/#rules-section)
+
 [Install for Mozilla Firefox](https://addons.mozilla.org/en-GB/firefox/addon/totally-automated-a11y-scanner/)
 
 Totally was built as part of a 3rd year Computer Science Dissertation project on Web Accessibility testing.
