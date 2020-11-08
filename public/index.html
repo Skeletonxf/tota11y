@@ -197,6 +197,85 @@
                 you inspect the CSS names and the code.
             </p>
         </section>
+        <section class="text test-suite-data">
+            <h2>What does Totally Automated Accessibility Scanner test?</h2>
+            <h3>Level A criteria</h3>
+            <p class="subheading">Some websites have legal obligations to meet level A and AA as part of government accessibility requirements.</p>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#non-text-content">WCAG &sect; 1.1.1 Non text content</a></h4>
+                <p>TAAS tests for suitable alt text of images.</p>
+            </div>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#captions-prerecorded">WCAG &sect; 1.2.2 Captions (Prerecorded)</a></h4>
+                <p>TAAS tests HTML audio and video elements for the presence of suitable captions.</p>
+            </div>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#audio-description-prerecorded">WCAG &sect; 1.2.5 Audio Description (Prerecorded)</a></h4>
+                <p>TAAS tests HTML audio and video elements for the presence of suitable audio descriptions.</p>
+            </div>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#info-and-relationships">WCAG &sect; 1.3.1 Info and Relationships</a></h4>
+                <p>TAAS has a number of tests for specific parts of this very broad guideline, including correct semantic marking up of forms, tables and headings.</p>
+            </div>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#audio-control">WCAG &sect; 1.4.2 Audio Control</a></h4>
+                <p>TASS tests HTML audio and video elements do not autoplay sound, or can be muted.</p>
+            </div>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#page-titled">WCAG &sect; 2.4.2 Page Titled</a></h4>
+                <p>TASS tests webpages have a title.</p>
+            </div>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#link-purpose-in-context">WCAG &sect; 2.4.4 Link Purpose (In Context)</a></h4>
+                <p>TASS has some heuristics to determine if links and their surrounding context are clear.</p>
+            </div>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#label-in-name">WCAG &sect; 2.5.3 Label in Name</a></h4>
+                <p>TASS tests that the programmatic labels of elements include the visual label when both are specified.</p>
+            </div>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#language-of-page">WCAG &sect; 3.1.1 Language of Page</a></h4>
+                <p>TASS tests webpages have a language specified.</p>
+            </div>
+
+            <h3>Level AA criteria</h3>
+            <p class="subheading">Some websites have legal obligations to meet level A and AA as part of government accessibility requirements.</p>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#contrast-minimum">WCAG &sect; 1.4.3 Contrast (Minimum)</a></h4>
+                <p>TASS tests text contrast ratios meet this guideline, and suggests fixes. It cannot properly identify text contrast against background images or in images of text.</p>
+            </div>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#resize-text">WCAG &sect; 1.4.4 Resize text</a></h4>
+                <p>TASS tests text is not clipped when enlarging font size. TASS also has a tool to let you visually see the effect of enlarged font size on your webpage.</p>
+            </div>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#text-spacing">WCAG &sect; 1.4.12 Text Spacing</a></h4>
+                <p>TASS tests text is not clipped when increasing text spacing properties. TASS also has a tool to let you visually see the effect of increased text spacing properties on your webpage.</p>
+            </div>
+
+            <h3>Level AAA criteria</h3>
+            <p class="subheading">These are still generally good to meet, but the W3C do not recommend it as a general policy</p>
+            <p><blockquote><a href="https://www.w3.org/TR/WCAG20/#conformance-reqs">It is not recommended that Level AAA conformance be required as a general policy for entire sites because it is not possible to satisfy all Level AAA Success Criteria for some content</a></blockquote></p>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/WCAG21/#link-purpose-link-only">WCAG &sect; 2.4.9 Link Purpose (Link Only)</a></h4>
+                <p>TASS has some heuristics to determine if links are clear without context.</p>
+            </div>
+
+            <h3>Miscellaneous</h3>
+            <p class="subheading">These are not part of WCAG guidelines or are functionality that is not part of automated tests but may still be useful</p>
+            <div class="flex column">
+                <h4><a href="https://www.w3.org/TR/aria-in-html/">ARIA</a></h4>
+                <p>TASS can visualise ARIA labels on a webpage for you. Point it at Facebook to get a good demonstration.</p>
+            </div>
+            <div class="flex column">
+                <h4>Screen Reader Wand</h4>
+                <p>TASS has a screen reader wand which can give you an idea of the sorts of things screen readers see on elements. It is not production grade and may miss things real screen readers would find.</p>
+            </div>
+            <div class="flex column">
+                <h4>Disabled click event input elements</h4>
+                <p>TASS warns you if it sees a read only input element which also has JavaScript click events registered, as this will likely cause problems for screen reader users that won't be able to interact with it.</p>
+            </div>
+        </section>
     </main>
     <div id="indicator" role="presentation">
         &larr; You should see glasses here when totally is running
