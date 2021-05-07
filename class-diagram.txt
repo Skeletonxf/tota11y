@@ -56,5 +56,7 @@ InfoPanel *-- infopanel_Port
 ActivePanel *-- Plugin
 Setting <|-- TranslucentAnnotations
 Setting <|-- AuditDevOnly
+Setting <|-- FocusOpened
 @enduml
-Last updated: commit 9065355a3e73e5b82abd65b5d805e15edf10fb5b
+Last updated: commit e8ee458c41e221c3f67d4f65f3d4e120c5b0bb08
+This is a PlantUML diagram which is used to automatically redraw the class-diagram.png file using the `plantuml class-diagram.txt` command.
