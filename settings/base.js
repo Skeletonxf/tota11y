@@ -75,6 +75,10 @@ class Setting {
     deactivate() {
         this.disable();
     }
+
+    enabledByDefault() {
+        return false;
+    }
 }
 
 module.exports = Setting

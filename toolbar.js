@@ -355,8 +355,22 @@ class ToolbarController {
         // to the sidebar UI
         settings.forEach((setting) => {
             browser.storage.local.get(setting.getName()).then((storage) => {
-                if (storage[setting.getName()]) {
+                let value = storage[setting.getName()];
+                if (value) {
                     setting.$checkbox.click();
+                }
+                if (typeof value === "undefined") {
+                    if (setting.enabledByDefault()) {
+                        // If we should be enabled by default and the setting
+                        // is not set on the browser then set it
+                        browser.storage.local.set({
+                            [setting.getName()]: true,
+                        });
+                        setting.$checkbox.click();
+                    }
+                    // If the setting is not set on the browser but the plugin
+                    // is not enabled by default, we don't need to do anything
+                    // since the checkbox won't be ticked by default either
                 }
             })
         });

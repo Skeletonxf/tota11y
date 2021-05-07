@@ -16537,10 +16537,62 @@ class Setting {
     this.disable();
   }
 
+  enabledByDefault() {
+    return false;
+  }
+
 }
 
 module.exports = Setting;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./utils/element */ "./utils/element.js")))
+
+/***/ }),
+
+/***/ "./settings/focus-opened/index.js":
+/*!****************************************!*\
+  !*** ./settings/focus-opened/index.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+let $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
+let Setting = __webpack_require__(/*! ../base */ "./settings/base.js");
+/*
+ * The focus-opened is automatically synced with
+ * the browser.storage.local area as the setting value
+ * itself is what we check in the sidebar code.
+ */
+
+
+class FocusOpened extends Setting {
+  getName() {
+    return "focus-opened";
+  }
+
+  getDescription() {
+    return "Shift focus to newly opened plugins";
+  }
+
+  applyToSidebar() {
+    return true;
+  }
+
+  applyToPage() {
+    return false;
+  }
+
+  enable() {}
+
+  disable() {}
+
+  enabledByDefault() {
+    return true;
+  }
+
+}
+
+module.exports = FocusOpened;
 
 /***/ }),
 
@@ -16560,7 +16612,9 @@ let TranslucentAnnotations = __webpack_require__(/*! ./translucent-annotations *
 
 let AuditDevOnly = __webpack_require__(/*! ./audit-dev-only */ "./settings/audit-dev-only/index.js");
 
-module.exports = [new TranslucentAnnotations(), new AuditDevOnly()];
+let FocusOpened = __webpack_require__(/*! ./focus-opened */ "./settings/focus-opened/index.js");
+
+module.exports = [new TranslucentAnnotations(), new AuditDevOnly(), new FocusOpened()];
 
 /***/ }),
 
@@ -17013,8 +17067,24 @@ class ToolbarController {
 
     settings.forEach(setting => {
       browser.storage.local.get(setting.getName()).then(storage => {
-        if (storage[setting.getName()]) {
+        let value = storage[setting.getName()];
+
+        if (value) {
           setting.$checkbox.click();
+        }
+
+        if (typeof value === "undefined") {
+          if (setting.enabledByDefault()) {
+            // If we should be enabled by default and the setting
+            // is not set on the browser then set it
+            browser.storage.local.set({
+              [setting.getName()]: true
+            });
+            setting.$checkbox.click();
+          } // If the setting is not set on the browser but the plugin
+          // is not enabled by default, we don't need to do anything
+          // since the checkbox won't be ticked by default either
+
         }
       });
     });

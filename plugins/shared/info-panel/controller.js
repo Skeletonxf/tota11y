@@ -229,7 +229,7 @@ class ActivePanel {
             }
             if (json.showError) {
                 if (json.plugin === this.plugin.getName()) {
-                    this.showError(json.errorId);
+                    this.showError(json.errorId, true);
                 }
             }
             if (json.highlightOn) {
@@ -477,13 +477,18 @@ class ActivePanel {
             this.initAndPosition();
         }
 
-        // (a11y) Shift focus to the newly-opened info panel
-        this.$el.focus();
+        // (a11y) Shift focus to the newly-opened info panel (unless configured
+        // not to)
+        browser.storage.local.get("focus-opened").then((storage) => {
+            if (storage["focus-opened"]) {
+                this.$el.focus();
+            }
 
-        if (this.errors.size > 0) {
-            // Jump to the first violation.
-            this.showError(FIRST_ERROR_ID);
-        }
+            if (this.errors.size > 0) {
+                // Jump to the first violation.
+                this.showError(FIRST_ERROR_ID, !!storage["focus-opened"]);
+            }
+        });
 
         return this.$el;
     }
@@ -497,7 +502,7 @@ class ActivePanel {
      * in the sidebar and not the same object the InfoPanel in
      * the content script created (but they will have the same ids).
      */
-    showError(errorId) {
+    showError(errorId, scrollTo) {
         let error = this.errors.get(errorId);
 
         if (error === undefined) {
@@ -514,10 +519,12 @@ class ActivePanel {
         // Switch to the "Errors" tab
         this.$errorsTab.trigger("activate");
 
-        // Scroll to the error entry smoothly
-        $("html, body").animate({
-            scrollTop: error.$trigger.offset().top - 10
-        }, 50);
+        // Scroll to the error entry smoothly (unless configured not to)
+        if (scrollTo) {
+            $("html, body").animate({
+                scrollTop: error.$trigger.offset().top - 10
+            }, 50);
+        }
     }
 
     /*
