@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.1.7
+
+Updated dependencies used in builds and made focus stealing of opened plugins configurable.
+
+## 1.1.6
+
+Rebuilt project due to version mismatch causing build reproduction issue. No changes to functionality.
+
+## 1.1.5
+
+Fixed a bug causing a crash in the Headings plugin on some websites
+
+## 1.1.4
+
+Removed false positives in headings and link text plugins. Added support to detect heading role elements.
+
+## 1.1.3
+
+Improved styling of multiple plugins in the sidebar.
+
+## 1.1.2
+
+Improved onboarding experience for new users and fixed visual issue when making the sidebar smaller.
+
+## 1.1.1
+
+Made insertion of content script after reloading much more reliable
+
+## 1.1.0
+
+All console logging removed and improved support for multiple sidebars/windows open at once.
+
 ## 1.0.0
 
 First release as WebExtension to AMO
